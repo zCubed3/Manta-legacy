@@ -1,0 +1,8 @@
+# Prevent vim sessions from being stored
+*.vim
+
+# Prevent cmake and builds
+cmake*/
+build*/
+bin*/
+
