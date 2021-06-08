@@ -5,4 +5,7 @@
 cmake*/
 build*/
 bin*/
+.cache*/
 
+# Prevent compile_commands' symlink from being stored
+compile_commands.json
