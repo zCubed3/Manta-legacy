@@ -1,0 +1,3 @@
+# Aurora Game Engine
+
+This is a small passion project that isn't intended to be ground breaking in any way. I am still learning better programming practices and have only been seriously using C/C++ for about a year now, any bugs and issues with this software are par for the course considering that it was written by a 16 year old...
