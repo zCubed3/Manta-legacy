@@ -14,14 +14,29 @@ This software was written using NeoVim with many customizations to make it adequ
 | OS            | Compilers     | Architectures  |
 | ------------- |:-------------:| -----          |
 | Linux         | GNU GCC, LLVM Clang | x86, amd64 |
+| Windows       | MSVC, LLVM Clang for Windows | x86, amd64 |
+| FreeBSD       | LLVM Clang    | x86, amd64        |
 
+(FreeBSD will potentially be zeroed from support)
 
 ### Unsupported Platforms
 | OS            | Compilers     | Architectures  |
 | ------------- |:-------------:| -----          |
-| Windows       | MSVC, LLVM Clang for Windows | x86, amd64 |
-| FreeBSD       | LLVM Clang    | x86, amd64        |
 | MacOS         | ENTIRELY UNSUPPORTED | ...         |
 
 ### Build instructions / requirements
 
+Warning: This repo is, BYOL, bring your own libraries
+
+#### Compilation requirements
+
+* CMake version 3.19 and above
+* LLVM Clang / GNU GCC / Microsoft MSVC (any modern C/C++ compiler)
+* libGLEW  (BYOL)
+* libGLFW3 (BYOL)
+* (Windows) Vulkan SDK / (Linux / BSD) Vulkan Libraries / Headers
+
+#### (Linux Only) GNU LibC is tested, Musl support is not guaranteed
+#### For manual shader development you'll need a SPIR-V compiler
+
+Using CMake, generate the project files and then use the resulting project files to compile the source, report any failed compilcation attempts to the issues page and I'll assist you with compilation!
