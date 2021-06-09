@@ -1,6 +1,9 @@
 #include <dynamiclib.hpp>
 #include <renderer.hpp>
 
+#include <manta_macros.hpp>
+#include <manta_errcodes.hpp>
+
 #include <stdlib.h>
 #include <string.h>
 
@@ -11,10 +14,19 @@ void HandleCmd(int argc, char** argv);
 int main(int argc, char** argv) {
    HandleCmd(argc, argv);
    
-   DynamicLib* rendererLib = LoadDynamicLib("lib/opengl_api.so");
+   DynamicLib* rendererLib = LoadDynamicLib("lib/OpenGL3_api.so");
 
    if (rendererLib) {
-      void* func = rendererLib->GetFunction("get_Renderer");
+      FuncGetRenderer funcGetRend = (FuncGetRenderer)rendererLib->GetFunction("get_Renderer");
+      Renderer* renderer = nullptr;
+
+      if (funcGetRend != nullptr)
+	 renderer = funcGetRend();
+
+      if (renderer == nullptr) {
+	 printf("Failed to create renderer\n");
+	 return ERR_FAILED_TO_CREATE_RENDERER;
+      }
    }
 }
 
