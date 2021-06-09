@@ -3,6 +3,10 @@
 
 #include "manta_macros.hpp"
 
+class Renderer;
+
+MANTA_DECLARE_FPTR(Renderer*, FuncGetRenderer, );
+
 class Renderer {
    public:
       // For determining which API we're using, for diagnotistic and stat reasons

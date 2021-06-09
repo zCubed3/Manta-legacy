@@ -25,7 +25,7 @@ void HandleCmd(int argc, char** argv) {
       if (arg == NULL) // Just in case
 	 continue;
 
-      if (strlen(arg) == 0) // Also just in case
+      if (strlen(arg) == 0) // Also just in case we get fed bad info from the OS
 	 continue;
 
       // Like Source and Id Tech

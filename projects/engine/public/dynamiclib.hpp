@@ -12,7 +12,7 @@ class DynamicLib {
       DynamicLib(void* handle);
 #endif
 
-#ifdef __WIN32
+#ifdef _WIN32
       DynamicLib(HMODULE handle);
 #endif
 
@@ -21,7 +21,7 @@ class DynamicLib {
       void* handle;
 #endif
 
-#ifdef __WIN32
+#ifdef _WIN32
       HINSTANCE module;
 #endif
 };
