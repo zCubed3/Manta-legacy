@@ -3,10 +3,15 @@
 
 #define MANTA_FLAG(SHIFT) 1 << SHIFT
 
-#define MANTA_DECLARE_FPTR(RETURN, TYPE, ARGS) typedef RETURN(*TYPE)(ARGS)
+#define MANTA_DECLARE_FPTR(RETURN, TYPE, ...) typedef RETURN(*TYPE)(__VA_ARGS__)
 
-// Used for dynamic linking
-#if defined(__linux__) || defined(__FreeBSD__)
+#define RGB_TO_LINEAR(V) (V / 255.0f)
+
+//
+// Platform specific defines
+//
+
+#ifdef __linux__
 #define MANTA_EXPORT extern "C"
 #endif
 

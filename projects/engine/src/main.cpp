@@ -3,29 +3,57 @@
 
 #include <manta_macros.hpp>
 #include <manta_errcodes.hpp>
+#include <console.hpp>
 
 #include <stdlib.h>
 #include <string.h>
 
 #include <iostream>
 
-void HandleCmd(int argc, char** argv);
+void ConTestFunction(std::vector<std::string> args) {
+  printf("ConTestFunc()!\n");
+
+  for (int a = 0; a < args.size(); a++)
+     printf("%s\n", args[a].c_str());
+}
 
 int main(int argc, char** argv) {
-   HandleCmd(argc, argv);
-   
-   DynamicLib* rendererLib = LoadDynamicLib("lib/OpenGL3_api.so");
+   ConsoleInstance console;
+
+   console.CreateCFunc("test_cmd", &ConTestFunction);
+   console.CreateCVar("test_cvar", "test");   
+
+   console.CreateCVar("gamename", "Manta");
+
+   DynamicLib* rendererLib = LoadDynamicLib("./lib/OpenGL3_api");
 
    if (rendererLib) {
-      FuncGetRenderer funcGetRend = (FuncGetRenderer)rendererLib->GetFunction("get_Renderer");
+      FuncGetRenderer funcGetRenderer = (FuncGetRenderer)rendererLib->GetFunction("get_Renderer");
       Renderer* renderer = nullptr;
 
-      if (funcGetRend != nullptr)
-	 renderer = funcGetRend();
+      if (funcGetRenderer != nullptr)
+	 renderer = funcGetRenderer();
 
       if (renderer == nullptr) {
 	 printf("Failed to create renderer\n");
 	 return ERR_FAILED_TO_CREATE_RENDERER;
+      }
+
+      renderer->console = &console;
+      renderer->RegisterConObjects();
+   
+      console.ParseCommandLine(argc, argv);
+
+      renderer->Initialize();
+
+      Renderer::RendererState state;
+      while (true) {
+	 state = renderer->Render();
+
+	 // TODO: Make this be more verbose
+	 if (state.status != Renderer::Status::Success)
+	    break;
+
       }
    }
 }

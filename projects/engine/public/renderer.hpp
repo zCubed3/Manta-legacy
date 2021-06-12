@@ -2,10 +2,20 @@
 #define MANTA_RENDERER_H
 
 #include "manta_macros.hpp"
+#include "console.hpp"
 
 class Renderer;
 
 MANTA_DECLARE_FPTR(Renderer*, FuncGetRenderer, );
+
+// Technically a Color4 but it works
+// Default color is #0d2342
+typedef struct ClearColor_T {
+   float r = RGB_TO_LINEAR(13);
+   float g = RGB_TO_LINEAR(35);
+   float b = RGB_TO_LINEAR(66);
+   float a = 1.0f;
+} ClearColor;
 
 class Renderer {
    public:
@@ -48,14 +58,16 @@ class Renderer {
 
    // Renderer state
    public:
-      enum class StatusFlag {
-	 Success     = MANTA_FLAG(0),
+      enum class Status {
+	 Failure     = 0,
 
-	 Failure     = MANTA_FLAG(1),
+	 Success     = 1,
+
+	 ShutDown    = 2,
       };
 
       struct RendererState {
-	 Renderer::StatusFlag status;
+	 Renderer::Status status;
 	 const char* failReason;
       };
 
@@ -63,6 +75,18 @@ class Renderer {
    public:
       virtual void Initialize() = 0;
       virtual RendererState Render() = 0;
+
+      virtual void RegisterConObjects() {
+	 if (console != nullptr) {
+	    console->CreateCVar("r_window_resizable", "false");
+	    
+	    console->CreateCVar("r_window_width", "1024");
+	    console->CreateCVar("r_window_height", "768");
+	 }
+      };
+
+      ConsoleInstance* console = nullptr; // Allows the renderer to read from a console
+      ClearColor clearColor;
 };
 
 #endif

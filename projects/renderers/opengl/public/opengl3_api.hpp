@@ -3,10 +3,15 @@
 
 #include <renderer.hpp>
 
+typedef struct GLFWwindow GLFWwindow;
+
 class GL3Renderer : public Renderer {
    public:
-      void Initialize() { }; // Dummy
-      RendererState Render() { RendererState state; return state; }; // Dummy
+      void Initialize();
+      RendererState Render();
+
+   protected:
+      GLFWwindow* window;
 };
 
 #endif
