@@ -10,6 +10,9 @@ class GL3Renderer : public Renderer {
       void Initialize();
       RendererState Render();
 
+      void CreateBuffer(Model* model);
+      void CreateShaderProgram(Shader* shader);
+
    protected:
       GLFWwindow* window;
 };

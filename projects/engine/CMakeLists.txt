@@ -4,10 +4,14 @@ set(SOURCES
    "src/modular/dynamiclib.cpp"
 
    "public/console.cpp"
+
+   "public/assets/model.cpp"
+   "public/assets/shader.cpp"   
 )
 
 set(INCLUDE_DIRS
    "public"
+   "${SUBMOD_DIR}"
 )
 
 if(DEFINED WIN32)

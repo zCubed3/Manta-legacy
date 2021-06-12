@@ -3,12 +3,18 @@ set(SOURCES
 
    "src/opengl3_api.cpp"
 
+   "src/assets/glvertexbuffer.cpp"
+   "src/assets/glshaderprogram.cpp"
+
    "${ENGINE_DIR}/public/console.cpp"
+   "${ENGINE_DIR}/public/assets/model.cpp"
+   "${ENGINE_DIR}/public/assets/shader.cpp"
 )
 
 set(INCLUDE_DIRS
    "public"
-   "${ENGINE_DIR}/public"   
+   "${ENGINE_DIR}/public"
+   "${SUBMOD_DIR}"
 )
 
 # Windows isn't as good with libraries as *nix systems

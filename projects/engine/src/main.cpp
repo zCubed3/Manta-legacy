@@ -10,6 +10,8 @@
 
 #include <iostream>
 
+#include <assets/model.hpp> // REMOVE ME!
+
 void ConTestFunction(std::vector<std::string> args) {
   printf("ConTestFunc()!\n");
 
@@ -26,7 +28,7 @@ int main(int argc, char** argv) {
    console.CreateCVar("gamename", "Manta");
 
    DynamicLib* rendererLib = LoadDynamicLib("./lib/OpenGL3_api");
-
+      
    if (rendererLib) {
       FuncGetRenderer funcGetRenderer = (FuncGetRenderer)rendererLib->GetFunction("get_Renderer");
       Renderer* renderer = nullptr;
@@ -46,8 +48,17 @@ int main(int argc, char** argv) {
 
       renderer->Initialize();
 
+      Model* test = renderer->modelLoader.LoadModel("./data/Cube.obj");
+      renderer->CreateBuffer(test);
+      renderer->modelQueue.emplace_back(test);
+
+      Shader* testShader = renderer->shaderLoader.LoadShader("./data/Test.glsl");
+      renderer->CreateShaderProgram(testShader);
+      testShader->Bind();
+
       Renderer::RendererState state;
       while (true) {
+	 testShader->Bind();
 	 state = renderer->Render();
 
 	 // TODO: Make this be more verbose
@@ -58,26 +69,3 @@ int main(int argc, char** argv) {
    }
 }
 
-void HandleCmd(int argc, char** argv) {
-   for (int a = 0; a < argc; a++) {
-      char* arg = argv[a];
-
-      if (arg == NULL) // Just in case
-	 continue;
-
-      if (strlen(arg) == 0) // Also just in case we get fed bad info from the OS
-	 continue;
-
-      // Like Source and Id Tech
-      // - is command
-      // + is convar
-      if (arg[0] == '-') {
-      	 char* cmd = new char[strlen(arg) - 1]; // Trim the first character
-	 strcpy(cmd, arg + 1);
-
-	 printf("Parsing CMD %s\n", cmd);
-
-	 delete[] cmd;
-      }
-   }
-}

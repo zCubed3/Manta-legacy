@@ -4,6 +4,9 @@
 #include "manta_macros.hpp"
 #include "console.hpp"
 
+#include "assets/model.hpp"
+#include "assets/shader.hpp"
+
 class Renderer;
 
 MANTA_DECLARE_FPTR(Renderer*, FuncGetRenderer, );
@@ -87,6 +90,15 @@ class Renderer {
 
       ConsoleInstance* console = nullptr; // Allows the renderer to read from a console
       ClearColor clearColor;
+
+      // Rendering necessities
+      virtual void CreateBuffer(Model* model) = 0;
+      virtual void CreateShaderProgram(Shader* shader) = 0;
+
+      ModelLoader modelLoader;
+      ShaderLoader shaderLoader;
+
+      std::vector<Model*> modelQueue;
 };
 
 #endif
