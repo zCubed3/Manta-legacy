@@ -30,11 +30,11 @@ void GL3VertexBuffer::Draw() {
    glEnableVertexAttribArray(1);
    glEnableVertexAttribArray(2);
 
-   int vec3Size = sizeof(glm::vec3);
+   int vertSize = sizeof(Model::Vertex);
 
-   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, vec3Size, nullptr);
-   glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, vec3Size, (void*)vec3Size);
-   glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, vec3Size, (void*)(vec3Size * 2));
+   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, vertSize, nullptr);
+   glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, vertSize, (void*)(sizeof(float) * 3));
+   glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, vertSize, (void*)(sizeof(float) * 3));
    
    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
    glDrawElements(GL_TRIANGLES, indices, GL_UNSIGNED_INT, nullptr);

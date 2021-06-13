@@ -7,6 +7,8 @@
 #include "assets/model.hpp"
 #include "assets/shader.hpp"
 
+#include "entities/camera.hpp"
+
 class Renderer;
 
 MANTA_DECLARE_FPTR(Renderer*, FuncGetRenderer, );
@@ -97,6 +99,11 @@ class Renderer {
 
       ModelLoader modelLoader;
       ShaderLoader shaderLoader;
+
+      float windowWidth = 1;
+      float windowHeight = 1;
+
+      Camera* camera;
 
       std::vector<Model*> modelQueue;
 };

@@ -11,11 +11,12 @@ enum class ShaderLanguage {
 };
 
 class Shader;
+class Renderer;
 
 class ShaderProgram {
    public:
       virtual void Compile(Shader* shader) = 0;
-      virtual void Bind() = 0;
+      virtual void Bind(Renderer* renderer) = 0;
 };
 
 class Shader {
@@ -24,7 +25,7 @@ class Shader {
       ShaderLanguage language;
       ShaderProgram* program;
 
-      void Bind();
+      void Bind(Renderer* renderer);
 };
 
 class ShaderLoader {

@@ -7,9 +7,9 @@
 #include <iostream>
 #include <fstream>
 
-void Shader::Bind() {
+void Shader::Bind(Renderer* renderer) {
    if (program != nullptr)
-      program->Bind();
+      program->Bind(renderer);
    else
       printf("Error: Can't bind Shader, the ShaderProgram hasn't been assigned yet!\n");
 }

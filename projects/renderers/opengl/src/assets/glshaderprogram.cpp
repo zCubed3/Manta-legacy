@@ -2,10 +2,22 @@
 
 #include <stdio.h>
 
+#include <renderer.hpp>
 #include <GL/glew.h>
 
-void GL3ShaderProgram::Bind() {
+#include <glm/glm/gtc/type_ptr.hpp>
+
+void GL3ShaderProgram::Bind(Renderer* renderer) {
    glUseProgram(program);
+   
+   if (renderer->camera) {
+      int mVLocation = glGetUniformLocation(program, "MANTA_mV");
+      int mPLocation = glGetUniformLocation(program, "MANTA_mP");
+
+      glUniformMatrix4fv(mVLocation, 1, GL_FALSE, glm::value_ptr(renderer->camera->view));
+      glUniformMatrix4fv(mPLocation, 1, GL_FALSE, glm::value_ptr(renderer->camera->perspective)); 
+   }
+
 }
 
 bool didCompileShader(uint shader) {
@@ -54,24 +66,29 @@ void GL3ShaderProgram::Compile(Shader *shader) {
    uint vShader = glCreateShader(GL_VERTEX_SHADER);
    uint fShader = glCreateShader(GL_FRAGMENT_SHADER);   
 
-   const char* vSources[2] = {"#version 330 core\n#define VERTEX\n", shader->code.c_str()};
+   const char* vSources[2] = {"#version 330\n#define VERTEX\n", shader->code.c_str()};
    glShaderSource(vShader, 2, vSources, nullptr);
 
-   const char* fSources[2] = {"#version 330 core\n#define FRAGMENT\n", shader->code.c_str()};
+   const char* fSources[2] = {"#version 330\n#define FRAGMENT\n", shader->code.c_str()};
    glShaderSource(fShader, 2, fSources, nullptr);
 
+   bool vValid = false;
    glCompileShader(vShader);
+   vValid = didCompileShader(vShader);
+
+   bool fValid = false;
    glCompileShader(fShader);
+   fValid = didCompileShader(fShader);
 
    bool successful = true;
-
-   if (didCompileShader(vShader) && didCompileShader(fShader)) {
+   
+   if (vValid && fValid) {
       uint tempProgram = glCreateProgram(); 
       
-      glAttachShader(program, vShader);
-      glAttachShader(program, fShader);
+      glAttachShader(tempProgram, vShader);
+      glAttachShader(tempProgram, fShader);
 
-      glLinkProgram(program);
+      glLinkProgram(tempProgram);
 
       if (didCompileProgram(tempProgram))
 	 program = tempProgram;

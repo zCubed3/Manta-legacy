@@ -18,7 +18,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 set(CMAKE_SHARED_LIBRARY_PREFIX "")
 
 set(ENGINE_DIR ${PROJECTS_DIR}/engine)
-set(SUBMOD_DIR ${CMAKE_SOURCE_DIR}/submodules)
+set(DEPENDS_DIR ${CMAKE_SOURCE_DIR}/dependencies)
 
 # Comment out elements in this list to determine the render apis compiled into the engine
 set(RENDER_APIS

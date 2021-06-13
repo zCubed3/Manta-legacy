@@ -48,17 +48,20 @@ int main(int argc, char** argv) {
 
       renderer->Initialize();
 
-      Model* test = renderer->modelLoader.LoadModel("./data/Cube.obj");
+      Model* test = renderer->modelLoader.LoadModel("./data/models/Cube.obj"); // Don't make me hardcoded!
       renderer->CreateBuffer(test);
       renderer->modelQueue.emplace_back(test);
 
-      Shader* testShader = renderer->shaderLoader.LoadShader("./data/Test.glsl");
+      Shader* testShader = renderer->shaderLoader.LoadShader("./data/shaders/Test.glsl");
       renderer->CreateShaderProgram(testShader);
-      testShader->Bind();
+
+      Camera camera;
+      renderer->camera = &camera;
 
       Renderer::RendererState state;
       while (true) {
-	 testShader->Bind();
+	 testShader->Bind(renderer);
+	 camera.Update(renderer);
 	 state = renderer->Render();
 
 	 // TODO: Make this be more verbose

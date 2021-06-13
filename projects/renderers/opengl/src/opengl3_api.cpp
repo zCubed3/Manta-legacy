@@ -15,7 +15,18 @@
 
 // TODO: Make this set a permanent variable so RenderTargets are possible
 void OnFramebufferResize(GLFWwindow* window, int width, int height) {
-   glViewport(0, 0, width, height); 
+   glViewport(0, 0, width, height);
+
+   void* rendererRaw = glfwGetWindowUserPointer(window);
+   if (!rendererRaw)
+      return;
+
+   Renderer* renderer = (Renderer*)rendererRaw;
+
+   if (renderer) {
+      renderer->windowWidth = width;
+      renderer->windowHeight = height;
+   }
 }
 
 //
@@ -72,7 +83,14 @@ void GL3Renderer::Initialize() {
 
       window = glfwCreateWindow(winWidth, winHeight, winTitle, nullptr, nullptr);
       glfwMakeContextCurrent(window);
+      
+      glEnable(GL_DEPTH_TEST);
+      glDepthFunc(GL_LESS);
 
+      windowWidth = winWidth;
+      windowHeight = winHeight;
+
+      glfwSetWindowUserPointer(window, this);
       glfwSetFramebufferSizeCallback(window, OnFramebufferResize);
 
       if (glewInit() != GLEW_OK) {
@@ -95,9 +113,11 @@ Renderer::RendererState GL3Renderer::Render() {
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
    glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
 
-   for (int m = 0; m < modelQueue.size(); m++)
-      if (modelQueue[m])
+   for (int m = 0; m < modelQueue.size(); m++) {
+      if (modelQueue[m]) {
 	 modelQueue[m]->Draw();
+      }
+   }
 
    if (glfwWindowShouldClose(window))
       state.status = Renderer::Status::ShutDown;

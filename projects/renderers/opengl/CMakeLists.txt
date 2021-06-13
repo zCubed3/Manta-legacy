@@ -14,7 +14,7 @@ set(SOURCES
 set(INCLUDE_DIRS
    "public"
    "${ENGINE_DIR}/public"
-   "${SUBMOD_DIR}"
+   "${DEPENDS_DIR}"
 )
 
 # Windows isn't as good with libraries as *nix systems
