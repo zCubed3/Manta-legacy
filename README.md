@@ -60,5 +60,10 @@ This software was written using NeoVim with many customizations to make it adequ
     2. (Windows) Provide your SPIR-V compiler with the shader source which is in ```projects/renderers/shaders``` and move the resulting binaries to the compiled executable directory under the  ```data/shaders``` folder
 
 
-#### Credits
-* Thanks [forthebadge](forthebadge.com) for the header images!<br/>
+### Credits
+1. Other projects used
+    * GL Mathematics library, licensed under the MIT license, [g-truc/glm](https://github.com/g-truc/glm)
+    * Dear ImGui, licensed under the MIT license, [ocornut/imgui](https://github.com/ocornut/imgui)
+
+2. Misc
+    * For the badge [forthebadge](forthebadge.com) for the header images!<br/>
