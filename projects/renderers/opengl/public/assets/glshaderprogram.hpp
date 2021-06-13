@@ -10,6 +10,8 @@ class GL3ShaderProgram : public ShaderProgram {
       void Compile(Shader* shader);
       void Bind(Renderer* renderer);
 
+      ~GL3ShaderProgram();
+
       uint program;
 };
 

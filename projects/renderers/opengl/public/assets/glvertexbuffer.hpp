@@ -9,6 +9,7 @@ class GL3VertexBuffer : public VertexBuffer {
    public:
       void Populate(Model* model);
       void Draw();
+      ~GL3VertexBuffer();
 
    protected:
       uint vao, vbo, ibo; // IBO stands for "index buffer object"

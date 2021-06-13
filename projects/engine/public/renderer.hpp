@@ -85,8 +85,9 @@ class Renderer {
 	 if (console != nullptr) {
 	    console->CreateCVar("r_window_resizable", "false");
 	    
-	    console->CreateCVar("r_window_width", "1024");
-	    console->CreateCVar("r_window_height", "768");
+	    console->CreateCVar("width", "1024");
+	    console->CreateCVar("height", "768");
+	    console->CreateCVar("fullscreen", "false");
 	 }
       };
 
@@ -102,6 +103,10 @@ class Renderer {
 
       float windowWidth = 1;
       float windowHeight = 1;
+
+      float timeTotal = 0.0f;
+      float timeLast = 0.0f;
+      float timeDelta = 0.0f;
 
       Camera* camera;
 

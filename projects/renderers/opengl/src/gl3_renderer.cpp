@@ -1,4 +1,4 @@
-#include <opengl3_api.hpp>
+#include <gl3_renderer.hpp>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -40,48 +40,32 @@ void GL3Renderer::Initialize() {
       printf("Initialized GLFW\n");
 
       bool isResizable = false;
+      bool fullscreen = false;
       int winWidth = 800;
       int winHeight = 600;
-      const char* winTitle = "Manta";
+      std::string winTitle = "Manta";
+      int sampleCount = 1;
 
       if (console) {
-	 ConVar* cvar = console->GetCVar("r_window_resizable");
-
-	 if (cvar) {
-	    isResizable = cvar->ParseBool(false);
-	    printf("Set window resizability to %s\n", (isResizable ? "true" : "false"));      
-	    cvar = nullptr;
-	 }
-
-	 cvar = console->GetCVar("r_window_width");
-
-	 if (cvar) {
-	    winWidth = cvar->ParseInt(800);
-	    printf("Set window width to %i\n", winWidth);
-	    cvar = nullptr;
-	 }
-
-	 cvar = console->GetCVar("r_window_height");
-
-	 if (cvar) {
-	    winHeight = cvar->ParseInt(600);
-	    printf("Set window height to %i\n", winHeight);
-	    cvar = nullptr;
-	 }
-
-	 cvar = console->GetCVar("gamename");
-
-	 if (cvar) {
-	    winTitle = cvar->data.c_str();
-	    cvar = nullptr;
-	 }
+	 isResizable = console->CVarGetBool("r_window_resizable", false);
+	 winWidth = console->CVarGetInt("width", 800);
+	 winHeight = console->CVarGetInt("height", 600);
+	 winTitle = console->CVarGetData("gamename", "GL3Window");
+	 fullscreen = console->CVarGetBool("fullscreen", false);
+	 sampleCount = console->CVarGetInt("gl_samples", 1);
       }
 
       glfwWindowHint(GLFW_RESIZABLE, isResizable);
       glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
       glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+      glfwWindowHint(GLFW_SAMPLES, sampleCount);
 
-      window = glfwCreateWindow(winWidth, winHeight, winTitle, nullptr, nullptr);
+      GLFWmonitor* monitor = nullptr;
+
+      if (fullscreen)
+	 monitor = glfwGetPrimaryMonitor();
+
+      window = glfwCreateWindow(winWidth, winHeight, winTitle.c_str(), monitor, nullptr);
       glfwMakeContextCurrent(window);
       
       glEnable(GL_DEPTH_TEST);
@@ -119,12 +103,11 @@ Renderer::RendererState GL3Renderer::Render() {
       }
    }
 
-   if (glfwWindowShouldClose(window))
-      state.status = Renderer::Status::ShutDown;
-
    glfwSwapBuffers(window);
-
-   //printf("GL Error: %i\n", glGetError());
+   if (glfwWindowShouldClose(window)) {
+      state.status = Renderer::Status::ShutDown;
+      glfwDestroyWindow(window);
+   }
 
    return state;
 }
@@ -150,5 +133,13 @@ void GL3Renderer::CreateShaderProgram(Shader *shader) {
 
       shader->program = new GL3ShaderProgram();
       shader->program->Compile(shader); 
+   }
+}
+
+void GL3Renderer::RegisterConObjects() {
+   Renderer::RegisterConObjects();
+
+   if (console) {
+      console->CreateCVar("gl_samples", "1");
    }
 }

@@ -2,6 +2,17 @@
 
 #include <GL/glew.h>
 
+GL3VertexBuffer::~GL3VertexBuffer() {
+   if (vao != 0)
+      glDeleteVertexArrays(1, &vao);
+
+   if (vbo != 0)
+      glDeleteBuffers(1, &vbo);
+
+   if (ibo != 0)
+      glDeleteBuffers(1, &ibo);
+}
+
 void GL3VertexBuffer::Populate(Model* model) {
    printf("Creating OpenGL3 VBO for %s\n", model->name.c_str());
 

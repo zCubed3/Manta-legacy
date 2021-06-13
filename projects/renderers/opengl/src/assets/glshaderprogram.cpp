@@ -7,6 +7,12 @@
 
 #include <glm/glm/gtc/type_ptr.hpp>
 
+GL3ShaderProgram::~GL3ShaderProgram() {
+   if (program != 0) {
+      glDeleteProgram(program);
+   }
+}
+
 void GL3ShaderProgram::Bind(Renderer* renderer) {
    glUseProgram(program);
    

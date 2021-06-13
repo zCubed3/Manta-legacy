@@ -12,20 +12,12 @@
 
 #include <assets/model.hpp> // REMOVE ME!
 
-void ConTestFunction(std::vector<std::string> args) {
-  printf("ConTestFunc()!\n");
-
-  for (int a = 0; a < args.size(); a++)
-     printf("%s\n", args[a].c_str());
-}
+#include <common/common_console.hpp>
 
 int main(int argc, char** argv) {
    ConsoleInstance console;
 
-   console.CreateCFunc("test_cmd", &ConTestFunction);
-   console.CreateCVar("test_cvar", "test");   
-
-   console.CreateCVar("gamename", "Manta");
+   CreateCommonConObjects(&console);
 
    DynamicLib* rendererLib = LoadDynamicLib("./lib/OpenGL3_api");
       
@@ -44,13 +36,16 @@ int main(int argc, char** argv) {
       renderer->console = &console;
       renderer->RegisterConObjects();
    
+      console.ParseAutoExec();
       console.ParseCommandLine(argc, argv);
+
+      console.CVarGetData("gamename", "Test");
 
       renderer->Initialize();
 
-      Model* test = renderer->modelLoader.LoadModel("./data/models/Cube.obj"); // Don't make me hardcoded!
-      renderer->CreateBuffer(test);
-      renderer->modelQueue.emplace_back(test);
+      Model* testModel = renderer->modelLoader.LoadModel("./data/models/Sphere.obj"); // Don't make me hardcoded!
+      renderer->CreateBuffer(testModel);
+      renderer->modelQueue.emplace_back(testModel);
 
       Shader* testShader = renderer->shaderLoader.LoadShader("./data/shaders/Test.glsl");
       renderer->CreateShaderProgram(testShader);

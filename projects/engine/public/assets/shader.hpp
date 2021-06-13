@@ -17,6 +17,8 @@ class ShaderProgram {
    public:
       virtual void Compile(Shader* shader) = 0;
       virtual void Bind(Renderer* renderer) = 0;
+
+      virtual ~ShaderProgram() = 0;
 };
 
 class Shader {

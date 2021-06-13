@@ -1,0 +1,6 @@
+#Initializes commonly used engine cvars and cfuncs
+
++gamename Manta
+
++width 1280
++height 720

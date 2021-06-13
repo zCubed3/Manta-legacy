@@ -8,6 +8,8 @@ set(SOURCES
    "public/assets/model.cpp"
    "public/assets/shader.cpp"
 
+   "public/common/common_console.cpp"
+
    "src/entities/camera.cpp"
 )
 

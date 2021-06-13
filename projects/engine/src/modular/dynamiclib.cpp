@@ -23,7 +23,7 @@ DynamicLib* LoadDynamicLib(const char* path) {
    sprintf(soPath, "%s.so", path);
 
    printf("Attempting to open library at %s\n", soPath);
-   void* handle = dlopen(soPath, RTLD_LAZY);
+   void* handle = dlopen(soPath, RTLD_LAZY | RTLD_GLOBAL);
 
    delete[] soPath;
 

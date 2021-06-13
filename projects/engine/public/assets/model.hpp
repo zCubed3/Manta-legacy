@@ -13,6 +13,8 @@ class VertexBuffer {
    public:
       virtual void Populate(Model* model) = 0;
       virtual void Draw() = 0; // Model::Draw wraps around this
+
+      virtual ~VertexBuffer() = 0;
 };
 
 class Model {

@@ -66,9 +66,15 @@ class ConsoleInstance {
       void CreateCVar(std::string signature, std::string data);
 
       bool RegisterObject(ConObject* object);
+
+      void ParseAutoExec();
       void ParseCommandLine(int argc, char** argv);
 
       ConVar* GetCVar(std::string signature);
+
+      int CVarGetInt(std::string signature, int default_);
+      bool CVarGetBool(std::string signature, bool default_);
+      std::string CVarGetData(std::string signature, std::string default_);
 
       bool canCreateConObject(std::string signature);
 };

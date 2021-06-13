@@ -1,7 +1,7 @@
 set(SOURCES 
    "src/libmain.cpp"
 
-   "src/opengl3_api.cpp"
+   "src/gl3_renderer.cpp"
 
    "src/assets/glvertexbuffer.cpp"
    "src/assets/glshaderprogram.cpp"
