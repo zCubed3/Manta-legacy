@@ -92,8 +92,6 @@ void GL3Renderer::Initialize() {
       shaderLoader.LoadCode("engine#default", "");
       
       glGenBuffers(1, &worldUBO);
-      glBindBuffer(GL_UNIFORM_BUFFER, worldUBO);
-      glBufferData(GL_UNIFORM_BUFFER, sizeof(WorldData), nullptr, GL_DYNAMIC_DRAW);
       glBindBufferBase(GL_UNIFORM_BUFFER, 0, worldUBO);
    }
    else {
@@ -116,9 +114,7 @@ Renderer::RendererState GL3Renderer::Render() {
 
    if (world) {
       glBindBuffer(GL_UNIFORM_BUFFER, worldUBO);
-      void* worldBuffer = glMapBuffer(GL_UNIFORM_BUFFER, GL_WRITE_ONLY);
-      memcpy(worldBuffer, &world->data, sizeof(WorldData));
-      glUnmapBuffer(GL_UNIFORM_BUFFER);
+      glBufferData(GL_UNIFORM_BUFFER, sizeof(WorldData), &world->data, GL_DYNAMIC_DRAW);
 
       for (int e = 0; e < world->entities.size(); e++) {
 	 if (world->entities[e] == nullptr)

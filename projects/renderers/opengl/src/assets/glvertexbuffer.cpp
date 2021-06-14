@@ -67,15 +67,26 @@ void GL3VertexBuffer::Draw(Renderer* renderer, Entity* entity, Shader* shader) {
       }
 
       if (renderer->world) {
-	 int lightPositionsLocation = glGetUniformLocation(program, "MANTA_lightPositions");
-	 
-	 for (int l = 0; l < 32; l++) {
-	    ///int lightPosLocation = glGetUniformLocation(program, std::string("MANTA_lightPositions[") + std::to_string(l) + "]");
-	    //glUniform3fv(lightPositionsLocation, 32, renderer->world->data.lightPositions);
+	 char locationString[64];
+	 sprintf(locationString, "MANTA_lightCount");
+	    
+	 int lightCtLocation = glGetUniformLocation(program, locationString);
+	 glUniform1i(lightCtLocation, renderer->world->data.lightCount);
+
+	 for (int l = 0; l < renderer->world->data.lightCount; l++) {
+	    sprintf(locationString, "MANTA_lightPositions[%i]", l);
+	    
+	    int lightPosLocation = glGetUniformLocation(program, locationString);
+	    glUniform3fv(lightPosLocation, 1, glm::value_ptr(renderer->world->data.lightPositions[l]));
+
+	    sprintf(locationString, "MANTA_lightColors[%i]", l);
+	    
+	    int lightColLocation = glGetUniformLocation(program, locationString);
+	    glUniform3fv(lightColLocation, 1, glm::value_ptr(renderer->world->data.lightColors[l]));
 	 }
 
-	 int worldInfoLocation = glGetUniformBlockIndex(program, "MANTA_worldInfo");
-	 glUniformBlockBinding(program, worldInfoLocation, 0);
+	 //int worldInfoLocation = glGetUniformBlockIndex(program, "MANTA_worldInfo");
+	 //glUniformBlockBinding(program, worldInfoLocation, 0);
       }
    }
 

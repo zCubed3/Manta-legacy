@@ -9,6 +9,9 @@ set(SOURCES
    "${ENGINE_DIR}/public/console.cpp"
    "${ENGINE_DIR}/public/assets/model.cpp"
    "${ENGINE_DIR}/public/assets/shader.cpp"
+
+   "${ENGINE_DIR}/public/entities/entity.cpp"
+   "${ENGINE_DIR}/public/entities/world.cpp"
 )
 
 set(INCLUDE_DIRS

@@ -83,6 +83,9 @@ int main(int argc, char** argv) {
 	 world.Update();
 	 state = renderer->Render();
 
+	 testLight.position = glm::vec3(sinf(renderer->timeTotal) * 3, cosf(renderer->timeTotal) * 3, 0);
+	 testLight.color = glm::vec3(abs(sinf(renderer->timeTotal)), abs(sinf(renderer->timeTotal + 1)), abs(sinf(renderer->timeTotal + 2)));
+
 	 // TODO: Make this be more verbose
 	 if (state.status != Renderer::Status::Success)
 	    break;

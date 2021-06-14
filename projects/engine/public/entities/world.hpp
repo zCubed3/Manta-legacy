@@ -11,16 +11,11 @@ class Light;
 
 #define MAX_LIGHTS 32
 
-typedef struct Float3_T {
-   float x;
-   float y;
-   float z;
-} Float3;
-
 class WorldData {
    public:
       int lightCount;
-      std::vector<glm::vec3> lightPositions;
+      glm::vec3 lightPositions[MAX_LIGHTS];
+      glm::vec3 lightColors[MAX_LIGHTS];
 };
 
 class World {

@@ -41,23 +41,16 @@ out vec3 color;
 
 uniform vec3 MANTA_pCamera;
 
-struct MANTA_lightInfo {
-  vec3 position;
-  vec3 rotation;
-  vec3 color;
-  int type;
-};
-
-layout(std140) uniform MANTA_worldInfo {
-  int lightCount;
-  vec3 lightPositions[32];
-} worldInfo;
+uniform int MANTA_lightCount;
+uniform vec3 MANTA_lightPositions[32];
+uniform vec3 MANTA_lightColors[32];
 
 void main() {
   vec3 lighting = vec3(0, 0, 0);
 
-  for (int l = 0; l < worldInfo.lightCount; l++) {
-    lighting += worldInfo.lightPositions[l];
+  for (int l = 0; l < MANTA_lightCount; l++) {
+    float atten = 1.0 - length(MANTA_lightPositions[l] - vert_pos);
+    lighting += MANTA_lightColors[l] * dot(normal, MANTA_lightPositions[l]) * atten;
   }
 
   color = vec3(1, 1, 1) * lighting;
