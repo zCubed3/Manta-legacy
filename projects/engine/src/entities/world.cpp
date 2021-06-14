@@ -18,7 +18,7 @@ void World::Update() {
       Light* light = dynamic_cast<Light*>(entities[e]);
 
       if (light != nullptr) {
-	 data.lightPositions[l] = glm::value_ptr(light->position);
+	 //data.lightPositions[l] = glm::value_ptr(light->position);
 	 l++;	 
       }	 
 

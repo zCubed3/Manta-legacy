@@ -70,8 +70,8 @@ void GL3VertexBuffer::Draw(Renderer* renderer, Entity* entity, Shader* shader) {
 	 int lightPositionsLocation = glGetUniformLocation(program, "MANTA_lightPositions");
 	 
 	 for (int l = 0; l < 32; l++) {
-	    int lightPosLocation = glGetUniformLocation(program, std::string("MANTA_lightPositions[") + std::to_string(l) + "]");
-	    glUniform3fv(lightPositionsLocation, 32, renderer->world->data.lightPositions);
+	    ///int lightPosLocation = glGetUniformLocation(program, std::string("MANTA_lightPositions[") + std::to_string(l) + "]");
+	    //glUniform3fv(lightPositionsLocation, 32, renderer->world->data.lightPositions);
 	 }
 
 	 int worldInfoLocation = glGetUniformBlockIndex(program, "MANTA_worldInfo");
