@@ -3,6 +3,8 @@
 
 #include <renderer.hpp>
 
+typedef unsigned int uint;
+
 typedef struct GLFWwindow GLFWwindow;
 
 class GL3Renderer : public Renderer {
@@ -14,6 +16,8 @@ class GL3Renderer : public Renderer {
       void CreateShaderProgram(Shader* shader) override;
 
       virtual void RegisterConObjects() override;
+
+      uint worldUBO;
 
    protected:
       GLFWwindow* window;

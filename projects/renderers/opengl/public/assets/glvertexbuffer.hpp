@@ -8,7 +8,7 @@ typedef unsigned int uint;
 class GL3VertexBuffer : public VertexBuffer {
    public:
       void Populate(Model* model);
-      void Draw();
+      void Draw(Renderer* renderer, Entity* entity, Shader* shader);
       ~GL3VertexBuffer();
 
    protected:

@@ -7,12 +7,15 @@
 
 #include <glm/glm/glm.hpp>
 
+class Shader;
 class Model;
+class Entity;
+class Renderer;
 
 class VertexBuffer {
    public:
       virtual void Populate(Model* model) = 0;
-      virtual void Draw() = 0; // Model::Draw wraps around this
+      virtual void Draw(Renderer* renderer, Entity* entity, Shader* shader) = 0; // Model::Draw wraps around this
 
       virtual ~VertexBuffer() = 0;
 };
@@ -34,8 +37,9 @@ class Model {
       std::string name = "Unnamed model"; // If the format supports it, we extract the name
 
       VertexBuffer* vertexBuffer = nullptr;
+      Shader* shader = nullptr;
 
-      void Draw();
+      void Draw(Renderer* renderer, Entity* entity);
 };
 
 class ModelLoader {

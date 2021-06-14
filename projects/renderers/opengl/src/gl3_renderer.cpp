@@ -4,10 +4,14 @@
 #include <GLFW/glfw3.h>
 
 #include <stdio.h>
+#include <string.h>
 #include <console.hpp>
 
 #include <assets/glvertexbuffer.hpp>
 #include <assets/glshaderprogram.hpp>
+
+#include <entities/light.hpp>
+#include <entities/world.hpp>
 
 //
 // Callbacks
@@ -45,6 +49,7 @@ void GL3Renderer::Initialize() {
       int winHeight = 600;
       std::string winTitle = "Manta";
       int sampleCount = 1;
+      bool transparentFB = false;
 
       if (console) {
 	 isResizable = console->CVarGetBool("r_window_resizable", false);
@@ -52,6 +57,7 @@ void GL3Renderer::Initialize() {
 	 winHeight = console->CVarGetInt("height", 600);
 	 winTitle = console->CVarGetData("gamename", "GL3Window");
 	 fullscreen = console->CVarGetBool("fullscreen", false);
+	 
 	 sampleCount = console->CVarGetInt("gl_samples", 1);
       }
 
@@ -82,8 +88,15 @@ void GL3Renderer::Initialize() {
 	 return;
       }
 
-      shaderLoader.LoadCode("default", "");
-   } else {
+      shaderLoader.LoadCode("engine#error", "");
+      shaderLoader.LoadCode("engine#default", "");
+      
+      glGenBuffers(1, &worldUBO);
+      glBindBuffer(GL_UNIFORM_BUFFER, worldUBO);
+      glBufferData(GL_UNIFORM_BUFFER, sizeof(WorldData), nullptr, GL_DYNAMIC_DRAW);
+      glBindBufferBase(GL_UNIFORM_BUFFER, 0, worldUBO);
+   }
+   else {
       printf("Failed to initialize GLFW\n");
    }
 }
@@ -97,9 +110,21 @@ Renderer::RendererState GL3Renderer::Render() {
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
    glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
 
-   for (int m = 0; m < modelQueue.size(); m++) {
-      if (modelQueue[m]) {
-	 modelQueue[m]->Draw();
+   timeTotal = glfwGetTime();
+   timeDelta = timeTotal - timeLast;
+   timeLast = timeTotal;
+
+   if (world) {
+      glBindBuffer(GL_UNIFORM_BUFFER, worldUBO);
+      void* worldBuffer = glMapBuffer(GL_UNIFORM_BUFFER, GL_WRITE_ONLY);
+      memcpy(worldBuffer, &world->data, sizeof(WorldData));
+      glUnmapBuffer(GL_UNIFORM_BUFFER);
+
+      for (int e = 0; e < world->entities.size(); e++) {
+	 if (world->entities[e] == nullptr)
+	    continue;
+
+	 world->entities[e]->Draw(this);
       }
    }
 
@@ -141,5 +166,6 @@ void GL3Renderer::RegisterConObjects() {
 
    if (console) {
       console->CreateCVar("gl_samples", "1");
+      
    }
 }

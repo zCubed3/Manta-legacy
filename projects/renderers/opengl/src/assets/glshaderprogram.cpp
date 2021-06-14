@@ -5,25 +5,14 @@
 #include <renderer.hpp>
 #include <GL/glew.h>
 
-#include <glm/glm/gtc/type_ptr.hpp>
-
 GL3ShaderProgram::~GL3ShaderProgram() {
    if (program != 0) {
       glDeleteProgram(program);
    }
 }
 
-void GL3ShaderProgram::Bind(Renderer* renderer) {
+void GL3ShaderProgram::Bind() {
    glUseProgram(program);
-   
-   if (renderer->camera) {
-      int mVLocation = glGetUniformLocation(program, "MANTA_mV");
-      int mPLocation = glGetUniformLocation(program, "MANTA_mP");
-
-      glUniformMatrix4fv(mVLocation, 1, GL_FALSE, glm::value_ptr(renderer->camera->view));
-      glUniformMatrix4fv(mPLocation, 1, GL_FALSE, glm::value_ptr(renderer->camera->perspective)); 
-   }
-
 }
 
 bool didCompileShader(uint shader) {

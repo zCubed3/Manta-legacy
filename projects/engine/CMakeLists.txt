@@ -11,6 +11,8 @@ set(SOURCES
    "public/common/common_console.cpp"
 
    "src/entities/camera.cpp"
+   "src/entities/entity.cpp"
+   "src/entities/world.cpp"
 )
 
 set(INCLUDE_DIRS

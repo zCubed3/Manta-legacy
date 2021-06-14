@@ -3,14 +3,12 @@
 
 #include <glm/glm/glm.hpp>
 
+#include <entities/entity.hpp>
+
 class Renderer;
 
-// Each render backend utilizes this differently
-class Camera {
+class Camera : public Entity {
    public:
-      glm::vec3 position = glm::vec3(0, 0, -5); //Bring the camera back by default
-      glm::vec3 angles;
-
       float fieldOfView = 80;
 
       float nearClip = 0.001f;
@@ -19,7 +17,9 @@ class Camera {
       glm::mat4 view;
       glm::mat4 perspective;
 
-      void Update(Renderer* renderer);
+      Renderer* renderer;
+
+      virtual void Update() override;
 };
 
 #endif

@@ -16,7 +16,7 @@ class Renderer;
 class ShaderProgram {
    public:
       virtual void Compile(Shader* shader) = 0;
-      virtual void Bind(Renderer* renderer) = 0;
+      virtual void Bind() = 0;
 
       virtual ~ShaderProgram() = 0;
 };
@@ -27,7 +27,7 @@ class Shader {
       ShaderLanguage language;
       ShaderProgram* program;
 
-      void Bind(Renderer* renderer);
+      void Bind();
 };
 
 class ShaderLoader {

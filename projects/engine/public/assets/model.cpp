@@ -7,9 +7,30 @@
 #include <fstream>
 #include <chrono>
 
-void Model::Draw() {
+#include <assets/shader.hpp>
+#include <renderer.hpp>
+
+void Model::Draw(Renderer* renderer, Entity* entity) {
+   if (renderer == nullptr) {
+      printf("Can't Draw a model without a valid renderer!\n");
+      return;
+   }
+
+   Shader* usedShader = shader;
+
+   if (!usedShader) { // If we're missing a Shader, default to the error shader
+      ShaderLoader loader = renderer->shaderLoader;
+
+      usedShader = loader.LoadShader("engine#error");
+      
+      if (!usedShader) {
+	 printf("Failed to fallback on the error shader!");
+	 return;
+      }
+   }
+
    if (vertexBuffer != nullptr)
-      vertexBuffer->Draw();
+      vertexBuffer->Draw(renderer, entity, shader);
    else
       printf("Error: Model lacks a VertexBuffer, please assign it one!\n");
 }

@@ -10,6 +10,7 @@
 #include "entities/camera.hpp"
 
 class Renderer;
+class World;
 
 MANTA_DECLARE_FPTR(Renderer*, FuncGetRenderer, );
 
@@ -97,6 +98,8 @@ class Renderer {
       // Rendering necessities
       virtual void CreateBuffer(Model* model) = 0;
       virtual void CreateShaderProgram(Shader* shader) = 0;
+
+      World* world;
 
       ModelLoader modelLoader;
       ShaderLoader shaderLoader;

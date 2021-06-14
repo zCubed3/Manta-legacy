@@ -3,6 +3,7 @@ layout(location = 0) in vec3 _vertex;
 layout(location = 1) in vec3 _normal;
 layout(location = 2) in vec2 _uv;
 
+out vec3 vert_pos;
 out vec3 normal;
 out vec2 uv;
 
@@ -14,6 +15,7 @@ void main() {
   mat4 mMVP = MANTA_mP * MANTA_mV * MANTA_mM;
 
   gl_Position = mMVP * vec4(_vertex, 1.0);
+  vert_pos = vec3(gl_Position);
 
   mat3 mx3norm = mat3(MANTA_mM);
   mx3norm = inverse(mx3norm);
@@ -30,13 +32,35 @@ void main() {
 
 #ifdef FRAGMENT
 
+in vec3 vert_pos;
+
 in vec3 normal;
 in vec2 uv;
 
 out vec3 color;
 
+uniform vec3 MANTA_pCamera;
+
+struct MANTA_lightInfo {
+  vec3 position;
+  vec3 rotation;
+  vec3 color;
+  int type;
+};
+
+layout(std140) uniform MANTA_worldInfo {
+  int lightCount;
+  vec3 lightPositions[32];
+} worldInfo;
+
 void main() {
-  color = vec3(1.0, 1.0, 1.0) * dot(normal, vec3(1.0, 1.0, 0.0));
+  vec3 lighting = vec3(0, 0, 0);
+
+  for (int l = 0; l < worldInfo.lightCount; l++) {
+    lighting += worldInfo.lightPositions[l];
+  }
+
+  color = vec3(1, 1, 1) * lighting;
 }
 
 #endif
