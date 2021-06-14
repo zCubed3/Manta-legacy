@@ -39,8 +39,3 @@ set_target_properties(MantaEngine PROPERTIES
    OUTPUT_NAME "Manta"
 )
 
-# Copies default engine content to binary directory post-build
-add_custom_command(TARGET MantaEngine POST_BUILD
-   COMMAND ${CMAKE_COMMAND} -E copy_directory "${PROJECTS_DIR}/engine_data" "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/data"
-   COMMENT "Copied default engine content to binary directory!"
-)

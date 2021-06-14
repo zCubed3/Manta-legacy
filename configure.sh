@@ -105,3 +105,9 @@ ln -sf "$BUILD_PATH/compile_commands.json" "compile_commands.json"
 
 printf "Generated symlink to compile_commands.json for vim autocomplete (coc)\n" 
 printf "Active compiler is $USED_COMPILER_C/$USED_COMPILER_CPP\n"
+
+printf "Generating .MANTA_CONFIG\n"
+
+printf "CMAKE_PATH=${BUILD_PATH}\nBUILD_PATH=$(cat ".MANTA_CMAKE_DIR")" > .MANTA_CONFIG
+
+

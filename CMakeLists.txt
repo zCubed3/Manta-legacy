@@ -24,9 +24,6 @@ set(DEPENDS_DIR ${CMAKE_SOURCE_DIR}/dependencies)
 set(RENDER_APIS
    "COMPILE_GL" # Universal
    #"COMPILE_VK" # Universal
-   
-   #"COMPILE_DX11" # Windows only
-   #"COMPILE_DX12" # Windows only
 )
 
 if("COMPILE_GL" IN_LIST RENDER_APIS)
@@ -41,3 +38,6 @@ endif()
 
 # Builds the "engine", which is just the loader that brings all the modules together
 add_subdirectory(${ENGINE_DIR})
+
+# Create info for build.sh to use
+file(WRITE ".MANTA_CMAKE_DIR" "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
