@@ -12,11 +12,11 @@ This software was written using NeoVim with many customizations and plugins to m
 | OS            | Compilers     | Architectures  |
 | :-----------  |:-------------:| :-----:        |
 | <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Tux.svg/1200px-Tux.svg.png" width="32"/> Linux | GNU GCC, LLVM Clang | x86, amd64 |
-| <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Windows_logo_-_2012.svg/1200px-Windows_logo_-_2012.svg.png" width="32"/> Windows       | MSVC, LLVM Clang for Windows | x86, amd64 |
 
 ### Unsupported Platforms
 | OS            | Compilers     | Architectures  |
 | :-----------  |:-------------:| :-----:        |
+| <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Windows_logo_-_2012.svg/1200px-Windows_logo_-_2012.svg.png" width="32"/> Windows (TODO)       | MSVC, LLVM Clang for Windows | x86, amd64 |
 | <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/MacOS_logo_%282017%29.svg/512px-MacOS_logo_%282017%29.svg.png" width="32"/> MacOS         | N/A           | N/A            |
 | <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/IOS_logo.svg/512px-IOS_logo.svg.png" width="32"/> iOS           | N/A           | N/A            |
 | <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Android_robot.svg/511px-Android_robot.svg.png" width="32"/> Android       | N/A           | N/A            |  
@@ -53,7 +53,7 @@ This software was written using NeoVim with many customizations and plugins to m
     1. (Linux) Run configure.sh and pick your compiler or run `./configure COMPILER_NAME "debug"/"release"` Ex: `./configure clang debug` would generate a debug build built with Clang
     2. (Windows) Use cmake/cmake-gui to create the project files
 2. Compile the project
-    1. (Make - Linux) `cd` into the resulting build folder and run `make` or use `make -C BUILD_FOLDER_HERE`
+    1. (Linux) After having ran `./configure` run `./build`, it'll run make and copy over engine content to the build
     2. (VS - Windows) Open the resulting .vsproj and compile it
 
 ### Credits
