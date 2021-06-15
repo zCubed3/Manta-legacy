@@ -73,18 +73,30 @@ int main(int argc, char** argv) {
       testEnt.models.emplace_back(testModel);
       world.entities.emplace_back(&testEnt);
 
-      Light testLight;
-      testLight.position = glm::vec3(0, 1, 0);
+      Light testLight1, testLight2, testLight3;
 
-      world.entities.emplace_back(&testLight);
+      testLight1.color = glm::vec3(1, 0, 0);
+      testLight2.color = glm::vec3(0, 1, 0);
+      testLight3.color = glm::vec3(0, 0, 1);
+
+      world.entities.emplace_back(&testLight1);
+      world.entities.emplace_back(&testLight2);
+      world.entities.emplace_back(&testLight3);
 
       Renderer::RendererState state;
+   
+      float pi = 3.1415926535f;
+      float piThird = 2.094400006763f;
+
       while (true) {
 	 world.Update();
 	 state = renderer->Render();
 
-	 testLight.position = glm::vec3(sinf(renderer->timeTotal) * 3, cosf(renderer->timeTotal) * 3, 0);
-	 testLight.color = glm::vec3(abs(sinf(renderer->timeTotal)), abs(sinf(renderer->timeTotal + 1)), abs(sinf(renderer->timeTotal + 2)));
+	 testLight1.position = glm::vec3(sinf(renderer->timeTotal + piThird) * 3, cosf(renderer->timeTotal + piThird) * 3, 0);
+	 testLight2.position = glm::vec3(sinf(renderer->timeTotal + piThird * 2) * 3, cosf(renderer->timeTotal + piThird * 2) * 3, 0);
+	 testLight3.position = glm::vec3(sinf(renderer->timeTotal + piThird * 3) * 3, cosf(renderer->timeTotal + piThird * 3) * 3, 0);
+
+	 //testLight1.color = glm::vec3(abs(sinf(renderer->timeTotal)), abs(sinf(renderer->timeTotal + 1)), abs(sinf(renderer->timeTotal + 2)));
 
 	 // TODO: Make this be more verbose
 	 if (state.status != Renderer::Status::Success)

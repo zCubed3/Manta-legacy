@@ -20,6 +20,7 @@ void World::Update() {
       if (light != nullptr) {
 	 data.lightPositions[l] = light->position;
 	 data.lightColors[l] = light->color;
+	 data.lightTypes[l] = (int)light->type;
 	 l++;	 
       }	 
 

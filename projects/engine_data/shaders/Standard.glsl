@@ -44,16 +44,31 @@ uniform vec3 MANTA_pCamera;
 uniform int MANTA_lightCount;
 uniform vec3 MANTA_lightPositions[32];
 uniform vec3 MANTA_lightColors[32];
+uniform int MANTA_lightTypes[32];
+
+float sphereAtten(vec3 position, float range, float strength) {
+  vec3 direction = position - vert_pos;
+  float dist = length(direction);
+
+  float falloff = pow(1 - dist / range, 1.0 / strength);
+  return max(dot(normalize(normal), normalize(direction)) * falloff, 0.0);
+}
 
 void main() {
   vec3 lighting = vec3(0, 0, 0);
 
   for (int l = 0; l < MANTA_lightCount; l++) {
-    float atten = 1.0 - length(MANTA_lightPositions[l] - vert_pos);
-    lighting += MANTA_lightColors[l] * dot(normal, MANTA_lightPositions[l]) * atten;
+    float atten = 1;
+    if (MANTA_lightTypes[l] == 1) // Point lighting
+      atten = sphereAtten(MANTA_lightPositions[l], 10, 1);
+
+    lighting += (MANTA_lightColors[l] * dot(normal, MANTA_lightPositions[l])) * atten;
   }
 
+  lighting = clamp(lighting, 0, 1);
+
   color = vec3(1, 1, 1) * lighting;
+
 }
 
 #endif

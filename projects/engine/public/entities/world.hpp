@@ -16,6 +16,7 @@ class WorldData {
       int lightCount;
       glm::vec3 lightPositions[MAX_LIGHTS];
       glm::vec3 lightColors[MAX_LIGHTS];
+      int lightTypes[MAX_LIGHTS];
 };
 
 class World {
