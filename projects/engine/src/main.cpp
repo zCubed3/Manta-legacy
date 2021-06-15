@@ -55,10 +55,22 @@ int main(int argc, char** argv) {
       renderer->Initialize();
 
       Model* testModel = renderer->modelLoader.LoadModel(console.CVarGetData("testmodel", ""));
+      if (!testModel) {
+	 printf("TestModel wasn't loaded, aborting!\n");
+	 exit(0);
+      }
+
       renderer->CreateBuffer(testModel);
       renderer->modelQueue.emplace_back(testModel);
 
       Shader* testShader = renderer->shaderLoader.LoadShader(console.CVarGetData("testshader", ""));
+      //Shader* testShader = renderer->shaderLoader.LoadCode("engine#error");
+
+      if (!testShader) {
+	 printf("TestShader wasn't loaded, aborting!\n");
+	 exit(0);
+      }
+
       renderer->CreateShaderProgram(testShader);
 
       testModel->shader = testShader;

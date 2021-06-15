@@ -140,7 +140,7 @@ Model* ModelLoader::LoadModel(std::string path) {
    auto end = std::chrono::high_resolution_clock::now();
    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
    
-   printf("Loaded model from %s (%s), taking %li ms\n", path.c_str(), buffer->name.c_str(), duration.count());
+   printf("Loaded model from %s (%s), took %li ms\n", path.c_str(), buffer->name.c_str(), duration.count());
 
    loadedModels.emplace(path, buffer); // We keep models loaded as their paths to allow hot-reloading
    return buffer;

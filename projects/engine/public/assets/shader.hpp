@@ -4,12 +4,6 @@
 #include <map>
 #include <string>
 
-enum class ShaderLanguage {
-   GLSL,
-   SPIRV, 
-   HLSL
-};
-
 class Shader;
 class Renderer;
 
@@ -24,7 +18,6 @@ class ShaderProgram {
 class Shader {
    public:
       std::string code; // Usually cleared after compilation
-      ShaderLanguage language;
       ShaderProgram* program;
 
       void Bind();
@@ -33,7 +26,7 @@ class Shader {
 class ShaderLoader {
    public:
       Shader* LoadShader(std::string path);   
-      Shader* LoadCode(std::string name, std::string code);
+      Shader* LoadCode(std::string name, std::string code = "");
 
       std::map<std::string, Shader*> shaders;
 };

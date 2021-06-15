@@ -89,10 +89,9 @@ void GL3VertexBuffer::Draw(Renderer* renderer, Entity* entity, Shader* shader) {
 	    int lightTypeLocation = glGetUniformLocation(program, locationString);
 	    glUniform1i(lightTypeLocation, renderer->world->data.lightTypes[l]);
 	 }
-
-	 //int worldInfoLocation = glGetUniformBlockIndex(program, "MANTA_worldInfo");
-	 //glUniformBlockBinding(program, worldInfoLocation, 0);
       }
+
+      glUniform1f(glGetUniformLocation(program, "MANTA_fTime"), renderer->timeTotal);
    }
 
    glBindVertexArray(vao);

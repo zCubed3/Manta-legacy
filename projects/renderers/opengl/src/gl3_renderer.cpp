@@ -88,9 +88,9 @@ void GL3Renderer::Initialize() {
 	 return;
       }
 
-      shaderLoader.LoadCode("engine#error", "");
-      shaderLoader.LoadCode("engine#default", "");
-      
+      Shader* errShader = shaderLoader.LoadCode("engine#error", gl3ErrorShaderCode);
+      CreateShaderProgram(errShader);
+
       glGenBuffers(1, &worldUBO);
       glBindBufferBase(GL_UNIFORM_BUFFER, 0, worldUBO);
    }
@@ -108,7 +108,7 @@ Renderer::RendererState GL3Renderer::Render() {
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
    glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
 
-   timeTotal = glfwGetTime();
+   timeTotal = (float)glfwGetTime();
    timeDelta = timeTotal - timeLast;
    timeLast = timeTotal;
 
@@ -165,3 +165,35 @@ void GL3Renderer::RegisterConObjects() {
       
    }
 }
+
+//
+// Built-in shaders
+//
+
+std::string gl3ErrorShaderCode = R"(
+#ifdef VERTEX
+layout(location = 0) in vec3 _vertex;
+
+uniform mat4 MANTA_mM;
+uniform mat4 MANTA_mV;
+uniform mat4 MANTA_mP;
+
+void main() {
+  mat4 mMVP = MANTA_mP * MANTA_mV * MANTA_mM;
+  gl_Position = mMVP * vec4(_vertex, 1.0);
+}
+
+#endif
+
+#ifdef FRAGMENT
+
+uniform float MANTA_fTime;
+out vec3 color;
+
+void main() {
+   // Color is #ff7300
+   color = vec3(1.0, 0.45098039215, 0.0) * abs(sin(MANTA_fTime * 2));
+}
+
+#endif
+)";

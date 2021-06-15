@@ -23,4 +23,6 @@ class GL3Renderer : public Renderer {
       GLFWwindow* window;
 };
 
+extern std::string gl3ErrorShaderCode;
+
 #endif

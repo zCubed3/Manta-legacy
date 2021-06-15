@@ -7,6 +7,8 @@
 #include <iostream>
 #include <fstream>
 
+#include <chrono>
+
 void Shader::Bind() {
    if (program != nullptr)
       program->Bind();
@@ -30,21 +32,18 @@ Shader* ShaderLoader::LoadShader(std::string path) {
       return nullptr;
    }
 
+   // Track the time taken to load
+   auto start = std::chrono::high_resolution_clock::now();
+
    Shader* buffer = new Shader();
-
-   const char* cpath = path.c_str();
-   if (strstr(cpath, ".glsl") || strstr(cpath, ".gl"))
-      buffer->language = ShaderLanguage::GLSL;
-
-   if (strstr(cpath, ".spirv") || strstr(cpath, ".v"))
-      buffer->language = ShaderLanguage::SPIRV;
-
-   if (strstr(cpath, ".hlsl") || strstr(cpath, ".hl"))
-      buffer->language = ShaderLanguage::HLSL;
 
    std::string fileText((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
    buffer->code = fileText;
 
+   auto end = std::chrono::high_resolution_clock::now();
+   auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+
+   printf("Loaded shader from %s, took %li ms\n", path.c_str(), duration.count());
    shaders.emplace(path, buffer);
    return buffer;
 }
@@ -57,6 +56,7 @@ Shader* ShaderLoader::LoadCode(std::string name, std::string code) {
    Shader* buffer = new Shader();
    buffer->code = code;
 
+   printf("Loaded shader code internally, %s\n", name.c_str());
    shaders.emplace(name, buffer);
    return buffer;
 }
