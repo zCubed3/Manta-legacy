@@ -3,8 +3,8 @@
 
 extern bool shouldQuit;
 
-class ConsoleInstance;
+class Console;
 
-void CreateCommonConObjects(ConsoleInstance* console);
+void CreateCommonConObjects(Console* console);
 
 #endif

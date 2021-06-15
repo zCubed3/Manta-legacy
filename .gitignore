@@ -7,6 +7,9 @@ build*/
 bin*/
 .cache*/
 
+# Raw_files
+*.blend*
+
 # Prevent configuration files from being carried over
 compile_commands.json
 .MANTA_*

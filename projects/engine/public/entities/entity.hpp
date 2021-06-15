@@ -8,6 +8,7 @@
 
 class Model;
 class Renderer;
+class World;
 
 class Entity {
    public:
@@ -23,7 +24,7 @@ class Entity {
       bool isEnabled = true;
       bool isVisible = true;
 
-      virtual void Update();
+      virtual void Update(World* world);
       virtual void Draw(Renderer* renderer);
 };
 

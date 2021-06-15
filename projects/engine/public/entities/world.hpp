@@ -6,6 +6,7 @@
 
 class Entity;
 class Light;
+class Console;
 
 #include <entities/light.hpp>
 
@@ -24,6 +25,7 @@ class World {
       std::vector<Entity*> entities;
       
       WorldData data;
+      Console* console;
 
       void Update();
 };

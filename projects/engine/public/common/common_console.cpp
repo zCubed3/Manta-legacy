@@ -7,7 +7,7 @@
 bool shouldQuit = false;
 void setQuit(std::vector<std::string> args) { shouldQuit = true; }
 
-void CreateCommonConObjects(ConsoleInstance* console) {
+void CreateCommonConObjects(Console* console) {
    if (!console) {
       printf("Could not create common ConObjects, the given console points to nullptr!\n");
       return;
@@ -18,7 +18,7 @@ void CreateCommonConObjects(ConsoleInstance* console) {
    //
 
    console->CreateCVar("gamename", "Manta Game");
-   console->CreateCVar("manta_debug", "0");
+   console->CreateCVar("fov", "90"); // Can be ignored by cameras
 
    //
    // Common cfuncs

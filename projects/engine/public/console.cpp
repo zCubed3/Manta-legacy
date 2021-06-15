@@ -76,7 +76,8 @@ void ConVar::ParseBool(bool* data, bool default_) { *data = ParseBool(default_);
 //
 // ConsoleInstance
 //
-ConsoleInstance::~ConsoleInstance() {
+Console::~Console() {
+   printf("Cleaning up Console\n");
    for (auto o = objects.begin(); o != objects.end(); o++) {
       if (o->second == nullptr)
 	 continue;
@@ -86,7 +87,7 @@ ConsoleInstance::~ConsoleInstance() {
    }
 }
 
-void ConsoleInstance::CreateCFunc(std::string signature, ConFuncBinding func) {
+void Console::CreateCFunc(std::string signature, ConFuncBinding func) {
    if (canCreateConObject(signature))
    { 
       ConFunc* cfunc = new ConFunc(signature, func);
@@ -100,7 +101,7 @@ void ConsoleInstance::CreateCFunc(std::string signature, ConFuncBinding func) {
    }
 }
 
-void ConsoleInstance::CreateCVar(std::string signature, std::string data) {
+void Console::CreateCVar(std::string signature, std::string data) {
    if (canCreateConObject(signature))
    { 
       ConVar* cvar = new ConVar(signature, data);
@@ -114,7 +115,7 @@ void ConsoleInstance::CreateCVar(std::string signature, std::string data) {
    }
 }
 
-bool ConsoleInstance::RegisterObject(ConObject* object) { 
+bool Console::RegisterObject(ConObject* object) { 
    if (object == nullptr) {
       printf("Given ConObject was a nullptr!\n");
       return false;
@@ -141,7 +142,7 @@ void ProcessObject(ConObject** object, std::vector<std::string>* args) {
    }
 }
 
-void ConsoleInstance::ParseAutoExec() {
+void Console::ParseAutoExec() {
    // Parsed a bit differently to the command line, does it line by line instead of arg by arg
 
    std::ifstream autoExec("./data/autoexec");
@@ -182,7 +183,7 @@ void ConsoleInstance::ParseAutoExec() {
    printf("\nDone parsing from autoexec!\n");
 }
 
-void ConsoleInstance::ParseCommandLine(int argc, char **argv) {
+void Console::ParseCommandLine(int argc, char **argv) {
    // - is cfunc
    // + is cvar
    std::vector<std::string> args;
@@ -213,7 +214,7 @@ void ConsoleInstance::ParseCommandLine(int argc, char **argv) {
    printf("\nDone parsing from command line!\n");
 }
 
-ConVar* ConsoleInstance::GetCVar(std::string signature) {
+ConVar* Console::GetCVar(std::string signature) {
    if (objects.count(signature) > 0) {
       ConObject* object = objects[signature];
 
@@ -232,13 +233,13 @@ ConVar* ConsoleInstance::GetCVar(std::string signature) {
    return nullptr;
 }
 
-bool ConsoleInstance::canCreateConObject(std::string signature) {
+bool Console::canCreateConObject(std::string signature) {
    return objects.count(signature) == 0;
 }
 
 // Quick CVar getters
 
-int ConsoleInstance::CVarGetInt(std::string signature, int default_) {
+int Console::CVarGetInt(std::string signature, int default_) {
    ConVar* cvar = GetCVar(signature);
 
    if (cvar)
@@ -247,7 +248,7 @@ int ConsoleInstance::CVarGetInt(std::string signature, int default_) {
    return default_;
 }
 
-bool ConsoleInstance::CVarGetBool(std::string signature, bool default_) {
+bool Console::CVarGetBool(std::string signature, bool default_) {
    ConVar* cvar = GetCVar(signature);
 
    if (cvar)
@@ -256,7 +257,7 @@ bool ConsoleInstance::CVarGetBool(std::string signature, bool default_) {
    return default_;
 }
 
-std::string ConsoleInstance::CVarGetData(std::string signature, std::string default_) {
+std::string Console::CVarGetData(std::string signature, std::string default_) {
    ConVar* cvar = GetCVar(signature);
 
    if (cvar)

@@ -17,9 +17,11 @@ class Camera : public Entity {
       glm::mat4 view;
       glm::mat4 perspective;
 
+      bool ignoreConFov = true;
+
       Renderer* renderer;
 
-      virtual void Update() override;
+      virtual void Update(World* world) override;
 };
 
 #endif

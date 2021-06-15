@@ -24,7 +24,7 @@ void World::Update() {
 	 l++;	 
       }	 
 
-      entities[e]->Update();
+      entities[e]->Update(this);
    }
 
    data.lightCount = l;

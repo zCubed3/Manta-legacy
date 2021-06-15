@@ -18,8 +18,10 @@
 #include <entities/light.hpp>
 
 int main(int argc, char** argv) {
-   ConsoleInstance console;
+   Console console;
    World world;
+
+   world.console = &console;
 
    CreateCommonConObjects(&console);
 
@@ -62,6 +64,9 @@ int main(int argc, char** argv) {
       testModel->shader = testShader;
 
       Camera camera;
+      camera.position = glm::vec3(0, 0, 3);
+      camera.euler = glm::vec3(0, 180, 0);
+      camera.ignoreConFov = false;
       camera.renderer = renderer;
 
       renderer->camera = &camera;
@@ -79,6 +84,8 @@ int main(int argc, char** argv) {
       testLight2.color = glm::vec3(0, 1, 0);
       testLight3.color = glm::vec3(0, 0, 1);
 
+      testLight1.type = testLight2.type = testLight3.type = Light::LightType::Point;
+
       world.entities.emplace_back(&testLight1);
       world.entities.emplace_back(&testLight2);
       world.entities.emplace_back(&testLight3);
@@ -92,11 +99,14 @@ int main(int argc, char** argv) {
 	 world.Update();
 	 state = renderer->Render();
 
-	 testLight1.position = glm::vec3(sinf(renderer->timeTotal + piThird) * 3, cosf(renderer->timeTotal + piThird) * 3, 0);
-	 testLight2.position = glm::vec3(sinf(renderer->timeTotal + piThird * 2) * 3, cosf(renderer->timeTotal + piThird * 2) * 3, 0);
-	 testLight3.position = glm::vec3(sinf(renderer->timeTotal + piThird * 3) * 3, cosf(renderer->timeTotal + piThird * 3) * 3, 0);
+	 testLight1.position = glm::vec3(sinf(renderer->timeTotal + piThird) * 3, cosf(renderer->timeTotal + piThird) * 3, sinf(renderer->timeTotal));
+	 testLight2.position = glm::vec3(sinf(renderer->timeTotal + piThird * 2) * 3, cosf(renderer->timeTotal + piThird * 2) * 3, sinf(renderer->timeTotal));
+	 testLight3.position = glm::vec3(sinf(renderer->timeTotal + piThird * 3) * 3, cosf(renderer->timeTotal + piThird * 3) * 3, sinf(renderer->timeTotal));
 
+	 // RGB light
 	 //testLight1.color = glm::vec3(abs(sinf(renderer->timeTotal)), abs(sinf(renderer->timeTotal + 1)), abs(sinf(renderer->timeTotal + 2)));
+	 
+	 //camera.euler = glm::vec3(0, renderer->timeTotal, 0);
 
 	 // TODO: Make this be more verbose
 	 if (state.status != Renderer::Status::Success)

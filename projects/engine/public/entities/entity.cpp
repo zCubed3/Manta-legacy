@@ -4,11 +4,11 @@
 
 #include <assets/model.hpp>
 
-void Entity::Update() {
+void Entity::Update(World* world) {
    if (!isEnabled)
       return;
 
-   rotation = glm::quat(euler);
+   rotation = glm::quat(glm::radians(euler));
 
    mModel = glm::translate(glm::mat4(1.0f), position);
    mModel *= glm::toMat4(rotation);

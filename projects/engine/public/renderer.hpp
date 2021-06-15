@@ -92,7 +92,7 @@ class Renderer {
 	 }
       };
 
-      ConsoleInstance* console = nullptr; // Allows the renderer to read from a console
+      Console* console = nullptr; // Allows the renderer to read from a console
       ClearColor clearColor;
 
       // Rendering necessities

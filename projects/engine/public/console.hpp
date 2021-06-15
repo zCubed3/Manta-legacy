@@ -57,9 +57,9 @@ class ConVar : public ConObject {
 //
 // Structure that holds the console data and does error checking
 //
-class ConsoleInstance {
+class Console {
    public:
-      ~ConsoleInstance();
+      ~Console();
       std::map<std::string, ConObject*> objects;
 
       void CreateCFunc(std::string signature, ConFuncBinding func);

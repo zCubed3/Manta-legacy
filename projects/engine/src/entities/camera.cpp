@@ -6,15 +6,20 @@
 #include <glm/glm/gtc/quaternion.hpp>
 
 #include <renderer.hpp>
+#include <console.hpp>
+#include <entities/world.hpp>
 
-void Camera::Update() {
-   glm::quat rot = glm::quat(euler);
-   glm::vec3 forward = glm::vec3(0, 0, 1) * rot;
+void Camera::Update(World* world) {
+   Entity::Update(world);
 
-   view = glm::lookAt(position, glm::vec3(0,0,0), glm::vec3(0, 1, 0));
+   glm::vec3 forward = glm::rotate(rotation, glm::vec3(0, 0, 1));
+
+   view = glm::lookAt(position, position + forward, glm::vec3(0, 1, 0));
+
+   if (!ignoreConFov && world)
+      if (world->console)
+	 fieldOfView = world->console->CVarGetInt("fov", 90);
 
    if (renderer != nullptr)
       perspective = glm::perspective(glm::radians(fieldOfView), renderer->windowWidth / renderer->windowHeight, nearClip, farClip); 
-
-   position = glm::vec3(sinf(renderer->timeTotal), cosf(renderer->timeTotal), -3);
 }
