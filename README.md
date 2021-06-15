@@ -1,15 +1,6 @@
 # Manta Engine [![forthebadge](https://forthebadge.com/images/badges/0-percent-optimized.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/built-with-resentment.svg)](https://forthebadge.com)
 
 
-
-#### Master Branch:
-If master has not passed the check, then please be patient, this is WIP software and is under constant change!<br/>
-![Linux Build](https://github.com/zCubed3/Manta/actions/workflows/linuxbuild.yml/badge.svg) 
-
-
-#### Experimental Branch:
-![Linux Build](https://github.com/zCubed3/Manta/actions/workflows/linuxbuild.yml/badge.svg?branch=experimental)
-
 The Manta engine is a one man project to build a basic game engine capable of making basic games with. It is in no way meant to compete with Unreal, Unity, Godot, and any other game engine developed by professionals. This project may be abandoned in the future depending on my motivation.
 
 This software was written using NeoVim with many customizations and plugins to make it adequate for C/C++ programming. Any formatting issues are the result of Vim and poor programming practices.
@@ -19,9 +10,9 @@ This software was written using NeoVim with many customizations and plugins to m
 
 <!--Html here is necessary and is very messy!-->
 
-| OS            | Compilers     | Architectures  |
-| :-----------  |:-------------:| :-----:        |
-| <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Tux.svg/1200px-Tux.svg.png" width="32"/> Linux | GNU GCC, LLVM Clang | x86, amd64 |
+| OS            | Compilers     | Architectures  | Build |
+| :-----------  |:-------------:| :-----:        | :---: |
+| <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Tux.svg/1200px-Tux.svg.png" width="32"/> Linux | GNU GCC, LLVM Clang | x86, amd64 | ![Linux Build](https://github.com/zCubed3/Manta/actions/workflows/linuxbuild.yml/badge.svg) |
 
 ### Unsupported Platforms
 | OS            | Compilers     | Architectures  |
