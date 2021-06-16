@@ -25,7 +25,7 @@ int main(int argc, char** argv) {
 
    CreateCommonConObjects(&console);
    world.CreateConObjects(&console);
-   PackerCreateConObjects(&console);
+   //PackerCreateConObjects(&console);
 
    console.CreateCVar("testmodel", "./data/models/Sphere.obj");
    console.CreateCVar("testshader", "./data/shaders/Standard.glsl");

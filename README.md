@@ -62,5 +62,8 @@ This software was written using NeoVim with many customizations and plugins to m
     * GL Mathematics library, licensed under the MIT license, [g-truc/glm](https://github.com/g-truc/glm)
     * Dear ImGui, licensed under the MIT license, [ocornut/imgui](https://github.com/ocornut/imgui)
 
-2. Misc
-    * For the badge [forthebadge](forthebadge.com) for the header images!<br/>
+2. Resources
+    * Utah Teapot model (used for testing shading)
+
+3. Misc
+   * For the badge [forthebadge](forthebadge.com) for the header images!<br/>
