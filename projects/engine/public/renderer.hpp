@@ -11,6 +11,7 @@
 
 class Renderer;
 class World;
+class GLFWwindow;
 
 MANTA_DECLARE_FPTR(Renderer*, FuncGetRenderer, );
 
@@ -25,70 +26,32 @@ typedef struct ClearColor_T {
 
 class Renderer {
    public:
-      // For determining which API we're using, for diagnotistic and stat reasons
-      enum class RenderAPI {
-	 Unknown = 0,
-
-	 OpenGL	 = 1,
-	 Vulkan  = 2,
-
-#ifdef _WIN32
-	 // Futureproofing
-	 DX11	 = 3,
-	 DX12    = 4,
-#endif
-      };
-
-      virtual RenderAPI get_RenderAPI() { return RenderAPI::Unknown; };
-      virtual const char* get_RenderAPIName(RenderAPI api) { 
-	 switch (api) {
-	    default:
-	       return "Unknown API";
-
-	    case RenderAPI::OpenGL:
-	       return "OpenGL";
-
-	    case RenderAPI::Vulkan:
-	       return "Vulkan";
-
-#ifdef _WIN32
-	    case RenderAPI::DX11
-	       return "DirectX 11";
-
-	    case RenderAPI::DX12
-	       return "DirectX 12";
-#endif
-	 }
-      };
+      virtual const char* get_APIName() { return "Unknown API"; };
 
 
    // Renderer state
    public:
       enum class Status {
-	 Failure     = 0,
+	 Running 	= 0,
 
-	 Success     = 1,
-
-	 ShutDown    = 2,
-      };
-
-      struct RendererState {
-	 Renderer::Status status;
-	 const char* failReason;
+	 Failure	= 1,
+	 ShuttingDown 	= 2,
       };
 
    // Actual renderer functionality
    public:
       virtual void Initialize() = 0;
-      virtual RendererState Render() = 0;
+      virtual Status Render() = 0;
 
-      virtual void RegisterConObjects() {
+      virtual void CreateConObjects(Console* console) {
 	 if (console != nullptr) {
 	    console->CreateCVar("r_window_resizable", "false");
 	    
 	    console->CreateCVar("width", "1024");
 	    console->CreateCVar("height", "768");
 	    console->CreateCVar("fullscreen", "false");
+
+	    this->console = console;
 	 }
       };
 
@@ -114,6 +77,8 @@ class Renderer {
       Camera* camera;
 
       std::vector<Model*> modelQueue;
+
+      GLFWwindow* window;
 };
 
 #endif

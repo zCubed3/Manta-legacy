@@ -73,6 +73,11 @@ void GL3VertexBuffer::Draw(Renderer* renderer, Entity* entity, Shader* shader) {
 	 int lightCtLocation = glGetUniformLocation(program, locationString);
 	 glUniform1i(lightCtLocation, renderer->world->data.lightCount);
 
+	 sprintf(locationString, "MANTA_ambientColor");
+
+	 int ambientColLocation = glGetUniformLocation(program, locationString);
+	 glUniform3fv(ambientColLocation, 1, glm::value_ptr(renderer->world->data.ambientColor));
+
 	 for (int l = 0; l < renderer->world->data.lightCount; l++) {
 	    sprintf(locationString, "MANTA_lightPositions[%i]", l);
 	    

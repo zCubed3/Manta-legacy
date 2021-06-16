@@ -2,7 +2,6 @@
 #include <renderer.hpp>
 
 #include <manta_macros.hpp>
-#include <manta_errcodes.hpp>
 #include <console.hpp>
 
 #include <stdlib.h>
@@ -17,16 +16,17 @@
 #include <entities/world.hpp>
 #include <entities/light.hpp>
 
+#include <GLFW/glfw3.h>
+
 int main(int argc, char** argv) {
    Console console;
    World world;
 
-   world.console = &console;
-
    CreateCommonConObjects(&console);
+   world.CreateConObjects(&console);
 
    console.CreateCVar("testmodel", "./data/models/Sphere.obj");
-   console.CreateCVar("testshader", "./data/shaders/Test.glsl");
+   console.CreateCVar("testshader", "./data/shaders/Standard.glsl");
 
    DynamicLib* rendererLib = LoadDynamicLib("./lib/OpenGL3_api");
       
@@ -38,14 +38,13 @@ int main(int argc, char** argv) {
 	 renderer = funcGetRenderer();
 
       if (renderer == nullptr) {
-	 printf("Failed to create renderer\n");
-	 return ERR_FAILED_TO_CREATE_RENDERER;
+	 printf("Fatal: Failed to create renderer\n");
+	 exit(0);
       }
 
-      renderer->console = &console;
-      renderer->RegisterConObjects();
-   
-      console.ParseAutoExec();
+      renderer->CreateConObjects(&console);
+
+      console.ParseExecFile("./data/autoexec"); // Autoexec is the default autoexec path
       console.ParseCommandLine(argc, argv);
 
       console.CVarGetData("gamename", "Test");
@@ -56,7 +55,7 @@ int main(int argc, char** argv) {
 
       Model* testModel = renderer->modelLoader.LoadModel(console.CVarGetData("testmodel", ""));
       if (!testModel) {
-	 printf("TestModel wasn't loaded, aborting!\n");
+	 printf("Fatal: TestModel wasn't loaded, aborting!\n");
 	 exit(0);
       }
 
@@ -67,7 +66,7 @@ int main(int argc, char** argv) {
       //Shader* testShader = renderer->shaderLoader.LoadCode("engine#error");
 
       if (!testShader) {
-	 printf("TestShader wasn't loaded, aborting!\n");
+	 printf("Fatal: TestShader wasn't loaded, aborting!\n");
 	 exit(0);
       }
 
@@ -102,11 +101,16 @@ int main(int argc, char** argv) {
       world.entities.emplace_back(&testLight2);
       world.entities.emplace_back(&testLight3);
 
-      Renderer::RendererState state;
+      Renderer::Status state;
    
       float pi = 3.1415926535f;
       float piThird = 2.094400006763f;
 
+      double mouseX, mouseY;
+      glfwGetCursorPos(renderer->window, &mouseX, &mouseY);
+      
+      bool lockCursor = false, hasLocked = false;
+      bool forward = false, backward = false;
       while (true) {
 	 world.Update();
 	 state = renderer->Render();
@@ -117,13 +121,43 @@ int main(int argc, char** argv) {
 
 	 // RGB light
 	 //testLight1.color = glm::vec3(abs(sinf(renderer->timeTotal)), abs(sinf(renderer->timeTotal + 1)), abs(sinf(renderer->timeTotal + 2)));
+
+	 //
+	 // Very shitty free camera code :tm:
+	 //
+	 double nowMouseX, nowMouseY;
+	 glfwGetCursorPos(renderer->window, &nowMouseX, &nowMouseY);
 	 
-	 //camera.euler = glm::vec3(0, renderer->timeTotal, 0);
+	 if (lockCursor)
+	    camera.euler += glm::vec3(nowMouseY - mouseY, mouseX - nowMouseX, 0) * 0.1f;
 
-	 // TODO: Make this be more verbose
-	 if (state.status != Renderer::Status::Success)
+	 if (glfwGetKey(renderer->window, GLFW_KEY_ESCAPE) == GLFW_PRESS && !hasLocked) {
+	    lockCursor = !lockCursor;
+	    glfwSetInputMode(renderer->window, GLFW_CURSOR, lockCursor ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
+	    hasLocked = true;
+	 }
+	 
+	 if (glfwGetKey(renderer->window, GLFW_KEY_ESCAPE) == GLFW_RELEASE)
+	    hasLocked = false;
+
+	 if (glfwGetKey(renderer->window, GLFW_KEY_W))
+	    camera.position += glm::rotate(camera.rotation, glm::vec3(0, 0, 1)) * renderer->timeDelta;
+
+	 if (glfwGetKey(renderer->window, GLFW_KEY_S))
+	    camera.position += glm::rotate(camera.rotation, glm::vec3(0, 0, -1)) * renderer->timeDelta;
+
+	 if (glfwGetKey(renderer->window, GLFW_KEY_A))
+	    camera.position += glm::rotate(camera.rotation, glm::vec3(1, 0, 0)) * renderer->timeDelta;
+
+	 if (glfwGetKey(renderer->window, GLFW_KEY_D))
+	    camera.position += glm::rotate(camera.rotation, glm::vec3(-1, 0, 0)) * renderer->timeDelta;
+
+	 mouseX = nowMouseX;
+	 mouseY = nowMouseY;
+
+	 if (state != Renderer::Status::Running) {
 	    break;
-
+	 }
       }
    }
 }

@@ -8,12 +8,14 @@
 
 #include "manta_macros.hpp"
 
+class Console;
+
 class ConObject { 
    public:
       ConObject(std::string signature);
       virtual ~ConObject() { };
 
-      virtual void Execute(std::vector<std::string> args) = 0;
+      virtual void Execute(Console* console, std::vector<std::string> args) = 0;
 
       std::string signature;
 };
@@ -26,12 +28,12 @@ bool canCreateConObject();
 
 // Binding for a ConFunc
 // Defines a function that is basically "void FUNCTION(std::vector<std::string>);"
-MANTA_DECLARE_FPTR(void, ConFuncBinding, std::vector<std::string>);
+MANTA_DECLARE_FPTR(void, ConFuncBinding, Console*, std::vector<std::string>);
 
 class ConFunc : public ConObject {
    public:
       ConFunc(std::string signature, ConFuncBinding func);
-      void Execute(std::vector<std::string> args);
+      void Execute(Console* console, std::vector<std::string> args);
       
    protected:
       ConFuncBinding function = nullptr;
@@ -43,7 +45,7 @@ class ConFunc : public ConObject {
 class ConVar : public ConObject {
    public:
       ConVar(std::string signature, std::string data);
-      void Execute(std::vector<std::string> args);
+      void Execute(Console* console, std::vector<std::string> args);
 
       std::string data = "";
 
@@ -67,10 +69,10 @@ class Console {
 
       bool RegisterObject(ConObject* object);
 
-      void ParseAutoExec();
+      void ParseExecFile(std::string path);
       void ParseCommandLine(int argc, char** argv);
 
-      ConVar* GetCVar(std::string signature);
+      ConVar* GetCVar(std::string signature, bool silent = false);
 
       int CVarGetInt(std::string signature, int default_);
       bool CVarGetBool(std::string signature, bool default_);

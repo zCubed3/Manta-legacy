@@ -14,6 +14,8 @@ class Console;
 
 class WorldData {
    public:
+      glm::vec3 ambientColor = glm::vec3(0.05f, 0.05f, 0.05f);
+
       int lightCount;
       glm::vec3 lightPositions[MAX_LIGHTS];
       glm::vec3 lightColors[MAX_LIGHTS];
@@ -27,6 +29,7 @@ class World {
       WorldData data;
       Console* console;
 
+      void CreateConObjects(Console* console);
       void Update();
 };
 

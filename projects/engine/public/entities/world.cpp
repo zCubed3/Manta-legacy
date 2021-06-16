@@ -6,6 +6,18 @@
 
 #include <glm/glm/gtc/type_ptr.hpp>
 
+void World::CreateConObjects(Console* console) {
+   if (console) {
+      //
+      // CFuncs
+      //
+
+      //console->Create
+      //
+      this->console = console;
+   }
+}
+
 void World::Update() {
 
    int l = 0;

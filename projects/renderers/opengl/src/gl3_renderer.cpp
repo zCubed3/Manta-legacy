@@ -90,20 +90,13 @@ void GL3Renderer::Initialize() {
 
       Shader* errShader = shaderLoader.LoadCode("engine#error", gl3ErrorShaderCode);
       CreateShaderProgram(errShader);
-
-      glGenBuffers(1, &worldUBO);
-      glBindBufferBase(GL_UNIFORM_BUFFER, 0, worldUBO);
    }
    else {
       printf("Failed to initialize GLFW\n");
    }
 }
 
-Renderer::RendererState GL3Renderer::Render() {
-   RendererState state;
-
-   state.status = Renderer::Status::Success;
-
+Renderer::Status GL3Renderer::Render() {
    glfwPollEvents();
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
    glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
@@ -113,9 +106,6 @@ Renderer::RendererState GL3Renderer::Render() {
    timeLast = timeTotal;
 
    if (world) {
-      glBindBuffer(GL_UNIFORM_BUFFER, worldUBO);
-      glBufferData(GL_UNIFORM_BUFFER, sizeof(WorldData), &world->data, GL_DYNAMIC_DRAW);
-
       for (int e = 0; e < world->entities.size(); e++) {
 	 if (world->entities[e] == nullptr)
 	    continue;
@@ -124,9 +114,11 @@ Renderer::RendererState GL3Renderer::Render() {
       }
    }
 
+   Renderer::Status state = Renderer::Status::Running;
+
    glfwSwapBuffers(window);
    if (glfwWindowShouldClose(window)) {
-      state.status = Renderer::Status::ShutDown;
+      state = Renderer::Status::ShuttingDown;
       glfwDestroyWindow(window);
    }
 
@@ -157,8 +149,8 @@ void GL3Renderer::CreateShaderProgram(Shader *shader) {
    }
 }
 
-void GL3Renderer::RegisterConObjects() {
-   Renderer::RegisterConObjects();
+void GL3Renderer::CreateConObjects(Console* console) {
+   Renderer::CreateConObjects(console);
 
    if (console) {
       console->CreateCVar("gl_samples", "1");

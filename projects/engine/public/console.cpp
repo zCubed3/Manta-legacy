@@ -16,10 +16,9 @@ ConObject::ConObject(std::string signature) {
 //
 ConFunc::ConFunc(std::string signature, ConFuncBinding func) : ConObject(signature) { function = func; } 
 
-void ConFunc::Execute(std::vector<std::string> args) {
-   if (function != nullptr) {
-      function(args);
-   }
+void ConFunc::Execute(Console* console, std::vector<std::string> args) {
+   if (function != nullptr)
+      function(console, args);
 }
 
 //
@@ -27,7 +26,7 @@ void ConFunc::Execute(std::vector<std::string> args) {
 //
 ConVar::ConVar(std::string signature, std::string data) : ConObject(signature) { this->data = data; }
 
-void ConVar::Execute(std::vector<std::string> args) {
+void ConVar::Execute(Console* console, std::vector<std::string> args) {
    // CVars are only set to the first argument
    if (args.size() > 0)
       data = args[0];
@@ -38,9 +37,7 @@ void ConVar::Execute(std::vector<std::string> args) {
 }
 
 int ConVar::ParseInt(int default_) {
-   std::regex digitRegex("^\\d+$");
-
-   if (std::regex_match(data, digitRegex)) {
+   if (std::all_of(data.begin(), data.end(), ::isdigit)) {
       int number = default_; 
       sscanf(data.c_str(), "%i", &number);
 
@@ -77,7 +74,7 @@ void ConVar::ParseBool(bool* data, bool default_) { *data = ParseBool(default_);
 // ConsoleInstance
 //
 Console::~Console() {
-   printf("Cleaning up Console\n");
+   printf("Cleaning up Console...\n");
    for (auto o = objects.begin(); o != objects.end(); o++) {
       if (o->second == nullptr)
 	 continue;
@@ -133,30 +130,30 @@ bool Console::RegisterObject(ConObject* object) {
    }
 }
 
-void ProcessObject(ConObject** object, std::vector<std::string>* args) {
-   if (object != nullptr && *object != nullptr && args != nullptr) {
-      (*object)->Execute(*args);
+void ProcessObject(ConObject** object, Console* console, std::vector<std::string>* args) {
+   if (object != nullptr && *object != nullptr && args != nullptr && console != nullptr) {
+      (*object)->Execute(console, *args);
       args->clear();
 
       // This isn't very good code but it helps keep clutter down
    }
 }
 
-void Console::ParseAutoExec() {
+void Console::ParseExecFile(std::string path) {
    // Parsed a bit differently to the command line, does it line by line instead of arg by arg
 
-   std::ifstream autoExec("./data/autoexec");
+   std::ifstream execFile(path);
 
-   if (!autoExec.is_open()) {
-      printf("Failed to open autoexec, was expecting it to be in ./data/autoexec, is it missing or moved?\n");
+   if (!execFile.is_open()) {
+      printf("Failed to open file for execution, %s\n", path.c_str());
       return;
    }
 
    std::vector<std::string> args;
    std::string line;
 
-   printf("Parsing commands from autoexec:\n\n");
-   while (std::getline(autoExec, line)) {
+   printf("Parsing commands from %s:\n\n", path.c_str());
+   while (std::getline(execFile, line)) {
       if (line.size() <= 0 || line[0] == '#')
 	 continue;
 
@@ -174,13 +171,13 @@ void Console::ParseAutoExec() {
 	 }
 
 	 if (objects.count(cmd) > 0)
-	    ProcessObject(&objects[cmd], &args);
+	    ProcessObject(&objects[cmd], this, &args);
 	 else
 	    printf("Unknown commmand %s\n", cmdRaw.c_str());
       }
    }
 
-   printf("\nDone parsing from autoexec!\n");
+   printf("\nDone parsing from file!\n");
 }
 
 void Console::ParseCommandLine(int argc, char **argv) {
@@ -193,7 +190,7 @@ void Console::ParseCommandLine(int argc, char **argv) {
 
    for (int a = 1; a < argc; a++) {
       if (argv[a][0] == '-' || argv[a][0] == '+') {
-	 ProcessObject(object, &args);
+	 ProcessObject(object, this, &args);
 	 object = nullptr;
 
 	 std::string arg = argv[a];
@@ -209,12 +206,12 @@ void Console::ParseCommandLine(int argc, char **argv) {
       }
    }
 
-   ProcessObject(object, &args);
+   ProcessObject(object, this, &args);
 
    printf("\nDone parsing from command line!\n");
 }
 
-ConVar* Console::GetCVar(std::string signature) {
+ConVar* Console::GetCVar(std::string signature, bool silent) {
    if (objects.count(signature) > 0) {
       ConObject* object = objects[signature];
 
@@ -228,7 +225,8 @@ ConVar* Console::GetCVar(std::string signature) {
       }
    }
    else
-      printf("CVar '%s' doesn't exist!\n", signature.c_str());
+      if (!silent)
+	 printf("CVar '%s' doesn't exist!\n", signature.c_str());
 
    return nullptr;
 }

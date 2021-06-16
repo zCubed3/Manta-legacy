@@ -6,6 +6,7 @@
 #include <iostream>
 #include <fstream>
 #include <chrono>
+#include <regex>
 
 #include <assets/shader.hpp>
 #include <renderer.hpp>
@@ -57,6 +58,9 @@ Model* ModelLoader::LoadModel(std::string path) {
    // Track the time taken to load
    auto start = std::chrono::high_resolution_clock::now();
 
+   int spinCharacter = 0;
+   std::vector<char> spinChars { '|', '/', '-', '\\' };
+
    // Not a very good OBJ loader but it works for our purposes right now
    if (strstr(path.c_str(), ".obj")) {
       std::vector<glm::vec3> positions;
@@ -66,9 +70,20 @@ Model* ModelLoader::LoadModel(std::string path) {
 
       std::string line;
       while (std::getline(file, line)) {
+	 if (line.size() <= 2)
+	    continue;
+
+	 if (spinCharacter++ >= spinChars.size())
+	    spinCharacter = 0;
+
+	 printf("\rLoading model... %c", spinChars[spinCharacter]);
+
 	 // First two characters are a data id
 	 std::string id = line.substr(0, 2);
 	 std::string contents = line.substr(2);
+
+	 if (id[0] == '#')
+	    continue;
 
 	 if (id[0] == 'o')
 	    buffer->name = contents;
@@ -91,26 +106,39 @@ Model* ModelLoader::LoadModel(std::string path) {
 	       positions.emplace_back(v3data);
 	 }
 
-	 // F = face, so we iterate 3 times to make a tri
+	 // F = face, we either iterate 3 times to make a tri, or once to make it a vert, depends on the obj
 	 // Ugly method of loading faces but idc enough to fix it
+	 //
+	 // Thanks to https://stackoverflow.com/questions/8888748/how-to-check-if-given-c-string-or-char-contains-only-digits for the digit checker
 	 if (id[0] == 'f') {
-	    glm::ivec3 i1, i2, i3;
+	    // THIS DOESN'T WORK, NEEDS TO BE FIXED!
+	    if (std::all_of(contents.begin(), contents.end(), ::isdigit)) {
+	       glm::ivec3 i1;
+
+	       sscanf(contents.c_str(), "%i %i %i", &i1.x, &i1.y, &i1.z);
 	    
-	    sscanf(contents.c_str(), "%i/%i/%i %i/%i/%i %i/%i/%i",
-	       &i1.x, &i1.y, &i1.z,
-	       &i2.x, &i2.y, &i2.z,
-	       &i3.x, &i3.y, &i3.z
-	    );
+	       i1 -+ glm::ivec3(1);
+	       triangles.emplace_back(i1);
+	    }
+	    else {
+	       glm::ivec3 i1, i2, i3;
+	    
+	       sscanf(contents.c_str(), "%i/%i/%i %i/%i/%i %i/%i/%i",
+		  &i1.x, &i1.y, &i1.z,
+		  &i2.x, &i2.y, &i2.z,
+		  &i3.x, &i3.y, &i3.z
+	       );
 
-	    glm::ivec3 one(1, 1, 1);
+	       glm::ivec3 one(1, 1, 1);
 
-	    i1 -= one;
-	    i2 -= one;
-	    i3 -= one;
+	       i1 -= one;
+	       i2 -= one;
+	       i3 -= one;
 
-	    triangles.emplace_back(i1);
-	    triangles.emplace_back(i2);
-	    triangles.emplace_back(i3);
+	       triangles.emplace_back(i1);
+	       triangles.emplace_back(i2);
+	       triangles.emplace_back(i3);
+	    }
 	 }
       }
 
@@ -140,7 +168,7 @@ Model* ModelLoader::LoadModel(std::string path) {
    auto end = std::chrono::high_resolution_clock::now();
    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
    
-   printf("Loaded model from %s (%s), took %li ms\n", path.c_str(), buffer->name.c_str(), duration.count());
+   printf("\rLoaded model from %s (%s), took %li ms\n", path.c_str(), buffer->name.c_str(), duration.count());
 
    loadedModels.emplace(path, buffer); // We keep models loaded as their paths to allow hot-reloading
    return buffer;

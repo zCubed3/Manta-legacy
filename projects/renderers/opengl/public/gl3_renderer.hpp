@@ -9,18 +9,15 @@ typedef struct GLFWwindow GLFWwindow;
 
 class GL3Renderer : public Renderer {
    public:
+      virtual const char* get_APIName() override { return "OpenGL 3.3"; };
+
       void Initialize() override;
-      RendererState Render() override;
+      Status Render() override;
 
       void CreateBuffer(Model* model) override;
       void CreateShaderProgram(Shader* shader) override;
 
-      virtual void RegisterConObjects() override;
-
-      uint worldUBO;
-
-   protected:
-      GLFWwindow* window;
+      virtual void CreateConObjects(Console* console) override;
 };
 
 extern std::string gl3ErrorShaderCode;
