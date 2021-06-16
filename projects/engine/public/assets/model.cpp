@@ -9,6 +9,8 @@
 #include <regex>
 
 #include <assets/shader.hpp>
+#include <common/spinner.hpp>
+
 #include <renderer.hpp>
 
 void Model::Draw(Renderer* renderer, Entity* entity) {
@@ -58,8 +60,8 @@ Model* ModelLoader::LoadModel(std::string path) {
    // Track the time taken to load
    auto start = std::chrono::high_resolution_clock::now();
 
-   int spinCharacter = 0;
-   std::vector<char> spinChars { '|', '/', '-', '\\' };
+   Spinner spinner;
+   const char* loadingStr = "\rLoading model %c";
 
    // Not a very good OBJ loader but it works for our purposes right now
    if (strstr(path.c_str(), ".obj")) {
@@ -73,10 +75,8 @@ Model* ModelLoader::LoadModel(std::string path) {
 	 if (line.size() <= 2)
 	    continue;
 
-	 if (spinCharacter++ >= spinChars.size())
-	    spinCharacter = 0;
-
-	 printf("\rLoading model... %c", spinChars[spinCharacter]);
+	 printf(loadingStr, spinner.character);
+	 spinner.Spin();
 
 	 // First two characters are a data id
 	 std::string id = line.substr(0, 2);
@@ -162,6 +162,44 @@ Model* ModelLoader::LoadModel(std::string path) {
 	    buffer->triangles.emplace_back(buffer->vertices.size());
 	    buffer->vertices.emplace_back(vert);
 	 }
+      }
+   }
+
+   if (strstr(path.c_str(), ".mmdl")) {
+      char name[256];
+      file.read(name, sizeof(name));
+      
+      buffer->name = name;
+
+      int count;
+      file.read(reinterpret_cast<char*>(&count), sizeof(int));
+      
+      for (int v = 0; v < count; v++) {
+	 float data[8];
+	 file.read(reinterpret_cast<char*>(data), sizeof(float) * 8);
+
+	 Model::Vertex vertex;
+
+	 vertex.position.x = data[0];
+	 vertex.position.y = data[1];
+	 vertex.position.z = data[2];
+
+	 vertex.normal.x = data[3];
+	 vertex.normal.y = data[4];
+	 vertex.normal.z = data[5];
+
+	 vertex.uv0.x = data[6];
+	 vertex.uv0.y = data[7];
+
+	 buffer->vertices.emplace_back(vertex);
+      }
+
+      file.read(reinterpret_cast<char*>(&count), sizeof(int));
+      
+      for (int t = 0; t < count; t++) {
+	 int data;
+	 file.read(reinterpret_cast<char*>(&data), sizeof(int));
+	 buffer->triangles.emplace_back(data);
       }
    }
 

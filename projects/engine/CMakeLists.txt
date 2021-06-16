@@ -5,6 +5,7 @@ set(SOURCES
 
    "public/console.cpp"
 
+   "src/assets/manta_packer.cpp"
    "public/assets/model.cpp"
    "public/assets/shader.cpp"
 

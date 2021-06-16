@@ -9,6 +9,7 @@
 
 #include <iostream>
 
+#include <assets/manta_packer.hpp>
 #include <assets/model.hpp> // REMOVE ME!
 
 #include <common/common_console.hpp>
@@ -24,6 +25,7 @@ int main(int argc, char** argv) {
 
    CreateCommonConObjects(&console);
    world.CreateConObjects(&console);
+   PackerCreateConObjects(&console);
 
    console.CreateCVar("testmodel", "./data/models/Sphere.obj");
    console.CreateCVar("testshader", "./data/shaders/Standard.glsl");
@@ -58,6 +60,8 @@ int main(int argc, char** argv) {
 	 printf("Fatal: TestModel wasn't loaded, aborting!\n");
 	 exit(0);
       }
+
+      //MantaPackModel(testModel, "test.mmdl");
 
       renderer->CreateBuffer(testModel);
       renderer->modelQueue.emplace_back(testModel);
