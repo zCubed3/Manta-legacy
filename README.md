@@ -12,7 +12,7 @@ This software was written using NeoVim with many customizations and plugins to m
 
 | OS            | Compilers     | Architectures  | Build |
 | :-----------  |:-------------:| :-----:        | :---: |
-| <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Tux.svg/1200px-Tux.svg.png" width="32"/> Linux | GNU GCC, LLVM Clang | x86, amd64 | ![Linux Build](https://github.com/zCubed3/Manta/actions/workflows/linuxbuild.yml/badge.svg) |
+| <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Tux.svg/1200px-Tux.svg.png" width="32"/> Linux | GNU GCC, LLVM Clang | x86, amd64 | Master: ![Linux Build](https://github.com/zCubed3/Manta/actions/workflows/linuxbuild.yml/badge.svg?branch=master) <br/> Experimental: ![Linux Build](https://github.com/zCubed3/Manta/actions/workflows/linuxbuild.yml/badge.svg?branch=experimental) <br/>|
 
 ### Unsupported Platforms
 | OS            | Compilers     | Architectures  |
