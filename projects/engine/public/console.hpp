@@ -12,11 +12,12 @@ class Console;
 
 class ConObject { 
    public:
-      ConObject(std::string signature);
+      ConObject(std::string signature, bool isProtected);
       virtual ~ConObject() { };
 
       virtual void Execute(Console* console, std::vector<std::string> args) = 0;
 
+      bool isProtected; // Restricts usage / execution of this ConObject
       std::string signature;
 };
 
@@ -32,7 +33,7 @@ MANTA_DECLARE_FPTR(void, ConFuncBinding, Console*, std::vector<std::string>);
 
 class ConFunc : public ConObject {
    public:
-      ConFunc(std::string signature, ConFuncBinding func);
+      ConFunc(std::string signature, ConFuncBinding func, bool isProtected);
       void Execute(Console* console, std::vector<std::string> args);
       
    protected:
@@ -44,7 +45,7 @@ class ConFunc : public ConObject {
 //
 class ConVar : public ConObject {
    public:
-      ConVar(std::string signature, std::string data);
+      ConVar(std::string signature, std::string data, bool isProtected);
       void Execute(Console* console, std::vector<std::string> args);
 
       std::string data = "";
@@ -63,9 +64,10 @@ class Console {
    public:
       ~Console();
       std::map<std::string, ConObject*> objects;
+      bool protectionDisabled = false; // Allows cheat / risky ConObjects to execute
 
-      void CreateCFunc(std::string signature, ConFuncBinding func);
-      void CreateCVar(std::string signature, std::string data);
+      void CreateCFunc(std::string signature, ConFuncBinding func, bool isProtected = false);
+      void CreateCVar(std::string signature, std::string data, bool isProtected = false);
 
       bool RegisterObject(ConObject* object);
 

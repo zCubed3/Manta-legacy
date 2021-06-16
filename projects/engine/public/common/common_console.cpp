@@ -31,6 +31,11 @@ void exec(Console* console, std::vector<std::string> args) {
       console->ParseExecFile(args[0]);
 }
 
+void disableProtection(Console* console, std::vector<std::string> args) {
+   console->protectionDisabled = true;
+   printf("Console protection is now disabled, risky / cheat CFuncs and CVars can now be executed / set!\n");
+}
+
 void CreateCommonConObjects(Console* console) {
    if (!console) {
       printf("Could not create common ConObjects, the given console points to nullptr!\n");
@@ -54,4 +59,5 @@ void CreateCommonConObjects(Console* console) {
    console->CreateCFunc("quit", &setQuit);
    console->CreateCFunc("setv", &setv);
    console->CreateCFunc("exec", &exec);
+   console->CreateCFunc("e_disable_protection", &disableProtection);
 }

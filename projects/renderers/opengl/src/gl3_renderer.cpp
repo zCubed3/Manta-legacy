@@ -73,9 +73,14 @@ void GL3Renderer::Initialize() {
 
       window = glfwCreateWindow(winWidth, winHeight, winTitle.c_str(), monitor, nullptr);
       glfwMakeContextCurrent(window);
-      
+
+      // Depth testing
       glEnable(GL_DEPTH_TEST);
       glDepthFunc(GL_LESS);
+
+      // Backface culling
+      glEnable(GL_CULL_FACE);
+      glCullFace(GL_BACK);
 
       windowWidth = winWidth;
       windowHeight = winHeight;

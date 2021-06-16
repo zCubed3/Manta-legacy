@@ -46,6 +46,8 @@ in vec2 uv;
 
 out vec3 color;
 
+uniform float MANTA_fTime;
+
 uniform vec3 MANTA_pCamera;
 
 uniform vec3 MANTA_ambientColor;
@@ -84,10 +86,10 @@ void main() {
       float lDot = dot(normalize(normal), normalize(MANTA_lightPositions[l] - vert_pos)) * atten;
 
       lighting += MANTA_lightColors[l] * lDot;
-      lighting += MANTA_lightColors[l] * blinnPhongSpecular(MANTA_lightPositions[l], 32);
+      lighting += MANTA_lightColors[l] * blinnPhongSpecular(MANTA_lightPositions[l], 256);
    }
 
-   lighting = clamp(lighting, 0, 1);
+   //lighting = clamp(lighting, 0, 1);
 
    color = vec3(1, 1, 1) * lighting;
    //color = normal;

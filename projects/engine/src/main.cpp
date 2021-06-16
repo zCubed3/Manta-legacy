@@ -1,3 +1,4 @@
+#include "glm/glm/gtc/quaternion.hpp"
 #include <dynamiclib.hpp>
 #include <renderer.hpp>
 
@@ -17,6 +18,8 @@
 #include <entities/world.hpp>
 #include <entities/light.hpp>
 
+#include <common/spinner.hpp>
+
 #include <GLFW/glfw3.h>
 
 int main(int argc, char** argv) {
@@ -31,7 +34,9 @@ int main(int argc, char** argv) {
    console.CreateCVar("testshader", "./data/shaders/Standard.glsl");
 
    DynamicLib* rendererLib = LoadDynamicLib("./lib/OpenGL3_api");
-      
+   
+   Spinner spinner;
+
    if (rendererLib) {
       FuncGetRenderer funcGetRenderer = (FuncGetRenderer)rendererLib->GetFunction("get_Renderer");
       Renderer* renderer = nullptr;
@@ -61,7 +66,7 @@ int main(int argc, char** argv) {
 	 exit(0);
       }
 
-      //MantaPackModel(testModel, "test.mmdl");
+      MantaPackModel(testModel, "test.mmdl");
 
       renderer->CreateBuffer(testModel);
       renderer->modelQueue.emplace_back(testModel);
@@ -95,15 +100,30 @@ int main(int argc, char** argv) {
 
       Light testLight1, testLight2, testLight3;
 
+      Model* icoGizmo = renderer->modelLoader.LoadModel("./data/models/IcoGizmo.obj");
+      
+      if (!icoGizmo) {
+	 printf("Fatal: IcoGizmo model wasn't loaded, is it missing?\n");
+	 exit(0);
+      }
+      icoGizmo->shader = testShader;
+      renderer->CreateBuffer(icoGizmo);
+
+      std::vector<Light*> testLights = { &testLight1, &testLight2, &testLight3 };
+
+      for (int l = 0; l < testLights.size(); l++) {
+	 testLights[l]->type = Light::LightType::Point;
+	 world.entities.emplace_back(testLights[l]);
+
+	 testLights[l]->scale = glm::vec3(1, 1, 1) * 0.1f;
+	 testLights[l]->models.emplace_back(icoGizmo);
+      }
+
       testLight1.color = glm::vec3(1, 0, 0);
       testLight2.color = glm::vec3(0, 1, 0);
       testLight3.color = glm::vec3(0, 0, 1);
 
-      testLight1.type = testLight2.type = testLight3.type = Light::LightType::Point;
-
       world.entities.emplace_back(&testLight1);
-      world.entities.emplace_back(&testLight2);
-      world.entities.emplace_back(&testLight3);
 
       Renderer::Status state;
    
@@ -119,9 +139,11 @@ int main(int argc, char** argv) {
 	 world.Update();
 	 state = renderer->Render();
 
-	 testLight1.position = glm::vec3(sinf(renderer->timeTotal + piThird) * 3, cosf(renderer->timeTotal + piThird) * 3, sinf(renderer->timeTotal));
-	 testLight2.position = glm::vec3(sinf(renderer->timeTotal + piThird * 2) * 3, cosf(renderer->timeTotal + piThird * 2) * 3, sinf(renderer->timeTotal));
-	 testLight3.position = glm::vec3(sinf(renderer->timeTotal + piThird * 3) * 3, cosf(renderer->timeTotal + piThird * 3) * 3, sinf(renderer->timeTotal));
+	 for (int l = 0; l < testLights.size(); l++) {
+	    int o = l + 1;
+	    testLights[l]->position = glm::vec3(sinf(renderer->timeTotal + piThird * o) * 3, cosf(renderer->timeTotal + piThird * o) * 3, sinf(renderer->timeTotal));
+	    testLights[l]->euler += glm::vec3(0, 1, 0);
+	 }
 
 	 // RGB light
 	 //testLight1.color = glm::vec3(abs(sinf(renderer->timeTotal)), abs(sinf(renderer->timeTotal + 1)), abs(sinf(renderer->timeTotal + 2)));
@@ -158,6 +180,11 @@ int main(int argc, char** argv) {
 
 	 mouseX = nowMouseX;
 	 mouseY = nowMouseY;
+
+	 //testEnt.euler += glm::vec3(1, 0, 0);
+
+	 printf("\rRunning %c", spinner.character);
+	 spinner.Spin();
 
 	 if (state != Renderer::Status::Running) {
 	    break;

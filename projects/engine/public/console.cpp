@@ -7,16 +7,22 @@
 #include <iostream>
 #include <fstream>
 
-ConObject::ConObject(std::string signature) {
+ConObject::ConObject(std::string signature, bool isProtected) {
    this->signature = signature;
+   this->isProtected = isProtected;
 }
 
 //
 // ConFunc (CFunc)
 //
-ConFunc::ConFunc(std::string signature, ConFuncBinding func) : ConObject(signature) { function = func; } 
+ConFunc::ConFunc(std::string signature, ConFuncBinding func, bool isProtected) : ConObject(signature, isProtected) { function = func; } 
 
 void ConFunc::Execute(Console* console, std::vector<std::string> args) {
+   if (isProtected && !console->protectionDisabled) {
+      printf("Failed to execute %s, please run -e_disable_protection to use this function", signature.c_str());
+      return;
+   }
+
    if (function != nullptr)
       function(console, args);
 }
@@ -24,10 +30,15 @@ void ConFunc::Execute(Console* console, std::vector<std::string> args) {
 //
 // ConVar (CVar)
 //
-ConVar::ConVar(std::string signature, std::string data) : ConObject(signature) { this->data = data; }
+ConVar::ConVar(std::string signature, std::string data, bool isProtected) : ConObject(signature, isProtected) { this->data = data; }
 
 void ConVar::Execute(Console* console, std::vector<std::string> args) {
    // CVars are only set to the first argument
+   if (isProtected && !console->protectionDisabled) {
+      printf("Failed to set %s, please run -e_disable_protection to use this variable", signature.c_str());
+      return;
+   }
+
    if (args.size() > 0)
       data = args[0];
    else
@@ -84,10 +95,10 @@ Console::~Console() {
    }
 }
 
-void Console::CreateCFunc(std::string signature, ConFuncBinding func) {
+void Console::CreateCFunc(std::string signature, ConFuncBinding func, bool isProtected) {
    if (canCreateConObject(signature))
    { 
-      ConFunc* cfunc = new ConFunc(signature, func);
+      ConFunc* cfunc = new ConFunc(signature, func, isProtected);
 
       if (RegisterObject(cfunc))
 	 printf("Registered CFunc '%s'\n", signature.c_str());
@@ -98,10 +109,10 @@ void Console::CreateCFunc(std::string signature, ConFuncBinding func) {
    }
 }
 
-void Console::CreateCVar(std::string signature, std::string data) {
+void Console::CreateCVar(std::string signature, std::string data, bool isProtected) {
    if (canCreateConObject(signature))
    { 
-      ConVar* cvar = new ConVar(signature, data);
+      ConVar* cvar = new ConVar(signature, data, isProtected);
 
       if (RegisterObject(cvar))
 	 printf("Registered CVar '%s'\n", signature.c_str());
