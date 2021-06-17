@@ -14,10 +14,15 @@ This software was written using NeoVim with many customizations and plugins to m
 | :-----------  |:-------------:| :-----:        | :---: |
 | <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Tux.svg/1200px-Tux.svg.png" width="32"/> Linux | GNU GCC, LLVM Clang | x86, amd64 | Master: ![Linux Build](https://github.com/zCubed3/Manta/actions/workflows/linuxbuild.yml/badge.svg?branch=master) <br/> Experimental: ![Linux Build](https://github.com/zCubed3/Manta/actions/workflows/linuxbuild.yml/badge.svg?branch=experimental) <br/>|
 
+### Partiallly Supported Platforms
+
+| OS            | Compilers     | Architectures  |
+| :-----------  |:-------------:| :-----:        |
+| <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Windows_logo_-_2012.svg/1200px-Windows_logo_-_2012.svg.png" width="32"/> Windows      | MSVC, LLVM Clang for Windows | x86, amd64 |
+
 ### Unsupported Platforms
 | OS            | Compilers     | Architectures  |
 | :-----------  |:-------------:| :-----:        |
-| <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Windows_logo_-_2012.svg/1200px-Windows_logo_-_2012.svg.png" width="32"/> Windows (TODO)       | MSVC, LLVM Clang for Windows | x86, amd64 |
 | <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/MacOS_logo_%282017%29.svg/512px-MacOS_logo_%282017%29.svg.png" width="32"/> MacOS         | N/A           | N/A            |
 | <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/IOS_logo.svg/512px-IOS_logo.svg.png" width="32"/> iOS           | N/A           | N/A            |
 | <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Android_robot.svg/511px-Android_robot.svg.png" width="32"/> Android       | N/A           | N/A            |  
