@@ -3,6 +3,8 @@
 
 The Manta engine is a one man project to build a basic game engine capable of making basic games with. It is in no way meant to compete with Unreal, Unity, Godot, and any other game engine developed by professionals. This project may be abandoned in the future depending on my motivation.
 
+Parts of this software are inspired from features inside of well known game engines such as Id Tech 2 / Source, namely the console, they're functionally similar but I've extended the behaviour of my console implementation to fit my enigine's needs.
+
 This software was written using NeoVim with many customizations and plugins to make it adequate for C/C++ programming. Any formatting issues are the result of Vim and poor programming practices.
 
 <!-- I am aware this table is a mess, just let it be for now, it isn't hurting anyone -->
@@ -14,7 +16,7 @@ This software was written using NeoVim with many customizations and plugins to m
 | :-----------  |:-------------:| :-----:        | :---: |
 | <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Tux.svg/1200px-Tux.svg.png" width="32"/> Linux | GNU GCC, LLVM Clang | x86, amd64 | Master: ![Linux Build](https://github.com/zCubed3/Manta/actions/workflows/linuxbuild.yml/badge.svg?branch=master) <br/> Experimental: ![Linux Build](https://github.com/zCubed3/Manta/actions/workflows/linuxbuild.yml/badge.svg?branch=experimental) <br/>|
 
-### Partiallly Supported Platforms
+### Partially Supported Platforms
 
 | OS            | Compilers     | Architectures  |
 | :-----------  |:-------------:| :-----:        |
