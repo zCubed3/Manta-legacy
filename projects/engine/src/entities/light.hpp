@@ -13,7 +13,7 @@ class LightData {
 
 class Light : public Entity {
    public:
-      glm::vec3 color; 
+      glm::vec3 color = glm::vec3(1, 1, 1); 
       float range = 10.0f;
       float intensity = 1.0f;
 

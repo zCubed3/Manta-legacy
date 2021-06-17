@@ -24,6 +24,8 @@ class GL3Renderer : public Renderer {
       void InitImGui() override;
       void BeginImGui() override;
       void EndImGui() override;
+
+      void DrawImGuiWindow() override;
 };
 
 extern std::string gl3ErrorShaderCode;

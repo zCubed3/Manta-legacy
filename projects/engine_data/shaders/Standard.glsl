@@ -89,8 +89,8 @@ float spotAtten(vec3 position, vec3 direction, float range, float intensity, flo
    return (spot * (range / dist)) * intensity;
 }
 
-float blinnPhongSpecular(vec3 position, float power) {
-   vec3 halfway = normalize(normalize(position - vert_pos) + normalize(MANTA_pCamera - vert_pos));
+float blinnPhongSpecular(vec3 direction, float power) {
+   vec3 halfway = normalize(normalize(direction) + normalize(MANTA_pCamera - vert_pos));
    return clamp(pow(max(dot(normalize(normal), halfway), 0.0), power), 0.0, 1.0);
 }
 
@@ -119,9 +119,14 @@ void main() {
 
       if (MANTA_lightTypes[l] == 2) // Spot lights
 	 atten = spotAtten(MANTA_lightPositions[l], MANTA_lightDirections[l], MANTA_lightRanges[l], MANTA_lightIntensities[l], MANTA_lightParams1[l], MANTA_lightParams2[l]);
-      
+
+      vec3 specDir = MANTA_lightPositions[l] - vert_pos;
+
+      if (MANTA_lightTypes[l] == 0)
+	 specDir = MANTA_lightDirections[l] + vert_pos;
+
       lighting += MANTA_lightColors[l] * lDot * atten;
-      lighting += MANTA_lightColors[l] * blinnPhongSpecular(MANTA_lightPositions[l], 256) * atten;
+      lighting += MANTA_lightColors[l] * blinnPhongSpecular(specDir, 256) * atten;
    }
 
    //lighting = clamp(lighting, 0, 1);

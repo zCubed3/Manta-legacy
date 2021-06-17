@@ -17,6 +17,7 @@ class ShaderProgram {
 
 class Shader {
    public:
+      std::string name; // Is usually the path unless internal
       std::string code; // Usually cleared after compilation
       ShaderProgram* program;
 

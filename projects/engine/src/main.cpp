@@ -6,9 +6,12 @@
 #include <string.h>
 
 #include <iostream>
+#include <deque>
 
 #include <assets/manta_packer.hpp>
 #include <assets/model.hpp>
+#include <assets/shader.hpp>
+#include <assets/resources.hpp>
 
 #include <console/console.hpp>
 #include <console/common_console.hpp>
@@ -28,14 +31,14 @@
 
 int main(int argc, char** argv) {
    Console console;
+   Resources resources;
    World world;
+
+   world.resources = &resources;
 
    CreateCommonConObjects(&console);
    world.CreateConObjects(&console);
    //PackerCreateConObjects(&console);
-
-   console.CreateCVar("testmodel", "./data/models/Sphere.obj");
-   console.CreateCVar("testshader", "./data/shaders/Standard.glsl");
  
    Spinner spinner;
 
@@ -46,7 +49,10 @@ int main(int argc, char** argv) {
       exit(0);
    }
 
+   renderer->resources = &resources;
    renderer->CreateConObjects(&console);
+
+   resources.renderer = renderer;
 
    console.ParseExecFile("./data/autoexec"); // Autoexec is the default autoexec path
    console.ParseCommandLine(argc, argv);
@@ -56,63 +62,27 @@ int main(int argc, char** argv) {
    renderer->world = &world;
    renderer->Initialize();
 
-   Model* testModel = renderer->modelLoader.LoadModel(console.CVarGetData("testmodel", ""));
-   if (!testModel) {
-      printf("Fatal: TestModel wasn't loaded, aborting!\n");
-      exit(0);
-   }
-
-   MantaPackModel(testModel, "test.mmdl");
-
-   renderer->CreateVertexBuffer(testModel);
-   renderer->modelQueue.emplace_back(testModel);
-
-   Shader* testShader = renderer->shaderLoader.LoadShader(console.CVarGetData("testshader", ""));
-   //Shader* testShader = renderer->shaderLoader.LoadCode("engine#error");
-
-   if (!testShader) {
-      printf("Fatal: TestShader wasn't loaded, aborting!\n");
-      exit(0);
-   }
-
-   renderer->CreateShaderProgram(testShader);
-
-   testModel->shader = testShader;
-
    Camera camera;
    camera.position = glm::vec3(0, 0, 3);
    camera.euler = glm::vec3(0, 180, 0);
    camera.ignoreConFov = false;
    camera.renderer = renderer;
+   camera.isProtected = true;
+   camera.name = "Scene Camera";
 
    renderer->camera = &camera;
 
    world.entities.emplace_back(&camera);
 
-   Entity testEnt;
-
-   testEnt.models.emplace_back(testModel);
-   world.entities.emplace_back(&testEnt);
-
    Light testLight1, testLight2, testLight3;
-
-   Model* icoGizmo = renderer->modelLoader.LoadModel("./data/models/IcoGizmo.obj");
-      
-   if (!icoGizmo) {
-      printf("Fatal: IcoGizmo model wasn't loaded, is it missing?\n");
-      exit(0);
-   }
-   icoGizmo->shader = testShader;
-   renderer->CreateVertexBuffer(icoGizmo);
-
    std::vector<Light*> testLights = { &testLight1, &testLight2, &testLight3 };
 
    for (int l = 0; l < testLights.size(); l++) {
       testLights[l]->type = Light::LightType::Point;
-      world.entities.emplace_back(testLights[l]);
+      //world.entities.emplace_back(testLights[l]);
 
       testLights[l]->scale = glm::vec3(1, 1, 1) * 0.1f;
-      testLights[l]->models.emplace_back(icoGizmo);
+      testLights[l]->name = "Orbit Light";
    }
 
    testLight1.color = glm::vec3(1, 0, 0);
@@ -147,6 +117,8 @@ int main(int argc, char** argv) {
    ImGui::StyleColorsDark();
    renderer->InitImGui();
 
+   ImGuiIO& imguiIO = ImGui::GetIO();
+
    while (true) {
       glfwPollEvents();
 
@@ -167,8 +139,21 @@ int main(int argc, char** argv) {
       double nowMouseX, nowMouseY;
       glfwGetCursorPos(renderer->window, &nowMouseX, &nowMouseY);
 	 
-      if (lockCursor)
+      if (lockCursor) {
 	 camera.euler += glm::vec3(nowMouseY - mouseY, mouseX - nowMouseX, 0) * 0.1f;
+      
+	 if (glfwGetKey(renderer->window, GLFW_KEY_W))
+	    camera.position += glm::rotate(camera.rotation, glm::vec3(0, 0, 1)) * world.timeDelta;
+
+	 if (glfwGetKey(renderer->window, GLFW_KEY_S))
+	    camera.position += glm::rotate(camera.rotation, glm::vec3(0, 0, -1)) * world.timeDelta;
+
+	 if (glfwGetKey(renderer->window, GLFW_KEY_A))
+	    camera.position += glm::rotate(camera.rotation, glm::vec3(1, 0, 0)) * world.timeDelta;
+
+	 if (glfwGetKey(renderer->window, GLFW_KEY_D))
+	    camera.position += glm::rotate(camera.rotation, glm::vec3(-1, 0, 0)) * world.timeDelta;
+      }
 
       if (glfwGetKey(renderer->window, GLFW_KEY_ESCAPE) == GLFW_PRESS && !hasLocked) {
 	 lockCursor = !lockCursor;
@@ -178,18 +163,6 @@ int main(int argc, char** argv) {
 	 
       if (glfwGetKey(renderer->window, GLFW_KEY_ESCAPE) == GLFW_RELEASE)
 	 hasLocked = false;
-
-      if (glfwGetKey(renderer->window, GLFW_KEY_W))
-	 camera.position += glm::rotate(camera.rotation, glm::vec3(0, 0, 1)) * world.timeDelta;
-
-      if (glfwGetKey(renderer->window, GLFW_KEY_S))
-	 camera.position += glm::rotate(camera.rotation, glm::vec3(0, 0, -1)) * world.timeDelta;
-
-      if (glfwGetKey(renderer->window, GLFW_KEY_A))
-	 camera.position += glm::rotate(camera.rotation, glm::vec3(1, 0, 0)) * world.timeDelta;
-
-      if (glfwGetKey(renderer->window, GLFW_KEY_D))
-	 camera.position += glm::rotate(camera.rotation, glm::vec3(-1, 0, 0)) * world.timeDelta;
 
       mouseX = nowMouseX;
       mouseY = nowMouseY;
@@ -204,15 +177,25 @@ int main(int argc, char** argv) {
 
       renderer->BeginRender();
 
-      //renderer->BeginImGui();
-
       world.Draw(renderer);
 
-      //ImGui::Begin("Test");
+      if (!lockCursor) {
+	 renderer->BeginImGui();
+      
+	 ImGui::Begin("Windows");
+	 
+	 ImGui::Checkbox("Renderer", &renderer->showImGuiWindow);
+	 ImGui::Checkbox("World", &world.showWindow);
+	 ImGui::Checkbox("Resources", &resources.showWindow);
 
-      //ImGui::End();
+	 ImGui::End();
 
-      //renderer->EndImGui();
+	 world.DrawImGuiWindow();
+	 renderer->DrawImGuiWindow();
+	 resources.DrawImGuiWindow();
+
+	 renderer->EndImGui();
+      }
 
       if (renderer->EndRender() != Renderer::Status::Running) {
 	 break;

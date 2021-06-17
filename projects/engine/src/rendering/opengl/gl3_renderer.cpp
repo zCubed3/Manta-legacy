@@ -17,6 +17,8 @@
 #include <imgui/backends/imgui_impl_glfw.h>
 #include <imgui/backends/imgui_impl_opengl3.h>
 
+#include <assets/resources.hpp>
+
 //
 // Callbacks
 //
@@ -98,7 +100,7 @@ void GL3Renderer::Initialize() {
 	 return;
       }
 
-      Shader* errShader = shaderLoader.LoadCode("engine#error", gl3ErrorShaderCode);
+      Shader* errShader = resources->shaderLoader.LoadCode("engine#error", gl3ErrorShaderCode);
       CreateShaderProgram(errShader);
    }
    else {
@@ -108,8 +110,10 @@ void GL3Renderer::Initialize() {
 
 void GL3Renderer::BeginRender() {
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-   glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);\
+   glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
 
+   if (vsync)
+      glfwSwapInterval(vsync);
 }
 
 Renderer::Status GL3Renderer::EndRender() {
@@ -172,6 +176,18 @@ void GL3Renderer::CreateConObjects(Console* console) {
       console->CreateCVar("gl_samples", "1");
       
    }
+}
+
+void GL3Renderer::DrawImGuiWindow() {
+   if (!showImGuiWindow)
+      return;
+
+   ImGui::Begin("Renderer");
+   
+   ImGui::Text("OpenGL 3.3");
+   ImGui::Checkbox("VSync", &vsync);
+
+   ImGui::End();
 }
 
 //

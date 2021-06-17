@@ -12,7 +12,7 @@
 ShaderProgram::~ShaderProgram() {} // Silence the compiler
 
 void Shader::Bind() {
-   if (program != nullptr)
+   if (program)
       program->Bind();
    else
       printf("Error: Can't bind Shader, the ShaderProgram hasn't been assigned yet!\n");
@@ -41,6 +41,7 @@ Shader* ShaderLoader::LoadShader(std::string path) {
 
    std::string fileText((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
    buffer->code = fileText;
+   buffer->name = path;
 
    auto end = std::chrono::high_resolution_clock::now();
    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
@@ -57,6 +58,7 @@ Shader* ShaderLoader::LoadCode(std::string name, std::string code) {
 
    Shader* buffer = new Shader();
    buffer->code = code;
+   buffer->name = name;
 
    printf("Loaded shader code internally, %s\n", name.c_str());
    shaders.emplace(name, buffer);

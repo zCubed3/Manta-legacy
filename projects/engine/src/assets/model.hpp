@@ -11,6 +11,7 @@ class Shader;
 class Model;
 class Entity;
 class Renderer;
+class Resources;
 
 class VertexBuffer {
    public:
@@ -39,7 +40,7 @@ class Model {
       VertexBuffer* vertexBuffer = nullptr;
       Shader* shader = nullptr;
 
-      void Draw(Renderer* renderer, Entity* entity);
+      void Draw(Renderer* renderer, Resources* resources, Entity* entity);
 };
 
 class ModelLoader {

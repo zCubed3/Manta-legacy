@@ -8,6 +8,7 @@ class Entity;
 class Light;
 class Console;
 class Renderer;
+class Resources;
 
 #include <entities/light.hpp>
 
@@ -34,6 +35,7 @@ class World {
       
       WorldData data;
       Console* console;
+      Resources* resources;
 
       void CreateConObjects(Console* console);
       void Update();
@@ -42,6 +44,9 @@ class World {
       float timeTotal = 0.0f;
       float timeLast = 0.0f;
       float timeDelta = 0.0f;
+
+      bool showWindow = false;
+      void DrawImGuiWindow();
 };
 
 #endif

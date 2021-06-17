@@ -14,7 +14,7 @@ void Camera::Update(World* world) {
 
    glm::vec3 forward = glm::rotate(rotation, glm::vec3(0, 0, 1));
 
-   view = glm::lookAt(position, position + forward, glm::vec3(0, 1, 0));
+   view = glm::lookAt(position, position + forward, glm::rotate(rotation, glm::vec3(0, 1, 0)));
 
    if (!ignoreConFov && world)
       if (world->console)

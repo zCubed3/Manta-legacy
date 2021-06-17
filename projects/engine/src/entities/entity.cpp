@@ -15,16 +15,19 @@ void Entity::Update(World* world) {
    mModel = glm::scale(mModel, scale);
 }
 
-void Entity::Draw(Renderer* renderer) {
+void Entity::Draw(Renderer* renderer, Resources* resources) {
    if (!isVisible)
       return;
 
    for (int m = 0; m < models.size(); m++) {
-      if (models[m] == nullptr) {
+      if (!models[m])
+	 continue;
+
+      if (!*models[m]) {
 	 printf("Model #%i in entity is a nullptr!\n", m);
 	 continue;
       }
 
-      models[m]->Draw(renderer, this);
+      (*models[m])->Draw(renderer, resources, this);
    }
 }

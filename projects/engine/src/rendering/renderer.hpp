@@ -12,8 +12,7 @@
 class Renderer;
 class World;
 class GLFWwindow;
-
-MANTA_DECLARE_FPTR(Renderer*, FuncGetRenderer, );
+class Resources;
 
 // Technically a Color4 but it works
 // Default color is #0d2342
@@ -70,18 +69,20 @@ class Renderer {
       virtual void EndImGui() = 0;
 
       World* world;
-
-      ModelLoader modelLoader;
-      ShaderLoader shaderLoader;
+      Resources* resources;
 
       float windowWidth = 100;
       float windowHeight = 100;
+      bool vsync = true;
 
       Camera* camera;
 
       std::vector<Model*> modelQueue;
 
       GLFWwindow* window;
+
+      bool showImGuiWindow = false;
+      virtual void DrawImGuiWindow() = 0;
 };
 
 #endif

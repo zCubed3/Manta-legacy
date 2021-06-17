@@ -13,19 +13,25 @@
 
 #include <rendering/renderer.hpp>
 
+#include <assets/resources.hpp>
+
 VertexBuffer::~VertexBuffer() {} // Silence the compiler
 
-void Model::Draw(Renderer* renderer, Entity* entity) {
+void Model::Draw(Renderer* renderer, Resources* resources, Entity* entity) {
    if (renderer == nullptr) {
       printf("Can't Draw a model without a valid renderer!\n");
       return;
    }
 
+   if (resources == nullptr) {
+      printf("Something has gone horribly wrong and resources led to a nullptr! Exiting immediately!");
+      exit(0);
+   }
+
    Shader* usedShader = shader;
 
    if (!usedShader) { // If we're missing a Shader, default to the error shader
-      ShaderLoader loader = renderer->shaderLoader;
-
+      ShaderLoader loader = resources->shaderLoader;
       usedShader = loader.LoadShader("engine#error");
       
       if (!usedShader) {
@@ -34,7 +40,7 @@ void Model::Draw(Renderer* renderer, Entity* entity) {
       }
    }
 
-   if (vertexBuffer != nullptr)
+   if (vertexBuffer)
       vertexBuffer->Draw(renderer, entity, shader);
    else
       printf("Error: Model lacks a VertexBuffer, please assign it one!\n");

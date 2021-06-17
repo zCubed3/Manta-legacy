@@ -7,6 +7,7 @@ set(SOURCES
    "src/assets/manta_packer.cpp"
    "src/assets/model.cpp"
    "src/assets/shader.cpp"
+   "src/assets/resources.cpp"
 
    "src/entities/camera.cpp"
    "src/entities/entity.cpp"
@@ -22,6 +23,7 @@ set(SOURCES
    "${DEPENDS_DIR}/imgui/imgui_widgets.cpp"
    "${DEPENDS_DIR}/imgui/backends/imgui_impl_glfw.cpp"
    "${DEPENDS_DIR}/imgui/backends/imgui_impl_opengl3.cpp"
+   "${DEPENDS_DIR}/imgui/misc/cpp/imgui_stdlib.cpp"
 )
 
 set(INCLUDE_DIRS

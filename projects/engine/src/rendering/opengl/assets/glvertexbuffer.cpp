@@ -45,7 +45,10 @@ void GL3VertexBuffer::Populate(Model* model) {
 }
 
 void GL3VertexBuffer::Draw(Renderer* renderer, Entity* entity, Shader* shader) {
-   shader->Bind();
+   if (shader)
+      shader->Bind();
+   else
+      return;
 
    GL3ShaderProgram* shaderProgram = dynamic_cast<GL3ShaderProgram*>(shader->program);
    GL3Renderer* glRenderer = dynamic_cast<GL3Renderer*>(renderer);
