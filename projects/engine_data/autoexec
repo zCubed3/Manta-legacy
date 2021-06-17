@@ -5,3 +5,5 @@
 +width 1280
 +height 720
 +fov 90
+
++r_window_resizable true

@@ -12,7 +12,7 @@ This software was written using NeoVim with many customizations and plugins to m
 
 | OS            | Compilers     | Architectures  | Build |
 | :-----------  |:-------------:| :-----:        | :---: |
-| <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Tux.svg/1200px-Tux.svg.png" width="32"/> Linux | GNU GCC, LLVM Clang | x86, amd64 | ![Linux Build](https://github.com/zCubed3/Manta/actions/workflows/linuxbuild.yml/badge.svg) |
+| <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Tux.svg/1200px-Tux.svg.png" width="32"/> Linux | GNU GCC, LLVM Clang | x86, amd64 | Master: ![Linux Build](https://github.com/zCubed3/Manta/actions/workflows/linuxbuild.yml/badge.svg?branch=master) <br/> Experimental: ![Linux Build](https://github.com/zCubed3/Manta/actions/workflows/linuxbuild.yml/badge.svg?branch=experimental) <br/>|
 
 ### Unsupported Platforms
 | OS            | Compilers     | Architectures  |
@@ -62,5 +62,8 @@ This software was written using NeoVim with many customizations and plugins to m
     * GL Mathematics library, licensed under the MIT license, [g-truc/glm](https://github.com/g-truc/glm)
     * Dear ImGui, licensed under the MIT license, [ocornut/imgui](https://github.com/ocornut/imgui)
 
-2. Misc
-    * For the badge [forthebadge](forthebadge.com) for the header images!<br/>
+2. Resources
+    * Utah Teapot model (used for testing shading)
+
+3. Misc
+   * For the badge [forthebadge](forthebadge.com) for the header images!<br/>
