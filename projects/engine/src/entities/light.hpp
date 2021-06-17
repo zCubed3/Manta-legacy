@@ -14,10 +14,18 @@ class LightData {
 class Light : public Entity {
    public:
       glm::vec3 color; 
+      float range = 10.0f;
+      float intensity = 1.0f;
+
+      // Used for certain lighting types
+      // Spot: 1 = inner angle, 2 = outer angle
+      float param1 = 45.0f;
+      float param2 = 55.0f;
 
       enum class LightType {
       	 Sun,
-	 Point
+	 Point,
+	 Spot
       };
 
       LightType type;

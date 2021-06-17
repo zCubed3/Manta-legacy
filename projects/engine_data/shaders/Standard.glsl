@@ -54,15 +54,39 @@ uniform vec3 MANTA_ambientColor;
 
 uniform int MANTA_lightCount;
 uniform vec3 MANTA_lightPositions[32];
+uniform vec3 MANTA_lightDirections[32];
 uniform vec3 MANTA_lightColors[32];
+uniform float MANTA_lightRanges[32];
+uniform float MANTA_lightIntensities[32];
+uniform float MANTA_lightParams1[32];
+uniform float MANTA_lightParams2[32];
 uniform int MANTA_lightTypes[32];
 
-float sphereAtten(vec3 position, float range, float strength) {
-  vec3 direction = position - vert_pos;
-  float dist = length(direction);
+#define DEG_TO_RAD 0.01745329251
 
-  float falloff = pow(1 - dist / range, 1.0 / strength);
-  return max(dot(normalize(normal), normalize(direction)) * falloff, 0.0);
+float sphereAtten(vec3 position, float range, float intensity) {
+   vec3 direction = position - vert_pos;
+   float dist = length(direction);
+
+   float falloff = 1 - dist / range;
+   return max(dot(normalize(normal), normalize(direction)) * falloff, 0.0) * intensity;
+}
+
+float spotAtten(vec3 position, vec3 direction, float range, float intensity, float innerAngle, float outerAngle) {
+   vec3 lightDir = position - vert_pos;
+   float dist = length(lightDir);
+   float spot = max(0.0, dot(normalize(direction), normalize(-lightDir)));
+
+   // Fades the edges of the light
+   float innerEpsilon = cos(innerAngle * DEG_TO_RAD);
+   float outerEpsilon = cos(outerAngle * DEG_TO_RAD);
+   float epsilon = innerEpsilon - outerEpsilon;
+   if (spot > outerEpsilon)
+      spot = clamp((spot - outerEpsilon) / epsilon, 0.0, 1.0); 
+   else
+      spot = 0;
+   
+   return (spot * (range / dist)) * intensity;
 }
 
 float blinnPhongSpecular(vec3 position, float power) {
@@ -79,14 +103,25 @@ void main() {
    vec3 lighting = MANTA_ambientColor;
 
    for (int l = 0; l < MANTA_lightCount; l++) {
+      float lDot = 0.0;
+
+      if (MANTA_lightTypes[l] != 0)
+	 lDot = dot(normalize(normal), normalize(MANTA_lightPositions[l] - vert_pos));
+      else
+	 lDot = dot(normalize(normal), normalize(MANTA_lightDirections[l]));
+
+      if (lDot <= 0.0)
+	 continue;
+
       float atten = 1;
-      if (MANTA_lightTypes[l] == 1) // Point lighting
-	 atten = sphereAtten(MANTA_lightPositions[l], 100, 1);
+      if (MANTA_lightTypes[l] == 1) // Point lights
+	 atten = sphereAtten(MANTA_lightPositions[l], MANTA_lightRanges[l], MANTA_lightIntensities[l]);
 
-      float lDot = dot(normalize(normal), normalize(MANTA_lightPositions[l] - vert_pos)) * atten;
-
-      lighting += MANTA_lightColors[l] * lDot;
-      lighting += MANTA_lightColors[l] * blinnPhongSpecular(MANTA_lightPositions[l], 256);
+      if (MANTA_lightTypes[l] == 2) // Spot lights
+	 atten = spotAtten(MANTA_lightPositions[l], MANTA_lightDirections[l], MANTA_lightRanges[l], MANTA_lightIntensities[l], MANTA_lightParams1[l], MANTA_lightParams2[l]);
+      
+      lighting += MANTA_lightColors[l] * lDot * atten;
+      lighting += MANTA_lightColors[l] * blinnPhongSpecular(MANTA_lightPositions[l], 256) * atten;
    }
 
    //lighting = clamp(lighting, 0, 1);

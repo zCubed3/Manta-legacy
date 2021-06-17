@@ -1,16 +1,17 @@
-#include <assets/glvertexbuffer.hpp>
+#include "glvertexbuffer.hpp"
 
 #include <GL/glew.h>
 
 #include <assets/shader.hpp>
-#include <assets/glshaderprogram.hpp>
-#include <renderer.hpp>
+#include <rendering/renderer.hpp>
+
+#include "glshaderprogram.hpp"
 
 #include <entities/world.hpp>
 
 #include <glm/glm/gtc/type_ptr.hpp>
 
-#include <gl3_renderer.hpp>
+#include <rendering/opengl/gl3_renderer.hpp>
 #include <string>
 
 GL3VertexBuffer::~GL3VertexBuffer() {
@@ -84,19 +85,44 @@ void GL3VertexBuffer::Draw(Renderer* renderer, Entity* entity, Shader* shader) {
 	    int lightPosLocation = glGetUniformLocation(program, locationString);
 	    glUniform3fv(lightPosLocation, 1, glm::value_ptr(renderer->world->data.lightPositions[l]));
 
+	    sprintf(locationString, "MANTA_lightDirections[%i]", l);
+	    
+	    int lightDirLocation = glGetUniformLocation(program, locationString);
+	    glUniform3fv(lightDirLocation, 1, glm::value_ptr(renderer->world->data.lightDirections[l]));
+
 	    sprintf(locationString, "MANTA_lightColors[%i]", l);
 	    
 	    int lightColLocation = glGetUniformLocation(program, locationString);
 	    glUniform3fv(lightColLocation, 1, glm::value_ptr(renderer->world->data.lightColors[l]));
+
+	    sprintf(locationString, "MANTA_lightRanges[%i]", l);
+	    
+	    int lightRangeLocation = glGetUniformLocation(program, locationString);
+	    glUniform1f(lightRangeLocation, renderer->world->data.lightRanges[l]);
+
+	    sprintf(locationString, "MANTA_lightIntensities[%i]", l);
+	    
+	    int lightIntensitiesLocation = glGetUniformLocation(program, locationString);
+	    glUniform1f(lightIntensitiesLocation, renderer->world->data.lightIntensities[l]);
+
+	    sprintf(locationString, "MANTA_lightParams1[%i]", l);
+	    
+	    int lightP1Location = glGetUniformLocation(program, locationString);
+	    glUniform1f(lightP1Location, renderer->world->data.lightParams1[l]);
+
+	    sprintf(locationString, "MANTA_lightParams2[%i]", l);
+	    
+	    int lightP2Location = glGetUniformLocation(program, locationString);
+	    glUniform1f(lightP2Location, renderer->world->data.lightParams2[l]);
 
 	    sprintf(locationString, "MANTA_lightTypes[%i]", l);
 	    
 	    int lightTypeLocation = glGetUniformLocation(program, locationString);
 	    glUniform1i(lightTypeLocation, renderer->world->data.lightTypes[l]);
 	 }
-      }
 
-      glUniform1f(glGetUniformLocation(program, "MANTA_fTime"), renderer->timeTotal);
+	 glUniform1f(glGetUniformLocation(program, "MANTA_fTime"), renderer->world->timeTotal);
+      }
    }
 
    glBindVertexArray(vao);

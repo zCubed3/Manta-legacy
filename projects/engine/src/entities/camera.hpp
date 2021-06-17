@@ -1,9 +1,7 @@
 #ifndef MANTA_CAMERAENT_H
 #define MANTA_CAMERAENT_H
 
-#include <glm/glm/glm.hpp>
-
-#include <entities/entity.hpp>
+#include "entity.hpp"
 
 class Renderer;
 

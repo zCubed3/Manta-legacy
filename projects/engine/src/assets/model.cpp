@@ -8,10 +8,12 @@
 #include <chrono>
 #include <regex>
 
-#include <assets/shader.hpp>
+#include "shader.hpp"
 #include <common/spinner.hpp>
 
-#include <renderer.hpp>
+#include <rendering/renderer.hpp>
+
+VertexBuffer::~VertexBuffer() {} // Silence the compiler
 
 void Model::Draw(Renderer* renderer, Entity* entity) {
    if (renderer == nullptr) {

@@ -20,22 +20,6 @@ set(CMAKE_SHARED_LIBRARY_PREFIX "")
 set(ENGINE_DIR ${PROJECTS_DIR}/engine)
 set(DEPENDS_DIR ${CMAKE_SOURCE_DIR}/dependencies)
 
-# Comment out elements in this list to determine the render apis compiled into the engine
-set(RENDER_APIS
-   "COMPILE_GL" # Universal
-   #"COMPILE_VK" # Universal
-)
-
-if("COMPILE_GL" IN_LIST RENDER_APIS)
-   message("Compiling OpenGL backend.")
-   add_subdirectory(${PROJECTS_DIR}/renderers/opengl)
-endif()
-
-if("COMPILE_VK" IN_LIST RENDER_APIS)
-   message("Compiling Vulkan backend.")
-   add_subdirectory(${PROJECTS_DIR}/renderers/vulkan)
-endif()
-
 # Builds the "engine", which is just the loader that brings all the modules together
 add_subdirectory(${ENGINE_DIR})
 

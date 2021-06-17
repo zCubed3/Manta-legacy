@@ -1,13 +1,13 @@
 #ifndef MANTA_RENDERER_H
 #define MANTA_RENDERER_H
 
-#include "manta_macros.hpp"
-#include "console.hpp"
+#include <manta_macros.hpp>
+#include <console/console.hpp>
 
-#include "assets/model.hpp"
-#include "assets/shader.hpp"
+#include <assets/model.hpp>
+#include <assets/shader.hpp>
 
-#include "entities/camera.hpp"
+#include <entities/camera.hpp>
 
 class Renderer;
 class World;
@@ -41,7 +41,9 @@ class Renderer {
    // Actual renderer functionality
    public:
       virtual void Initialize() = 0;
-      virtual Status Render() = 0;
+
+      virtual void BeginRender() = 0;
+      virtual Status EndRender() = 0;
 
       virtual void CreateConObjects(Console* console) {
 	 if (console != nullptr) {
@@ -58,21 +60,22 @@ class Renderer {
       Console* console = nullptr; // Allows the renderer to read from a console
       ClearColor clearColor;
 
-      // Rendering necessities
-      virtual void CreateBuffer(Model* model) = 0;
+      // Initializes GPU assets
+      virtual void CreateVertexBuffer(Model* model) = 0;
       virtual void CreateShaderProgram(Shader* shader) = 0;
+
+      // ImGui
+      virtual void InitImGui() = 0;
+      virtual void BeginImGui() = 0;
+      virtual void EndImGui() = 0;
 
       World* world;
 
       ModelLoader modelLoader;
       ShaderLoader shaderLoader;
 
-      float windowWidth = 1;
-      float windowHeight = 1;
-
-      float timeTotal = 0.0f;
-      float timeLast = 0.0f;
-      float timeDelta = 0.0f;
+      float windowWidth = 100;
+      float windowHeight = 100;
 
       Camera* camera;
 

@@ -9,6 +9,8 @@
 
 #include <chrono>
 
+ShaderProgram::~ShaderProgram() {} // Silence the compiler
+
 void Shader::Bind() {
    if (program != nullptr)
       program->Bind();

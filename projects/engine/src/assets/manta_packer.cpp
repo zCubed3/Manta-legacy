@@ -1,6 +1,5 @@
-#include <assets/manta_packer.hpp>
-
-#include <assets/model.hpp>
+#include "manta_packer.hpp"
+#include "model.hpp"
 
 #include <stdio.h>
 
@@ -11,7 +10,7 @@
 
 #include <common/spinner.hpp>
 
-#include <console.hpp>
+#include <console/console.hpp>
 
 // Creates an .mmdl
 //

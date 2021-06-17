@@ -1,7 +1,7 @@
 #ifndef MANTAGL3_GL3RENDERER_H
 #define MANTAGL3_GL3RENDERER_H
 
-#include <renderer.hpp>
+#include <rendering/renderer.hpp>
 
 typedef unsigned int uint;
 
@@ -12,12 +12,18 @@ class GL3Renderer : public Renderer {
       virtual const char* get_APIName() override { return "OpenGL 3.3"; };
 
       void Initialize() override;
-      Status Render() override;
+      
+      void BeginRender() override;
+      Status EndRender() override;
 
-      void CreateBuffer(Model* model) override;
+      void CreateVertexBuffer(Model* model) override;
       void CreateShaderProgram(Shader* shader) override;
 
       virtual void CreateConObjects(Console* console) override;
+
+      void InitImGui() override;
+      void BeginImGui() override;
+      void EndImGui() override;
 };
 
 extern std::string gl3ErrorShaderCode;

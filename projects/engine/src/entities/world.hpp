@@ -7,6 +7,7 @@
 class Entity;
 class Light;
 class Console;
+class Renderer;
 
 #include <entities/light.hpp>
 
@@ -18,7 +19,12 @@ class WorldData {
 
       int lightCount;
       glm::vec3 lightPositions[MAX_LIGHTS];
+      glm::vec3 lightDirections[MAX_LIGHTS];
       glm::vec3 lightColors[MAX_LIGHTS];
+      float lightRanges[MAX_LIGHTS];
+      float lightIntensities[MAX_LIGHTS];
+      float lightParams1[MAX_LIGHTS];
+      float lightParams2[MAX_LIGHTS];
       int lightTypes[MAX_LIGHTS];
 };
 
@@ -31,6 +37,11 @@ class World {
 
       void CreateConObjects(Console* console);
       void Update();
+      void Draw(Renderer* renderer);
+
+      float timeTotal = 0.0f;
+      float timeLast = 0.0f;
+      float timeDelta = 0.0f;
 };
 
 #endif

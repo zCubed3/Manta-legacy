@@ -1,17 +1,21 @@
-#include <gl3_renderer.hpp>
+#include "gl3_renderer.hpp"
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
 #include <stdio.h>
 #include <string.h>
-#include <console.hpp>
+#include <console/console.hpp>
 
-#include <assets/glvertexbuffer.hpp>
-#include <assets/glshaderprogram.hpp>
+#include "assets/glvertexbuffer.hpp"
+#include "assets/glshaderprogram.hpp"
 
 #include <entities/light.hpp>
 #include <entities/world.hpp>
+
+#include <imgui/imgui.h>
+#include <imgui/backends/imgui_impl_glfw.h>
+#include <imgui/backends/imgui_impl_opengl3.h>
 
 //
 // Callbacks
@@ -65,6 +69,7 @@ void GL3Renderer::Initialize() {
       glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
       glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
       glfwWindowHint(GLFW_SAMPLES, sampleCount);
+      glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
       GLFWmonitor* monitor = nullptr;
 
@@ -101,24 +106,13 @@ void GL3Renderer::Initialize() {
    }
 }
 
-Renderer::Status GL3Renderer::Render() {
-   glfwPollEvents();
+void GL3Renderer::BeginRender() {
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-   glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
+   glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);\
 
-   timeTotal = (float)glfwGetTime();
-   timeDelta = timeTotal - timeLast;
-   timeLast = timeTotal;
+}
 
-   if (world) {
-      for (int e = 0; e < world->entities.size(); e++) {
-	 if (world->entities[e] == nullptr)
-	    continue;
-
-	 world->entities[e]->Draw(this);
-      }
-   }
-
+Renderer::Status GL3Renderer::EndRender() {
    Renderer::Status state = Renderer::Status::Running;
 
    glfwSwapBuffers(window);
@@ -128,9 +122,26 @@ Renderer::Status GL3Renderer::Render() {
    }
 
    return state;
+
 }
 
-void GL3Renderer::CreateBuffer(Model* model) {
+void GL3Renderer::InitImGui() {
+   ImGui_ImplGlfw_InitForOpenGL(window, true);
+   ImGui_ImplOpenGL3_Init("#version 150");
+}
+
+void GL3Renderer::BeginImGui() {
+   ImGui_ImplOpenGL3_NewFrame();
+   ImGui_ImplGlfw_NewFrame();
+   ImGui::NewFrame(); 
+}
+
+void GL3Renderer::EndImGui() {
+   ImGui::Render();
+   ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
+void GL3Renderer::CreateVertexBuffer(Model* model) {
    if (model != nullptr) {
       if (model->vertexBuffer) {
 	 printf("Model already has a vertex buffer, deleting it!\n");

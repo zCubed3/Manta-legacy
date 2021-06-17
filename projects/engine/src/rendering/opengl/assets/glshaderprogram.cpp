@@ -1,8 +1,8 @@
-#include <assets/glshaderprogram.hpp>
+#include "glshaderprogram.hpp"
 
 #include <stdio.h>
 
-#include <renderer.hpp>
+#include <rendering/renderer.hpp>
 #include <GL/glew.h>
 
 GL3ShaderProgram::~GL3ShaderProgram() {
