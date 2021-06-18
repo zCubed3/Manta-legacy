@@ -73,104 +73,45 @@ void World::DrawImGuiWindow() {
 
    ImGui::Begin("World");
 
-   if (ImGui::Button("Add Light"))
-      entities.emplace_back(new Light());
+   if (ImGui::TreeNode("Create Entity##create_ent_menu")) {
+      if (ImGui::Button("+ Light"))
+	 entities.emplace_back(new Light());
 
-   if (ImGui::Button("Add Entity"))
-      entities.emplace_back(new Entity());
+      if (ImGui::Button("+ Entity"))
+	 entities.emplace_back(new Entity());
+   
+      ImGui::TreePop();
+   }
 
    if (ImGui::TreeNode("World Settings")) {
       ImGui::DragFloat3("Ambient Color", glm::value_ptr(data.ambientColor), timeDelta, 0, 1);
+      
+      if (ImGui::TreeNode("World Info")) {
+	 ImGui::Text("Lights: %i", data.lightCount);
+	 ImGui::TreePop();
+      }
+
       ImGui::TreePop();
    }
 
-   if (ImGui::TreeNode("World Info")) {
-      ImGui::Text("Lights: %i", data.lightCount);
-      ImGui::TreePop();
-   }
 
    int deletion = -1;
    if (ImGui::TreeNode("Entities")) {
       int e = 0;
       for (const auto& entity : entities) {
-	 if (entity == nullptr) {
+	 ImGui::PushID("delete_ent_"); ImGui::PushID(e);
+	 if (ImGui::Button("X")) {
+	    ImGui::PopID(); ImGui::PopID();
+	    deletion = e;
+	    break;
+	 }
+
+	 if (entity == nullptr)
 	    continue;
-	 }
-   
-	 char entityName[256];
-	 sprintf(entityName, "%s##%i", entity->name.c_str(), e);
-
-	 if (ImGui::TreeNode(entityName)) {
-	    if (!entity->isProtected)
-	       if (ImGui::Button("Delete"))
-		  deletion = e;
-
-	    ImGui::DragFloat3("Position", glm::value_ptr(entity->position), timeDelta);
-	    ImGui::DragFloat3("Euler", glm::value_ptr(entity->euler), timeDelta);
-	    ImGui::DragFloat3("Scale", glm::value_ptr(entity->scale), timeDelta);
-
-	    if (ImGui::InputText("Name", &entity->nameBuffer, ImGuiInputTextFlags_EnterReturnsTrue)) {
-	       entity->name = entity->nameBuffer;
-	       entity->nameBuffer.clear();
-	    }	
-
-	    if (ImGui::Button("Add Model"))
-	       entity->models.push_back(nullptr);
-
-	    char modelsId[56];
-	    sprintf(modelsId, "Models##%s_%i", entity->name.c_str(), e);
-
-	    if (ImGui::TreeNode(modelsId)) {
-	       int i = 0;
-	       for (auto& model : entity->models) {
-		  const char* modelName = "None";
-
-		  if (model)
-		     if (*model)
-			modelName = (*model)->name.c_str();
-
-		  char modelText[56];
-		  sprintf(modelText, "%s##%s_%i_%i", modelName, entity->name.c_str(), e, i);
-
-		  if (ImGui::Button("X")) {
-		     entity->models.erase(entity->models.begin() + i);
-		     break;
-		  }
-
-		  ImGui::SameLine();
-		  if (ImGui::BeginCombo(modelText, modelName)) {
-		     for (auto& loadedModel : resources->modelLoader.loadedModels) {
-			if (!loadedModel.second)
-			   continue;
-
-			bool isSelected = modelName == loadedModel.second->name;
-
-			if (ImGui::Selectable(loadedModel.second->name.c_str(), isSelected))
-			   model = &loadedModel.second;
-
-			if (isSelected)
-			   ImGui::SetItemDefaultFocus();
-		     }
-		     ImGui::EndCombo();
-		  }
-
-		  i++;
-	       }
-	       ImGui::TreePop();
-	    }
-
-	    Light* light = dynamic_cast<Light*>(entity);
-	    if (light) {
-	       ImGui::InputInt("Type", reinterpret_cast<int*>(&light->type), 1);
-	       ImGui::ColorEdit3("Color", glm::value_ptr(light->color));
-	       ImGui::DragFloat("Range", &light->range, timeDelta);
-	       ImGui::DragFloat("Intensity", &light->intensity, timeDelta);
-	       ImGui::DragFloat("Param 1", &light->param1, timeDelta);
-	       ImGui::DragFloat("Param 2", &light->param2, timeDelta);
-	    }
-
-	    ImGui::TreePop();
-	 }
+	
+	 ImGui::SameLine();
+	 entity->DrawImGui(this, e);
+	 ImGui::PopID(); ImGui::PopID();
 
 	 e++;
       }

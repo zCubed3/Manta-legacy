@@ -2,7 +2,7 @@
 #define MANTA_MODEL_H
 
 #include <vector>
-#include <map>
+#include <unordered_map>
 #include <string>
 
 #include <glm/glm/glm.hpp>
@@ -46,7 +46,7 @@ class Model {
 class ModelLoader {
    public:
       Model* LoadModel(std::string path);
-      std::map<std::string, Model*> loadedModels;
+      std::unordered_map<std::string, Model*> loadedModels;
 };
 
 #endif

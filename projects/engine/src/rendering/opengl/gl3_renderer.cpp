@@ -7,8 +7,8 @@
 #include <string.h>
 #include <console/console.hpp>
 
-#include "assets/glvertexbuffer.hpp"
-#include "assets/glshaderprogram.hpp"
+#include "assets/glmodel.hpp"
+#include "assets/glshader.hpp"
 
 #include <entities/light.hpp>
 #include <entities/world.hpp>
@@ -43,43 +43,32 @@ void OnFramebufferResize(GLFWwindow* window, int width, int height) {
 // Renderer functionality
 //
 
+// Shadowmaps based on https://learnopengl.com/Advanced-Lighting/Shadows/Shadow-Mapping
 void GL3Renderer::Initialize() {
    glewExperimental = true; // Enables more features
 
    if (glfwInit()) {
       printf("Initialized GLFW\n");
-
-      bool isResizable = false;
-      bool fullscreen = false;
-      int winWidth = 800;
-      int winHeight = 600;
-      std::string winTitle = "Manta";
-      int sampleCount = 1;
-      bool transparentFB = false;
-
-      if (console) {
-	 isResizable = console->CVarGetBool("r_window_resizable", false);
-	 winWidth = console->CVarGetInt("width", 800);
-	 winHeight = console->CVarGetInt("height", 600);
-	 winTitle = console->CVarGetData("gamename", "GL3Window");
-	 fullscreen = console->CVarGetBool("fullscreen", false);
-	 
-	 sampleCount = console->CVarGetInt("gl_samples", 1);
-      }
-
-      glfwWindowHint(GLFW_RESIZABLE, isResizable);
+ 
+      glfwWindowHint(GLFW_RESIZABLE, console->CVarGetBool("r_window_resizable", false));
+      glfwWindowHint(GLFW_SAMPLES, console->CVarGetInt("r_msaa_samples", 1));
       glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
       glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-      glfwWindowHint(GLFW_SAMPLES, sampleCount);
       glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
+      
       GLFWmonitor* monitor = nullptr;
 
-      if (fullscreen)
+      if (console->CVarGetBool("fullscreen", false))
 	 monitor = glfwGetPrimaryMonitor();
 
-      window = glfwCreateWindow(winWidth, winHeight, winTitle.c_str(), monitor, nullptr);
+      window = glfwCreateWindow(console->CVarGetInt("width", 800), console->CVarGetInt("height", 600), console->CVarGetData("gamename", "Manta").c_str(), monitor, nullptr);
       glfwMakeContextCurrent(window);
+
+      // Supply the renderer some info
+      int intWidth, intHeight;
+      glfwGetWindowSize(window, &intWidth, &intHeight); 
+      windowWidth = intWidth;
+      windowHeight = intHeight;
 
       // Depth testing
       glEnable(GL_DEPTH_TEST);
@@ -89,9 +78,6 @@ void GL3Renderer::Initialize() {
       glEnable(GL_CULL_FACE);
       glCullFace(GL_BACK);
 
-      windowWidth = winWidth;
-      windowHeight = winHeight;
-
       glfwSetWindowUserPointer(window, this);
       glfwSetFramebufferSizeCallback(window, OnFramebufferResize);
 
@@ -100,12 +86,25 @@ void GL3Renderer::Initialize() {
 	 return;
       }
 
-      Shader* errShader = resources->shaderLoader.LoadCode("engine#error", gl3ErrorShaderCode);
-      CreateShaderProgram(errShader);
+      // Internal engine shaders
+      CreateShaderProgram(resources->shaderLoader.LoadCode("engine#error", gl3ErrorShaderCode));
    }
    else {
       printf("Failed to initialize GLFW\n");
    }
+}
+
+void GL3Renderer::BeginRenderShadow() {
+   int originalX = windowWidth, originalY = windowHeight;
+   glViewport(0, 0, shadowmapWidth, shadowmapHeight);
+   glBindFramebuffer(GL_FRAMEBUFFER, shadowmapFBO);
+   glClear(GL_DEPTH_BUFFER_BIT);
+}
+
+void GL3Renderer::EndRenderShadow() {
+   int originalX = windowWidth, originalY = windowHeight;
+   glViewport(0, 0, originalX, originalY);
+   glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void GL3Renderer::BeginRender() {
@@ -173,7 +172,7 @@ void GL3Renderer::CreateConObjects(Console* console) {
    Renderer::CreateConObjects(console);
 
    if (console) {
-      console->CreateCVar("gl_samples", "1");
+      //console->CreateCVar("gl_samples", "1");
       
    }
 }

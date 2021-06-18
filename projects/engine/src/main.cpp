@@ -114,10 +114,16 @@ int main(int argc, char** argv) {
    bool forward = false, backward = false;
 
    ImGui::CreateContext();
-   ImGui::StyleColorsDark();
    renderer->InitImGui();
+   ImGuiStyle& style = ImGui::GetStyle();
 
+   ImGui::StyleColorsDark(&style);
+
+   style.WindowRounding = 2.0f;
+   style.FrameRounding = 2.0f;
+   
    ImGuiIO& imguiIO = ImGui::GetIO();
+   imguiIO.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
    while (true) {
       glfwPollEvents();

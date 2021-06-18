@@ -1,7 +1,7 @@
 #ifndef MANTA_SHADER_H
 #define MANTA_SHADER_H
 
-#include <map>
+#include <unordered_map>
 #include <string>
 
 class Shader;
@@ -11,6 +11,11 @@ class ShaderProgram {
    public:
       virtual void Compile(Shader* shader) = 0;
       virtual void Bind() = 0;
+
+      // Unless a pragma is declared, these are not true...
+      bool lightingEnabled; 	// #pragma MANTA_ENABLE_LIGHTING
+      bool shadowsEnabled; 	// #pragma MANTA_ENABLE_SHADOWS
+      bool globalsEnabled; 	// #pragma MANTA_ENABLE_GLOBALS
 
       virtual ~ShaderProgram() = 0;
 };
@@ -29,7 +34,7 @@ class ShaderLoader {
       Shader* LoadShader(std::string path);   
       Shader* LoadCode(std::string name, std::string code = "");
 
-      std::map<std::string, Shader*> shaders;
+      std::unordered_map<std::string, Shader*> shaders;
 };
 
 #endif

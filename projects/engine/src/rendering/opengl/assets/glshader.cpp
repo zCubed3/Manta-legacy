@@ -1,4 +1,4 @@
-#include "glshaderprogram.hpp"
+#include "glshader.hpp"
 
 #include <stdio.h>
 
@@ -103,4 +103,13 @@ void GL3ShaderProgram::Compile(Shader *shader) {
       printf("Done!\n");
    else
       printf("Failed...\n");
+}
+
+int GL3ShaderProgram::getUniform(std::string name) {
+   if (uniforms.count(name) >= 0)
+      return uniforms[name];
+
+   int uniform = glGetUniformLocation(program, name.c_str());
+   uniforms.emplace(name, uniform);
+   return uniform;
 }

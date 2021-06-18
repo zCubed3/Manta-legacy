@@ -14,10 +14,11 @@ set(SOURCES
    "src/entities/world.cpp"
 
    "src/rendering/opengl/gl3_renderer.cpp"
-   "src/rendering/opengl/assets/glvertexbuffer.cpp"
-   "src/rendering/opengl/assets/glshaderprogram.cpp"
+   "src/rendering/opengl/assets/glmodel.cpp"
+   "src/rendering/opengl/assets/glshader.cpp"
 
    "${DEPENDS_DIR}/imgui/imgui.cpp"
+   "${DEPENDS_DIR}/imgui/imgui_internal.h"
    "${DEPENDS_DIR}/imgui/imgui_draw.cpp"
    "${DEPENDS_DIR}/imgui/imgui_tables.cpp"
    "${DEPENDS_DIR}/imgui/imgui_widgets.cpp"

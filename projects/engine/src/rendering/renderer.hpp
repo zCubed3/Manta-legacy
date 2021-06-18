@@ -41,13 +41,21 @@ class Renderer {
    public:
       virtual void Initialize() = 0;
 
+      virtual void BeginRenderShadow() = 0;
+      virtual void EndRenderShadow() = 0;
+
       virtual void BeginRender() = 0;
       virtual Status EndRender() = 0;
 
       virtual void CreateConObjects(Console* console) {
 	 if (console != nullptr) {
 	    console->CreateCVar("r_window_resizable", "false");
-	    
+
+	    console->CreateCVar("r_shadowmap_width", "512");
+	    console->CreateCVar("r_shadowmap_height", "512");
+
+	    console->CreateCVar("r_msaa_samples", "1");
+
 	    console->CreateCVar("width", "1024");
 	    console->CreateCVar("height", "768");
 	    console->CreateCVar("fullscreen", "false");

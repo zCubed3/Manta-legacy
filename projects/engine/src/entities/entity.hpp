@@ -31,6 +31,9 @@ class Entity {
 
       virtual void Update(World* world);
       virtual void Draw(Renderer* renderer, Resources* resources);
+
+      // This is usually ran inside of a tree
+      virtual void DrawImGui(World* world, int index);
 };
 
 #endif

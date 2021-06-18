@@ -1,11 +1,10 @@
-#include "glvertexbuffer.hpp"
+#include "glmodel.hpp"
+#include "glshader.hpp"
 
 #include <GL/glew.h>
 
 #include <assets/shader.hpp>
 #include <rendering/renderer.hpp>
-
-#include "glshaderprogram.hpp"
 
 #include <entities/world.hpp>
 
@@ -57,17 +56,17 @@ void GL3VertexBuffer::Draw(Renderer* renderer, Entity* entity, Shader* shader) {
       uint program = shaderProgram->program;
 
       if (renderer->camera && entity) {
-	 int mMLocation = glGetUniformLocation(program, "MANTA_mM");
-	 int mVLocation = glGetUniformLocation(program, "MANTA_mV");
-	 int mPLocation = glGetUniformLocation(program, "MANTA_mP");
+	 int location = shaderProgram->getUniform("MANTA_mM");
+	 glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(entity->mModel));
 
-	 int pCamLocation = glGetUniformLocation(program, "MANTA_pCamera");
+	 location = shaderProgram->getUniform("MANTA_mV");
+	 glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(renderer->camera->view));
 
-	 glUniformMatrix4fv(mMLocation, 1, GL_FALSE, glm::value_ptr(entity->mModel));
-	 glUniformMatrix4fv(mVLocation, 1, GL_FALSE, glm::value_ptr(renderer->camera->view));
-	 glUniformMatrix4fv(mPLocation, 1, GL_FALSE, glm::value_ptr(renderer->camera->perspective));
+	 location = shaderProgram->getUniform("MANTA_mP");
+	 glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(renderer->camera->perspective));
 
-	 glUniform3fv(pCamLocation, 1, glm::value_ptr(renderer->camera->position));
+	 location = shaderProgram->getUniform("MANTA_pCamera");
+	 glUniform3fv(location, 1, glm::value_ptr(renderer->camera->position));
       }
 
       if (renderer->world) {

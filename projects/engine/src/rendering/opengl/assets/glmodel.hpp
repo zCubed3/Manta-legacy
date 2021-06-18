@@ -1,5 +1,5 @@
-#ifndef MANTAGL3_GLVERTEXBUFFER_H
-#define MANTAGL3_GLVERTEXBUFFER_H
+#ifndef MANTA_GLMODEL_H
+#define MANTA_GLMODEL_H
 
 #include <assets/model.hpp>
 

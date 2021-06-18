@@ -13,6 +13,9 @@ class GL3Renderer : public Renderer {
 
       void Initialize() override;
       
+      void BeginRenderShadow() override;
+      void EndRenderShadow() override;
+
       void BeginRender() override;
       Status EndRender() override;
 
@@ -26,8 +29,12 @@ class GL3Renderer : public Renderer {
       void EndImGui() override;
 
       void DrawImGuiWindow() override;
+
+      uint shadowmapFBO, shadowmap;
+      int shadowmapWidth, shadowmapHeight;
 };
 
-extern std::string gl3ErrorShaderCode;
+extern std::string gl3ErrorShaderCode; // Fallback shader that is used in place of a nullptr
+extern std::string gl3GBufferShaderCode; // Writes data to the gbuffer which is used for lighting
 
 #endif
