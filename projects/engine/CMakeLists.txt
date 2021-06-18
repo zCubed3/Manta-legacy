@@ -10,6 +10,7 @@ set(SOURCES
    "src/assets/resources.cpp"
 
    "src/entities/camera.cpp"
+   "src/entities/light.cpp"
    "src/entities/entity.cpp"
    "src/entities/world.cpp"
 

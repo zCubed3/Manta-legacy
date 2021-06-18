@@ -20,6 +20,7 @@ class Camera : public Entity {
       Renderer* renderer;
 
       virtual void Update(World* world) override;
+      virtual void DrawImGuiSub(World* world, int index) override;
 };
 
 #endif

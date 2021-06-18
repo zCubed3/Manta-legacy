@@ -30,6 +30,7 @@ class GL3Renderer : public Renderer {
 
       void DrawImGuiWindow() override;
 
+      uint gbufferFBO;
       uint shadowmapFBO, shadowmap;
       int shadowmapWidth, shadowmapHeight;
 };

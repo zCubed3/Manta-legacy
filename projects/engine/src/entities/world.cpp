@@ -99,19 +99,28 @@ void World::DrawImGuiWindow() {
    if (ImGui::TreeNode("Entities")) {
       int e = 0;
       for (const auto& entity : entities) {
-	 ImGui::PushID("delete_ent_"); ImGui::PushID(e);
-	 if (ImGui::Button("X")) {
+	 bool cantDrawX = false;
+
+	 if (entity)
+	    cantDrawX = entity->isProtected;
+	 
+	 if (!cantDrawX) {
+	    ImGui::PushID("delete_ent_"); ImGui::PushID(e);
+	    if (ImGui::Button("X")) {
+	       ImGui::PopID(); ImGui::PopID();
+	       deletion = e;
+	       break;
+	    }
 	    ImGui::PopID(); ImGui::PopID();
-	    deletion = e;
-	    break;
 	 }
 
 	 if (entity == nullptr)
 	    continue;
 	
-	 ImGui::SameLine();
+	 if (!cantDrawX)
+	    ImGui::SameLine();
 	 entity->DrawImGui(this, e);
-	 ImGui::PopID(); ImGui::PopID();
+	 ImGui::Spacing();
 
 	 e++;
       }

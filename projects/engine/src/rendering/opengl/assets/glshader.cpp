@@ -106,7 +106,7 @@ void GL3ShaderProgram::Compile(Shader *shader) {
 }
 
 int GL3ShaderProgram::getUniform(std::string name) {
-   if (uniforms.count(name) >= 0)
+   if (uniforms.count(name) > 0)
       return uniforms[name];
 
    int uniform = glGetUniformLocation(program, name.c_str());

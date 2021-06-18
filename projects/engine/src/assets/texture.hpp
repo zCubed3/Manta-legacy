@@ -4,6 +4,8 @@
 #include <string>
 #include <unordered_map>
 
+class TextureBuffer {}; // For storing API data
+
 class Texture {
    public:
       enum class TextureType {
@@ -18,7 +20,8 @@ class Texture {
       TextureType type;
       unsigned char* data;
       std::string name;
-      //TextureBuffer* buffer;
+      
+      TextureBuffer* buffer = nullptr;
 };
 
 class TextureLoader {

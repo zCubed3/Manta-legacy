@@ -33,7 +33,8 @@ class Entity {
       virtual void Draw(Renderer* renderer, Resources* resources);
 
       // This is usually ran inside of a tree
-      virtual void DrawImGui(World* world, int index);
+      void DrawImGui(World* world, int index);
+      virtual void DrawImGuiSub(World* world, int index) {}; // By default this does nothing, but is useful for lights and stuff
 };
 
 #endif

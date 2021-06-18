@@ -27,6 +27,11 @@ Shader* ShaderLoader::LoadShader(std::string path) {
       }
    }
 
+   if (!strstr(path.c_str(), ".glsl")) {
+      printf("Provided file didn't end in .glsl, %s, ignoring it!\n", path.c_str());
+      return nullptr;
+   }
+
    std::ifstream file(path);
 
    if (!file.is_open()) {

@@ -29,6 +29,8 @@ class Light : public Entity {
       };
 
       LightType type;
+
+      virtual void DrawImGuiSub(World *world, int index) override;
 };
 
 #endif
