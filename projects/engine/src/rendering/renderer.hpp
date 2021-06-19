@@ -4,15 +4,16 @@
 #include <manta_macros.hpp>
 #include <console/console.hpp>
 
-#include <assets/model.hpp>
-#include <assets/shader.hpp>
-
 #include <entities/camera.hpp>
 
 class Renderer;
 class World;
 class GLFWwindow;
+
 class Resources;
+class Shader;
+class Model;
+class Texture;
 
 // Technically a Color4 but it works
 // Default color is #0d2342
@@ -41,11 +42,9 @@ class Renderer {
    public:
       virtual void Initialize() = 0;
 
-      virtual void BeginRenderShadow() = 0;
-      virtual void EndRenderShadow() = 0;
-
-      virtual void BeginRender() = 0;
+      virtual void BeginRender(bool toGBuffer = true) = 0;
       virtual Status EndRender() = 0;
+      virtual void PresentRender() = 0;
 
       virtual void CreateConObjects(Console* console) {
 	 if (console != nullptr) {
@@ -55,6 +54,9 @@ class Renderer {
 	    console->CreateCVar("r_shadowmap_height", "512");
 
 	    console->CreateCVar("r_msaa_samples", "1");
+
+	    console->CreateCVar("r_shader_lighting", "./data/shaders/Lighting.glsl", true);
+	    console->CreateCVar("r_model_quad", "./data/models/ScreenQuad.obj", true);
 
 	    console->CreateCVar("width", "1024");
 	    console->CreateCVar("height", "768");
@@ -70,6 +72,7 @@ class Renderer {
       // Initializes GPU assets
       virtual void CreateVertexBuffer(Model* model) = 0;
       virtual void CreateShaderProgram(Shader* shader) = 0;
+      virtual void CreateTextureBuffer(Texture* texture) = 0;
 
       // ImGui
       virtual void InitImGui() = 0;
@@ -91,6 +94,9 @@ class Renderer {
 
       bool showImGuiWindow = false;
       virtual void DrawImGuiWindow() = 0;
+
+      Model* lightingQuad;
+      virtual void DrawLightingQuad() = 0;
 };
 
 #endif

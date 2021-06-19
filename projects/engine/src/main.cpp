@@ -119,8 +119,7 @@ int main(int argc, char** argv) {
 
    ImGui::StyleColorsDark(&style);
 
-   style.WindowRounding = 2.0f;
-   style.FrameRounding = 2.0f;
+   style.WindowRounding = 1.0f;
    
    ImGuiIO& imguiIO = ImGui::GetIO();
    imguiIO.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
@@ -178,12 +177,21 @@ int main(int argc, char** argv) {
 
       //testEnt.euler += glm::vec3(1, 0, 0);
 
-      printf("\rRunning %c", spinner.character);
-      spinner.Spin();
+      //printf("\rRunning %c", spinner.character);
+      //spinner.Spin();
 
       renderer->BeginRender();
 
       world.Draw(renderer);
+
+      renderer->EndRender();
+
+      renderer->BeginRender(false);
+      renderer->DrawLightingQuad();
+
+      if (renderer->EndRender() != Renderer::Status::Running) {
+	 break;
+      }
 
       if (!lockCursor) {
 	 renderer->BeginImGui();
@@ -202,10 +210,8 @@ int main(int argc, char** argv) {
 
 	 renderer->EndImGui();
       }
-
-      if (renderer->EndRender() != Renderer::Status::Running) {
-	 break;
-      }
+      
+      renderer->PresentRender();
    }
 }
 

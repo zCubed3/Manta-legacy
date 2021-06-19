@@ -5,11 +5,13 @@
 
 #include "model.hpp"
 #include "shader.hpp"
+#include "texture.hpp"
 
 class Resources {
    public:
       ModelLoader modelLoader;
       ShaderLoader shaderLoader;
+      TextureLoader textureLoader;
 
       bool showWindow = false;
       void DrawImGuiWindow();

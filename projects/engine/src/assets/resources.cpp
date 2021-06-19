@@ -34,13 +34,21 @@ void Resources::DrawImGuiWindow() {
 	 if (!model.second)
 	    continue;
 
+	 const char* shaderName = "None";
+	 if (model.second->shader)
+	    shaderName = model.second->shader->name.c_str();
+
 	 if (ImGui::TreeNode(model.second->name.c_str())) {
-	    if (ImGui::BeginCombo("Shader", model.second->shader->name.c_str())) {
+	    if (ImGui::BeginCombo("Shader", shaderName)) {
 	       for (auto& shader : shaderLoader.shaders) {
 		  if (!shader.second)
 		     continue;
 
-		  bool isSelected = model.second->shader == shader.second;
+		  bool isSelected = false;
+
+		  if (model.second->shader)
+		     isSelected = model.second->shader == shader.second;
+		  
 		  if (ImGui::Selectable(shader.first.c_str(), isSelected))
 		     model.second->shader = shader.second;
 

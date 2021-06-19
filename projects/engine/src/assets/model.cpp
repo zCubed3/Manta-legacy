@@ -102,7 +102,7 @@ Model* ModelLoader::LoadModel(std::string path) {
 	    if (id[1] == 't') {
 	       glm::vec2 uv;
 	       sscanf(contents.c_str(), "%f %f", &uv.x, &uv.y);
-	       uv0s.emplace_back(uv);	       
+	       uv0s.emplace_back(uv);
 	       continue;
 	    }
 
@@ -220,3 +220,23 @@ Model* ModelLoader::LoadModel(std::string path) {
    return buffer;
 }
 
+Model* ModelLoader::CreateModel(std::string name, std::vector<Model::Vertex> vertices, std::vector<unsigned int> triangles) {
+   if (loadedModels.count(name) > 0) {
+      if (loadedModels[name] != nullptr)
+	 return loadedModels[name];
+      else {
+	 printf("Model in memory from %s was corrupt or unloaded, reloading it!\n", name.c_str());
+	 loadedModels.erase(name);
+      }
+   }
+
+   Model* buffer = new Model();
+
+   buffer->name = name;
+   buffer->vertices = vertices;
+   buffer->triangles = triangles;
+
+   printf("Created model using internal data, named, %s\n", name.c_str());
+   loadedModels.emplace(name, buffer);
+   return buffer;
+}

@@ -5,6 +5,7 @@ set(SOURCES
    "src/console/common_console.cpp"
 
    "src/assets/manta_packer.cpp"
+   "src/assets/texture.cpp"
    "src/assets/model.cpp"
    "src/assets/shader.cpp"
    "src/assets/resources.cpp"
@@ -17,6 +18,7 @@ set(SOURCES
    "src/rendering/opengl/gl3_renderer.cpp"
    "src/rendering/opengl/assets/glmodel.cpp"
    "src/rendering/opengl/assets/glshader.cpp"
+   "src/rendering/opengl/assets/gltexture.cpp"
 
    "${DEPENDS_DIR}/imgui/imgui.cpp"
    "${DEPENDS_DIR}/imgui/imgui_internal.h"

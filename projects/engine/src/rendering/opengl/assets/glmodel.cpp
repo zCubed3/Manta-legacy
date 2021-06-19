@@ -54,9 +54,22 @@ void GL3VertexBuffer::Draw(Renderer* renderer, Entity* entity, Shader* shader) {
 
    if (shaderProgram) {
       uint program = shaderProgram->program;
+      int location;
+
+      location = shaderProgram->getUniform("MANTA_tex0");
+      glUniform1i(location, 0);
+
+      location = shaderProgram->getUniform("MANTA_tex1");
+      glUniform1i(location, 1);
+
+      location = shaderProgram->getUniform("MANTA_tex2");
+      glUniform1i(location, 2);
+
+      location = shaderProgram->getUniform("MANTA_tex3");
+      glUniform1i(location, 3);
 
       if (renderer->camera && entity) {
-	 int location = shaderProgram->getUniform("MANTA_mM");
+	 location = shaderProgram->getUniform("MANTA_mM");
 	 glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(entity->mModel));
 
 	 location = shaderProgram->getUniform("MANTA_mV");
@@ -139,7 +152,7 @@ void GL3VertexBuffer::Draw(Renderer* renderer, Entity* entity, Shader* shader) {
 
    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, vertSize, nullptr);
    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, vertSize, (void*)(sizeof(float) * 3));
-   glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, vertSize, (void*)(sizeof(float) * 3));
+   glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, vertSize, (void*)(sizeof(float) * 6));
 
    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
    glDrawElements(GL_TRIANGLES, indices, GL_UNSIGNED_INT, nullptr);

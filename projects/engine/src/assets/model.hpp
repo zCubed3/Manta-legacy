@@ -46,6 +46,7 @@ class Model {
 class ModelLoader {
    public:
       Model* LoadModel(std::string path);
+      Model* CreateModel(std::string name, std::vector<Model::Vertex> vertices, std::vector<unsigned int> triangles);
       std::unordered_map<std::string, Model*> loadedModels;
 };
 

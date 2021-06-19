@@ -7,20 +7,21 @@ typedef unsigned int uint;
 
 typedef struct GLFWwindow GLFWwindow;
 
+class Texture;
+
 class GL3Renderer : public Renderer {
    public:
       virtual const char* get_APIName() override { return "OpenGL 3.3"; };
 
       void Initialize() override;
       
-      void BeginRenderShadow() override;
-      void EndRenderShadow() override;
-
-      void BeginRender() override;
+      void BeginRender(bool toGBuffer = true) override;
       Status EndRender() override;
+      void PresentRender() override;
 
       void CreateVertexBuffer(Model* model) override;
       void CreateShaderProgram(Shader* shader) override;
+      void CreateTextureBuffer(Texture* texture) override;
 
       virtual void CreateConObjects(Console* console) override;
 
@@ -30,12 +31,16 @@ class GL3Renderer : public Renderer {
 
       void DrawImGuiWindow() override;
 
-      uint gbufferFBO;
-      uint shadowmapFBO, shadowmap;
-      int shadowmapWidth, shadowmapHeight;
+      bool gbufferInited = false;
+      uint gbufferFBO, gbufferDepthRBO;
+      Texture* gbufferPositionTex, *gbufferNormalTex, *gbufferAlbedoTex, *gbufferEmissionTex, *gbufferDepthTex;
+      uint gbufferPositionID, gbufferNormalID, gbufferAlbedoID, gbufferEmissionID, gbufferDepthID;
+
+      void CreateGBuffers();
+
+      void DrawLightingQuad() override; 
 };
 
 extern std::string gl3ErrorShaderCode; // Fallback shader that is used in place of a nullptr
-extern std::string gl3GBufferShaderCode; // Writes data to the gbuffer which is used for lighting
 
 #endif
