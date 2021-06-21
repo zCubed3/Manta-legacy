@@ -1,14 +1,11 @@
 #ifdef VERTEX
 layout(location = 0) in vec3 _vertex;
-layout(location = 1) in vec3 _normal;
 layout(location = 2) in vec2 _uv;
 
 out vec2 uv;
-out vec3 normal;
 
 void main() {
   gl_Position = vec4(_vertex, 1.0);
-  normal = _normal;
   uv = _uv;
 }
 
@@ -34,7 +31,6 @@ uniform int MANTA_lightTypes[32];
 
 #define DEG_TO_RAD 0.01745329251
 
-in vec3 normal;
 in vec2 uv;
 
 uniform vec3 MANTA_pCamera;
@@ -44,7 +40,7 @@ float sphereAtten(vec3 vert_pos, vec3 position, float range, float intensity) {
    vec3 direction = position - vert_pos;
    float dist = length(direction);
 
-   return (1 - dist / range) * intensity;
+   return max(0.0, 1 - dist / range) * intensity;
 }
 
 float spotAtten(vec3 vert_pos, vec3 position, vec3 direction, float range, float intensity, float innerAngle, float outerAngle) {
@@ -69,14 +65,20 @@ float blinnPhongSpecular(vec3 vert_pos, vec3 normal, vec3 direction, float power
    return clamp(pow(max(dot(normalize(normal), halfway), 0.0), power), 0.0, 1.0);
 }
 
-float fresnel(vec3 vert_pos) {
+float fresnel(vec3 vert_pos, vec3 normal) {
    vec3 camera_direction = vert_pos - MANTA_pCamera;
    return max(0.0, dot(normalize(camera_direction), normalize(normal)));
 }
 
 void main() {
-   vec3 fragPos = texture2D(MANTA_tex0, uv).xyz;  
+   vec3 fragPos = texture2D(MANTA_tex0, uv).xyz;
    vec3 fragNorm = texture2D(MANTA_tex1, uv).xyz;
+
+   if (fragPos == vec3(0) && fragNorm == vec3(0)) { // There must be nothing here
+      color = vec3(0);
+      return;
+   }
+
    vec3 fragColor = texture2D(MANTA_tex2, uv).xyz;  
    vec3 fragEmiss = texture2D(MANTA_tex3, uv).xyz;
 

@@ -9,13 +9,13 @@ class Renderer;
 
 class ShaderProgram {
    public:
-      virtual void Compile(Shader* shader) = 0;
+      virtual bool Compile(Shader* shader) = 0;
       virtual void Bind() = 0;
 
       // Unless a pragma is declared, these are not true...
-      bool lightingEnabled; 	// #pragma MANTA_ENABLE_LIGHTING
-      bool shadowsEnabled; 	// #pragma MANTA_ENABLE_SHADOWS
-      bool globalsEnabled; 	// #pragma MANTA_ENABLE_GLOBALS
+      //bool lightingEnabled; 	// #pragma MANTA_ENABLE_LIGHTING
+      //bool shadowsEnabled; 	// #pragma MANTA_ENABLE_SHADOWS
+      //bool globalsEnabled; 	// #pragma MANTA_ENABLE_GLOBALS
 
       virtual ~ShaderProgram() = 0;
 };
@@ -33,6 +33,7 @@ class ShaderLoader {
    public:
       Shader* LoadShader(std::string path);   
       Shader* LoadCode(std::string name, std::string code = "");
+      Shader* GetShader(std::string name);
 
       std::unordered_map<std::string, Shader*> shaders;
 };

@@ -12,8 +12,8 @@ class Camera : public Entity {
       float nearClip = 0.001f;
       float farClip = 100.0f;
 
-      glm::mat4 view;
-      glm::mat4 perspective;
+      glm::mat4 mView;
+      glm::mat4 mPerspective;
 
       bool ignoreConFov = true;
 

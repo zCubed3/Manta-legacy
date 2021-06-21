@@ -3,6 +3,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+#include <cstdint>
 #include <stdio.h>
 #include <string.h>
 #include <console/console.hpp>
@@ -96,7 +97,7 @@ void GL3Renderer::Initialize() {
       CreateGBuffers();
 
       // Load default content
-      lightingQuad = resources->modelLoader.LoadModel("./data/models/ScreenQuad.obj");
+      lightingQuad = resources->modelLoader.LoadModel(console->CVarGetData("r_model_quad", ""));
       CreateVertexBuffer(lightingQuad);
       Shader* lightingShader = resources->shaderLoader.LoadShader(console->CVarGetData("r_shader_lighting", ""));
       CreateShaderProgram(lightingShader);
@@ -182,8 +183,9 @@ void GL3Renderer::CreateShaderProgram(Shader* shader) {
 	 delete shader->program;
       }
 
-      shader->program = new GL3ShaderProgram();
-      shader->program->Compile(shader); 
+      GL3ShaderProgram* program = new GL3ShaderProgram();
+      if (program->Compile(shader))
+	 shader->program = program;
    }
 }
 
@@ -201,11 +203,7 @@ void GL3Renderer::CreateTextureBuffer(Texture* texture) {
 
 void GL3Renderer::CreateConObjects(Console* console) {
    Renderer::CreateConObjects(console);
-
-   if (console) {
-      //console->CreateCVar("gl_samples", "1");
-      
-   }
+   // Doesn't do anything yet
 }
 
 void GL3Renderer::DrawImGuiWindow() {
@@ -217,60 +215,70 @@ void GL3Renderer::DrawImGuiWindow() {
    ImGui::Text("OpenGL 3.3");
    ImGui::Checkbox("VSync", &vsync);
 
+   if (ImGui::TreeNode("GBuffer Visualization##gbuf_vis_opengl")) {
+      ImGui::Text("Positions:");
+      ImGui::Image((void*)(intptr_t)gbufferPositionID, ImVec2(windowWidth / 4, windowHeight / 4), ImVec2(0, 1), ImVec2(1, 0));
+      ImGui::Spacing();
+
+      ImGui::Text("Normals:");
+      ImGui::Image((void*)(intptr_t)gbufferNormalID, ImVec2(windowWidth / 4, windowHeight / 4), ImVec2(0, 1), ImVec2(1, 0));
+      ImGui::Spacing();
+
+      ImGui::Text("Albedo:");
+      ImGui::Image((void*)(intptr_t)gbufferAlbedoID, ImVec2(windowWidth / 4, windowHeight / 4), ImVec2(0, 1), ImVec2(1, 0));
+      ImGui::Spacing();
+
+      ImGui::Text("Emissive:");
+      ImGui::Image((void*)(intptr_t)gbufferEmissionID, ImVec2(windowWidth / 4, windowHeight / 4), ImVec2(0, 1), ImVec2(1, 0));
+
+      ImGui::TreePop();
+   }
+
    ImGui::End();
 }
 
 void GL3Renderer::CreateGBuffers() {
+   std::vector<Texture*> gbuffers { gbufferPositionTex, gbufferNormalTex, gbufferAlbedoTex, gbufferEmissionTex };
+
    if (!gbufferInited) {
-      gbufferPositionTex = resources->textureLoader.CreateTexture("engine#gbufferposition", windowWidth, windowHeight, 
-	    Texture::TextureType::Texture2D, Texture::Format::Float, Texture::Filtering::Point);
+      gbufferPositionTex = resources->textureLoader.CreateTexture("engine#gbuffer#position", windowWidth, windowHeight, 
+	    Texture::TextureType::Texture2D, Texture::Format::Internal, Texture::Filtering::Point);
 
       gbufferPositionTex->dataFormat = Texture::DataFormat::RGBA_16F;
 
-      gbufferNormalTex = resources->textureLoader.CreateTexture("engine#gbuffernormal", windowWidth, windowHeight, 
-	    Texture::TextureType::Texture2D, Texture::Format::Float, Texture::Filtering::Point);
+      gbufferNormalTex = resources->textureLoader.CreateTexture("engine#gbuffer#normal", windowWidth, windowHeight, 
+	    Texture::TextureType::Texture2D, Texture::Format::Internal, Texture::Filtering::Point);
 
       gbufferNormalTex->dataFormat = Texture::DataFormat::RGBA_16F;
 
-      gbufferAlbedoTex = resources->textureLoader.CreateTexture("engine#gbufferalbedo", windowWidth, windowHeight, 
-	    Texture::TextureType::Texture2D, Texture::Format::Byte, Texture::Filtering::Point);
+      gbufferAlbedoTex = resources->textureLoader.CreateTexture("engine#gbuffer#albedo", windowWidth, windowHeight, 
+	    Texture::TextureType::Texture2D, Texture::Format::Internal, Texture::Filtering::Point);
 
-      gbufferEmissionTex = resources->textureLoader.CreateTexture("engine#gbufferemission", windowWidth, windowHeight, 
-	    Texture::TextureType::Texture2D, Texture::Format::Byte, Texture::Filtering::Point);
-
-      gbufferDepthTex = resources->textureLoader.CreateTexture("engine#gbufferdepth", windowWidth, windowHeight, 
-	    Texture::TextureType::Texture2D, Texture::Format::Float, Texture::Filtering::Point);
-
-      gbufferDepthTex->isDepthMap = true;
+      gbufferEmissionTex = resources->textureLoader.CreateTexture("engine#gbuffer#emission", windowWidth, windowHeight, 
+	    Texture::TextureType::Texture2D, Texture::Format::Internal, Texture::Filtering::Point);
 
       glGenRenderbuffers(1, &gbufferDepthRBO);
+
+      gbuffers = { gbufferPositionTex, gbufferNormalTex, gbufferAlbedoTex, gbufferEmissionTex };
 
       gbufferInited = true;
    }
    else {
-      gbufferPositionTex->Resize(windowWidth, windowHeight);
-      gbufferNormalTex->Resize(windowWidth, windowHeight);
-      gbufferAlbedoTex->Resize(windowWidth, windowHeight);
-      gbufferEmissionTex->Resize(windowWidth, windowHeight);  
-      gbufferDepthTex->Resize(windowWidth, windowHeight); 
+      for (auto& gbuffer : gbuffers)
+	 gbuffer->Resize(windowWidth, windowHeight);
    }
 
    glBindRenderbuffer(GL_RENDERBUFFER, gbufferDepthRBO);
    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32, windowWidth, windowHeight);
    glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
-   CreateTextureBuffer(gbufferPositionTex);
-   CreateTextureBuffer(gbufferNormalTex);
-   CreateTextureBuffer(gbufferAlbedoTex);
-   CreateTextureBuffer(gbufferEmissionTex);
-   CreateTextureBuffer(gbufferDepthTex);
+   for (auto& gbuffer : gbuffers)
+      CreateTextureBuffer(gbuffer);
 
-   // Im aware this code is terrible, I will fix it later
-   gbufferPositionID = dynamic_cast<GL3TextureBuffer*>(gbufferPositionTex->texBuffer)->glTexID;
-   gbufferNormalID = dynamic_cast<GL3TextureBuffer*>(gbufferNormalTex->texBuffer)->glTexID;
-   gbufferAlbedoID = dynamic_cast<GL3TextureBuffer*>(gbufferAlbedoTex->texBuffer)->glTexID;
-   gbufferEmissionID = dynamic_cast<GL3TextureBuffer*>(gbufferEmissionTex->texBuffer)->glTexID;
-   gbufferDepthID = dynamic_cast<GL3TextureBuffer*>(gbufferDepthTex->texBuffer)->glTexID;
+   gbufferPositionID = gbufferPositionTex->texBuffer->handle;
+   gbufferNormalID = gbufferNormalTex->texBuffer->handle;
+   gbufferAlbedoID = gbufferAlbedoTex->texBuffer->handle;
+   gbufferEmissionID = gbufferEmissionTex->texBuffer->handle;
 }
 
 void GL3Renderer::DrawLightingQuad() {
@@ -321,9 +329,9 @@ void main() {
 #endif
 
 #ifdef FRAGMENT
-layout(location = 0) out vec3 out_position;
-layout(location = 1) out vec3 out_normal;
-layout(location = 3) out vec3 out_emission;
+layout(location = 0) out vec4 out_position;
+layout(location = 1) out vec4 out_normal;
+layout(location = 3) out vec4 out_emission;
 
 uniform float MANTA_fTime;
 
@@ -331,10 +339,11 @@ in vec3 vert_position;
 in vec3 normal;
 
 void main() {
+   out_position = vec4(vert_position, 1);
+   out_normal = vec4(normal, 1);
+
    // Color is #ff7300
-   out_emission = vec3(1.0, 0.45098039215, 0.0) * abs(sin(MANTA_fTime * 2));
-   out_position = vert_position;
-   out_normal = normal;
+   out_emission = vec4(vec3(1.0, 0.45098039215, 0.0) * abs(sin(MANTA_fTime * 2)), 1.0);
 }
 
 #endif

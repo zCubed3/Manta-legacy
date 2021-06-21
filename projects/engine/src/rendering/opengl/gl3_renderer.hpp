@@ -33,8 +33,8 @@ class GL3Renderer : public Renderer {
 
       bool gbufferInited = false;
       uint gbufferFBO, gbufferDepthRBO;
-      Texture* gbufferPositionTex, *gbufferNormalTex, *gbufferAlbedoTex, *gbufferEmissionTex, *gbufferDepthTex;
-      uint gbufferPositionID, gbufferNormalID, gbufferAlbedoID, gbufferEmissionID, gbufferDepthID;
+      Texture* gbufferPositionTex, *gbufferNormalTex, *gbufferAlbedoTex, *gbufferEmissionTex;
+      uint gbufferPositionID, gbufferNormalID, gbufferAlbedoID, gbufferEmissionID;
 
       void CreateGBuffers();
 

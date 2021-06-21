@@ -8,7 +8,10 @@ class Texture;
 
 class TextureBuffer {
    public:
+      virtual ~TextureBuffer() {};
       virtual void Populate(Texture* texture) = 0;
+
+      unsigned int handle; // Meant for ImGui but usually OGL and VK use handles
 }; // For storing API data
 
 class Texture {
@@ -19,7 +22,7 @@ class Texture {
       };
 
       enum class Format {
-	 Float, Byte
+	 Float, Byte, Internal
       };
 
       enum class Filtering {
@@ -28,7 +31,7 @@ class Texture {
       };
 
       enum class DataFormat {
-	 RGBA_16F, RGBA
+	 RGB, RGBA, RGBA_16F
       };
 
    public:
@@ -56,7 +59,9 @@ class TextureLoader {
    public:
       Texture* CreateTexture(std::string name, int width, int height, Texture::TextureType type, Texture::Format format = Texture::Format::Byte, 
 	    Texture::Filtering filtering = Texture::Filtering::Bilinear); 
-      
+     
+      Texture* LoadFromFile(std::string path, Texture::TextureType type, Texture::Format format = Texture::Format::Byte, Texture::Filtering filtering = Texture::Filtering::Point);
+
       std::unordered_map<std::string, Texture*> loadedTextures;
 };
 

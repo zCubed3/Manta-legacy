@@ -15,8 +15,6 @@
 
 #include <assets/resources.hpp>
 
-VertexBuffer::~VertexBuffer() {} // Silence the compiler
-
 void Model::Draw(Renderer* renderer, Resources* resources, Entity* entity) {
    if (renderer == nullptr) {
       printf("Can't Draw a model without a valid renderer!\n");
@@ -32,7 +30,7 @@ void Model::Draw(Renderer* renderer, Resources* resources, Entity* entity) {
 
    if (!usedShader) { // If we're missing a Shader, default to the error shader
       ShaderLoader loader = resources->shaderLoader;
-      usedShader = loader.LoadShader("engine#error");
+      usedShader = loader.GetShader("engine#error");
       
       if (!usedShader) {
 	 printf("Failed to fallback on the error shader!");
@@ -47,15 +45,6 @@ void Model::Draw(Renderer* renderer, Resources* resources, Entity* entity) {
 }
 
 Model* ModelLoader::LoadModel(std::string path) {
-   if (loadedModels.count(path) > 0) {
-      if (loadedModels[path] != nullptr)
-	 return loadedModels[path];
-      else {
-	 printf("Model in memory from %s was corrupt or unloaded, reloading it!\n", path.c_str());
-	 loadedModels.erase(path);
-      }
-   }
-
    std::ifstream file(path);
 
    if (!file.is_open()) {
@@ -63,16 +52,34 @@ Model* ModelLoader::LoadModel(std::string path) {
       return nullptr;
    }
 
-   Model* buffer = new Model();
-   
+   Model* buffer = GetModel(path); 
+   bool recognized = false;
+   bool exists = buffer != nullptr;
+
+   if (buffer == nullptr)
+      buffer = new Model();
+   else {
+      printf("A model loaded from %s already exists, replacing its contents!\n", path.c_str());
+      buffer->vertices.clear();
+      buffer->vertices.resize(0);
+
+      buffer->triangles.clear();
+      buffer->triangles.resize(0);
+
+      if (buffer->vertexBuffer) {
+	 printf("Model already has a vertex buffer, deleting it!\n");
+	 delete buffer->vertexBuffer;
+	 buffer->vertexBuffer = nullptr;
+      }
+   }
+
    // Track the time taken to load
    auto start = std::chrono::high_resolution_clock::now();
-
-   Spinner spinner;
-   const char* loadingStr = "\rLoading model %c";
-
+   printf("Loading model\n");
    // Not a very good OBJ loader but it works for our purposes right now
    if (strstr(path.c_str(), ".obj")) {
+      recognized = true;
+
       std::vector<glm::vec3> positions;
       std::vector<glm::vec3> normals;
       std::vector<glm::vec2> uv0s;
@@ -82,9 +89,6 @@ Model* ModelLoader::LoadModel(std::string path) {
       while (std::getline(file, line)) {
 	 if (line.size() <= 2)
 	    continue;
-
-	 printf(loadingStr, spinner.character);
-	 spinner.Spin();
 
 	 // First two characters are a data id
 	 std::string id = line.substr(0, 2);
@@ -174,6 +178,7 @@ Model* ModelLoader::LoadModel(std::string path) {
    }
 
    if (strstr(path.c_str(), ".mmdl")) {
+      recognized = true;
       char name[256];
       file.read(name, sizeof(name));
       
@@ -211,25 +216,25 @@ Model* ModelLoader::LoadModel(std::string path) {
       }
    }
 
-   auto end = std::chrono::high_resolution_clock::now();
-   auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-   
-   printf("\rLoaded model from %s (%s), took %li ms\n", path.c_str(), buffer->name.c_str(), duration.count());
+   if (recognized) {
+      if (!exists)
+	 loadedModels.emplace(path, buffer);
+ 
+      auto end = std::chrono::high_resolution_clock::now();
+      auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
 
-   loadedModels.emplace(path, buffer); // We keep models loaded as their paths to allow hot-reloading
+      printf("\rLoaded model from %s (%s), took %li ms\n", path.c_str(), buffer->name.c_str(), duration.count());
+   }
+   else {
+      printf("Model format wasn't supported, failed to load model!\n");
+      delete buffer;
+      return nullptr;
+   }
+
    return buffer;
 }
 
 Model* ModelLoader::CreateModel(std::string name, std::vector<Model::Vertex> vertices, std::vector<unsigned int> triangles) {
-   if (loadedModels.count(name) > 0) {
-      if (loadedModels[name] != nullptr)
-	 return loadedModels[name];
-      else {
-	 printf("Model in memory from %s was corrupt or unloaded, reloading it!\n", name.c_str());
-	 loadedModels.erase(name);
-      }
-   }
-
    Model* buffer = new Model();
 
    buffer->name = name;
@@ -239,4 +244,14 @@ Model* ModelLoader::CreateModel(std::string name, std::vector<Model::Vertex> ver
    printf("Created model using internal data, named, %s\n", name.c_str());
    loadedModels.emplace(name, buffer);
    return buffer;
+}
+
+Model* ModelLoader::GetModel(std::string name) {
+   if (loadedModels.size() == 0)
+      return nullptr;
+
+   if (loadedModels.find(name) != loadedModels.end())
+      return loadedModels[name];
+   else
+      return nullptr;
 }

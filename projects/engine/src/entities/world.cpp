@@ -74,8 +74,11 @@ void World::DrawImGuiWindow() {
    ImGui::Begin("World");
 
    if (ImGui::TreeNode("Create Entity##create_ent_menu")) {
-      if (ImGui::Button("+ Light"))
-	 entities.emplace_back(new Light());
+      if (ImGui::Button("+ Light")) {
+	 Light* light = new Light();
+	 light->name = "New Light";
+	 entities.emplace_back(light);
+      }
 
       if (ImGui::Button("+ Entity"))
 	 entities.emplace_back(new Entity());

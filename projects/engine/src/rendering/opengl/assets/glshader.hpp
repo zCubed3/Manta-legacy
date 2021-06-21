@@ -8,7 +8,7 @@ typedef unsigned int uint;
 
 class GL3ShaderProgram : public ShaderProgram {
    public:
-      void Compile(Shader* shader);
+      bool Compile(Shader* shader);
       void Bind();
 
       ~GL3ShaderProgram();

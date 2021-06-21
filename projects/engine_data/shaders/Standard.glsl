@@ -35,9 +35,9 @@ void main() {
 #endif
 
 #ifdef FRAGMENT
-layout(location = 0) out vec3 out_position;
-layout(location = 1) out vec3 out_normal;
-layout(location = 2) out vec3 out_color;
+layout(location = 0) out vec4 out_position;
+layout(location = 1) out vec4 out_normal;
+layout(location = 2) out vec4 out_color;
 
 in vec3 vert_pos;
 
@@ -47,10 +47,13 @@ in vec3 normal_camera;
 
 in vec2 uv;
 
+uniform vec4 MANTA_albedoColor;
+
 void main() {
-   out_position = vert_pos;
-   out_normal = normal;
-   out_color = vec3(1, 1, 1);
+   out_position = vec4(vert_pos, 1);
+   out_normal = vec4(normal, 1);
+   out_color = vec4(1, 1, 1, 1);
+   //out_color = MANTA_albedoColor;
 }
 
 #endif

@@ -55,7 +55,7 @@ bool didCompileProgram(uint program) {
 
 
 // TODO Geometry shaders?
-void GL3ShaderProgram::Compile(Shader *shader) {
+bool GL3ShaderProgram::Compile(Shader *shader) {
    printf("Beginning compilation of GLSL program\n");
 
    uint vShader = glCreateShader(GL_VERTEX_SHADER);
@@ -103,6 +103,8 @@ void GL3ShaderProgram::Compile(Shader *shader) {
       printf("Done!\n");
    else
       printf("Failed...\n");
+
+   return successful;
 }
 
 int GL3ShaderProgram::getUniform(std::string name) {

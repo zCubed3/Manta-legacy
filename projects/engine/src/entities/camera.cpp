@@ -16,14 +16,14 @@ void Camera::Update(World* world) {
 
    glm::vec3 forward = glm::rotate(rotation, glm::vec3(0, 0, 1));
 
-   view = glm::lookAt(position, position + forward, glm::rotate(rotation, glm::vec3(0, 1, 0)));
+   mView = glm::lookAt(position, position + forward, glm::rotate(rotation, glm::vec3(0, 1, 0)));
 
    if (!ignoreConFov && world)
       if (world->console)
 	 fieldOfView = world->console->CVarGetInt("fov", 90);
 
    if (renderer != nullptr)
-      perspective = glm::perspective(glm::radians(fieldOfView), renderer->windowWidth / renderer->windowHeight, nearClip, farClip); 
+      mPerspective = glm::perspective(glm::radians(fieldOfView), renderer->windowWidth / renderer->windowHeight, nearClip, farClip); 
 }
 
 void Camera::DrawImGuiSub(World* world, int index) {
@@ -43,7 +43,7 @@ void Camera::DrawImGuiSub(World* world, int index) {
 
       ImGui::Text("Ignore FOV CVar:");
       ImGui::SameLine();
-      ImGui::Checkbox("#ignore_fov_cvar", &ignoreConFov);
+      ImGui::Checkbox("##ignore_fov_cvar", &ignoreConFov);
 
       ImGui::TreePop();
    }

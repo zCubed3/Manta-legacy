@@ -5,9 +5,6 @@
 
 #include <string>
 
-class Console;
-void PackerCreateConObjects(Console* console);
-
 //
 // Model packing
 //

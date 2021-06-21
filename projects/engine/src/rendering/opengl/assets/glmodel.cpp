@@ -14,13 +14,13 @@
 #include <string>
 
 GL3VertexBuffer::~GL3VertexBuffer() {
-   if (vao != 0)
+   if (vao != GL_INVALID_INDEX)
       glDeleteVertexArrays(1, &vao);
 
-   if (vbo != 0)
+   if (vbo != GL_INVALID_INDEX)
       glDeleteBuffers(1, &vbo);
 
-   if (ibo != 0)
+   if (ibo != GL_INVALID_INDEX)
       glDeleteBuffers(1, &ibo);
 }
 
@@ -68,16 +68,18 @@ void GL3VertexBuffer::Draw(Renderer* renderer, Entity* entity, Shader* shader) {
       location = shaderProgram->getUniform("MANTA_tex3");
       glUniform1i(location, 3);
 
-      if (renderer->camera && entity) {
+      if (entity) {
 	 location = shaderProgram->getUniform("MANTA_mM");
 	 glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(entity->mModel));
 
 	 location = shaderProgram->getUniform("MANTA_mV");
-	 glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(renderer->camera->view));
+	 glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(renderer->camera->mView));
 
 	 location = shaderProgram->getUniform("MANTA_mP");
-	 glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(renderer->camera->perspective));
+	 glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(renderer->camera->mPerspective));
+      }
 
+      if (renderer->camera) {
 	 location = shaderProgram->getUniform("MANTA_pCamera");
 	 glUniform3fv(location, 1, glm::value_ptr(renderer->camera->position));
       }

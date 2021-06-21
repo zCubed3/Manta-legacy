@@ -1,10 +1,9 @@
 #ifndef MANTA_CONSOLE_H
 #define MANTA_CONSOLE_H
 
-#include <map>
+#include <unordered_map>
 #include <string>
 #include <vector>
-
 
 #include "manta_macros.hpp"
 
@@ -63,7 +62,7 @@ class ConVar : public ConObject {
 class Console {
    public:
       ~Console();
-      std::map<std::string, ConObject*> objects;
+      std::unordered_map<std::string, ConObject*> objects;
       bool protectionDisabled = false; // Allows cheat / risky ConObjects to execute
 
       void CreateCFunc(std::string signature, ConFuncBinding func, bool isProtected = false);

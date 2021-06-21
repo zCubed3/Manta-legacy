@@ -19,8 +19,8 @@ class Light : public Entity {
 
       // Used for certain lighting types
       // Spot: 1 = inner angle, 2 = outer angle
-      float param1 = 45.0f;
-      float param2 = 55.0f;
+      float param1 = 1.0f;
+      float param2 = 10.0f;
 
       enum class LightType {
       	 Sun,
@@ -29,6 +29,9 @@ class Light : public Entity {
       };
 
       LightType type;
+
+      glm::mat4 view, projection; // Lights are practically cameras
+      virtual void Update(World* world) override;
 
       virtual void DrawImGuiSub(World *world, int index) override;
 };

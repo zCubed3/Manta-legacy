@@ -15,7 +15,9 @@ ConObject::ConObject(std::string signature, bool isProtected) {
 //
 // ConFunc (CFunc)
 //
-ConFunc::ConFunc(std::string signature, ConFuncBinding func, bool isProtected) : ConObject(signature, isProtected) { function = func; } 
+ConFunc::ConFunc(std::string signature, ConFuncBinding func, bool isProtected) : ConObject(signature, isProtected) { 
+   function = func; 
+} 
 
 void ConFunc::Execute(Console* console, std::vector<std::string> args) {
    if (isProtected && !console->protectionDisabled) {
@@ -23,8 +25,9 @@ void ConFunc::Execute(Console* console, std::vector<std::string> args) {
       return;
    }
 
-   if (function != nullptr)
+   if (function != nullptr) {
       function(console, args);
+   }
 }
 
 //
@@ -35,7 +38,7 @@ ConVar::ConVar(std::string signature, std::string data, bool isProtected) : ConO
 void ConVar::Execute(Console* console, std::vector<std::string> args) {
    // CVars are only set to the first argument
    if (isProtected && !console->protectionDisabled) {
-      printf("Failed to set %s, please run -e_disable_protection to use this variable", signature.c_str());
+      printf("Failed to set %s, please run -e_disable_protection to set this variable", signature.c_str());
       return;
    }
 

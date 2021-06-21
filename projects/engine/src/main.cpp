@@ -35,6 +35,7 @@ int main(int argc, char** argv) {
    World world;
 
    world.resources = &resources;
+   resources.world = &world; // Circular, I know
 
    CreateCommonConObjects(&console);
    world.CreateConObjects(&console);
@@ -135,7 +136,7 @@ int main(int argc, char** argv) {
 	 testLights[l]->euler += glm::vec3(0, 1, 0);
       }
 
-      // RGB light
+      //RGB light
       //testLight1.color = glm::vec3(abs(sinf(renderer->timeTotal)), abs(sinf(renderer->timeTotal + 1)), abs(sinf(renderer->timeTotal + 2)));
 
       //
@@ -184,7 +185,9 @@ int main(int argc, char** argv) {
 
       world.Draw(renderer);
 
-      renderer->EndRender();
+      if (renderer->EndRender() != Renderer::Status::Running) {
+	 break;
+      }
 
       renderer->BeginRender(false);
       renderer->DrawLightingQuad();

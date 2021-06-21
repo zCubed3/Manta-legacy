@@ -18,7 +18,7 @@ class VertexBuffer {
       virtual void Populate(Model* model) = 0;
       virtual void Draw(Renderer* renderer, Entity* entity, Shader* shader) = 0; // Model::Draw wraps around this
 
-      virtual ~VertexBuffer() = 0;
+      virtual ~VertexBuffer() {};
 };
 
 class Model {
@@ -47,6 +47,8 @@ class ModelLoader {
    public:
       Model* LoadModel(std::string path);
       Model* CreateModel(std::string name, std::vector<Model::Vertex> vertices, std::vector<unsigned int> triangles);
+      Model* GetModel(std::string name);
+
       std::unordered_map<std::string, Model*> loadedModels;
 };
 
