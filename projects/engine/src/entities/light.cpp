@@ -14,7 +14,7 @@ Light::Light() {
 }
 
 void Light::CreateShadowmap() {
-   shadowmap = new Texture(); 
+    
 }
 
 void Light::Update(World* world) {
