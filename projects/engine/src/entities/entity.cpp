@@ -42,6 +42,10 @@ void Entity::Draw(Renderer* renderer, Resources* resources) {
 void Entity::DrawImGui(World* world, int index) {
    ImGui::PushID("entity_editor_"); ImGui::PushID(index);
    if (ImGui::TreeNode(name.c_str())) {
+      
+      ImGui::PushID(index);
+      ImGui::Checkbox("##entity_editor_enabled_toggle_", &isEnabled);
+      ImGui::PopID();
 
       ImGui::Text("Name:");
       ImGui::SameLine();

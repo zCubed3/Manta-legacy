@@ -1,3 +1,4 @@
+#include "entities/entity.hpp"
 #include <rendering/renderer.hpp>
 
 #include <manta_macros.hpp>
@@ -80,7 +81,7 @@ int main(int argc, char** argv) {
 
    for (int l = 0; l < testLights.size(); l++) {
       testLights[l]->type = Light::LightType::Point;
-      //world.entities.emplace_back(testLights[l]);
+      world.entities.emplace_back(testLights[l]);
 
       testLights[l]->scale = glm::vec3(1, 1, 1) * 0.1f;
       testLights[l]->name = "Orbit Light";
@@ -181,15 +182,17 @@ int main(int argc, char** argv) {
       //printf("\rRunning %c", spinner.character);
       //spinner.Spin();
 
-      renderer->BeginRender();
+      // Render GBuffers
+      renderer->BeginRender(Renderer::RenderType::GBuffer);
 
       world.Draw(renderer);
 
       if (renderer->EndRender() != Renderer::Status::Running) {
 	 break;
       }
-
-      renderer->BeginRender(false);
+      
+      // Then render the default scene
+      renderer->BeginRender(Renderer::RenderType::Default);
       renderer->DrawLightingQuad();
 
       if (renderer->EndRender() != Renderer::Status::Running) {

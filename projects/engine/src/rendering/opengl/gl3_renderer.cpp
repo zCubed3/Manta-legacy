@@ -51,8 +51,7 @@ void GL3Renderer::Initialize() {
    glewExperimental = true; // Enables more features
 
    if (glfwInit()) {
-      printf("Initialized GLFW\n");
- 
+      printf("Initialized GLFW\n"); 
       glfwWindowHint(GLFW_RESIZABLE, console->CVarGetBool("r_window_resizable", false));
       glfwWindowHint(GLFW_SAMPLES, console->CVarGetInt("r_msaa_samples", 1));
       glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -81,6 +80,8 @@ void GL3Renderer::Initialize() {
       glEnable(GL_CULL_FACE);
       glCullFace(GL_BACK);
 
+      //glEnable(GL_FRAMEBUFFER_SRGB);
+      
       glfwSetWindowUserPointer(window, this);
       glfwSetFramebufferSizeCallback(window, OnFramebufferResize);
 
@@ -97,20 +98,18 @@ void GL3Renderer::Initialize() {
       CreateGBuffers();
 
       // Load default content
-      lightingQuad = resources->modelLoader.LoadModel(console->CVarGetData("r_model_quad", ""));
-      CreateVertexBuffer(lightingQuad);
-      Shader* lightingShader = resources->shaderLoader.LoadShader(console->CVarGetData("r_shader_lighting", ""));
+      cameraQuad = resources->modelLoader.LoadModel(console->CVarGetData("r_model_quad", ""));
+      CreateVertexBuffer(cameraQuad);
+      lightingShader = resources->shaderLoader.LoadShader(console->CVarGetData("r_shader_lighting", ""));
       CreateShaderProgram(lightingShader);
-
-      lightingQuad->shader = lightingShader;
    }
    else {
       printf("Failed to initialize GLFW\n");
    }
 }
 
-void GL3Renderer::BeginRender(bool toGBuffer) {
-   if (toGBuffer) {
+void GL3Renderer::BeginRender(RenderType renderType) {
+   if (renderType == RenderType::GBuffer) {
       glBindFramebuffer(GL_FRAMEBUFFER, gbufferFBO);
 
       glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, gbufferPositionID, 0);
@@ -122,6 +121,15 @@ void GL3Renderer::BeginRender(bool toGBuffer) {
 
       uint buffers[4] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
       glDrawBuffers(4, buffers);
+   }
+
+   if (renderType == RenderType::Shadowmap) {
+      glBindFramebuffer(GL_FRAMEBUFFER, shadowmapFBO);
+
+      glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, shadowmapID, 0);
+
+      glDrawBuffer(GL_NONE);
+      glReadBuffer(GL_NONE);
    }
 
    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -294,7 +302,8 @@ void GL3Renderer::DrawLightingQuad() {
    glActiveTexture(GL_TEXTURE3);
    glBindTexture(GL_TEXTURE_2D, gbufferEmissionID);
 
-   lightingQuad->Draw(this, resources, nullptr);
+   cameraQuad->shader = lightingShader;
+   cameraQuad->Draw(this, resources, nullptr);
 }
 
 //

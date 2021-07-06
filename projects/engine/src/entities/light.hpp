@@ -3,16 +3,13 @@
 
 #include "entity.hpp"
 
-class LightData {
-   public:
-      glm::vec3 position;
-      glm::vec3 rotation;
-      glm::vec3 color;
-      int type;
-};
+class Texture;
 
 class Light : public Entity {
    public:
+      Light();
+      void CreateShadowmap();
+
       glm::vec3 color = glm::vec3(1, 1, 1); 
       float range = 10.0f;
       float intensity = 1.0f;
@@ -28,9 +25,14 @@ class Light : public Entity {
 	 Spot
       };
 
+      int shadowmapWidth = 256;
+      int shadowmapHeight = 256;
+
       LightType type;
 
-      glm::mat4 view, projection; // Lights are practically cameras
+      Texture* shadowmap;
+
+      glm::mat4 mLightMatrix; // Lights are practically cameras
       virtual void Update(World* world) override;
 
       virtual void DrawImGuiSub(World *world, int index) override;

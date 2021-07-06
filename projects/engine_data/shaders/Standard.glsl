@@ -38,6 +38,7 @@ void main() {
 layout(location = 0) out vec4 out_position;
 layout(location = 1) out vec4 out_normal;
 layout(location = 2) out vec4 out_color;
+layout(location = 3) out vec4 out_emission;
 
 in vec3 vert_pos;
 
@@ -48,6 +49,8 @@ in vec3 normal_camera;
 in vec2 uv;
 
 uniform vec4 MANTA_albedoColor;
+
+uniform vec3 MANTA_pCamera;
 
 void main() {
    out_position = vec4(vert_pos, 1);

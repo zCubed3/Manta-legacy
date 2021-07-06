@@ -111,7 +111,8 @@ void main() {
       lighting += MANTA_lightColors[l] * blinnPhongSpecular(fragPos, fragNorm, specDir, 256) * atten;
    }
 
-   color = (fragColor * lighting) + fragEmiss;
+   float gamma = 1.0;
+   color = pow((fragColor * lighting) + fragEmiss, vec3(1.0 / gamma));
 }
 
 #endif

@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <string>
 #include <vector>
+#include <functional>
 
 #include "manta_macros.hpp"
 
@@ -25,10 +26,9 @@ bool canCreateConObject();
 //
 // A binding to C/C++ code that allows for invoking it through its name
 //
+using ConFuncBinding = std::function<void(Console*, std::vector<std::string>)>;
 
-// Binding for a ConFunc
-// Defines a function that is basically "void FUNCTION(std::vector<std::string>);"
-MANTA_DECLARE_FPTR(void, ConFuncBinding, Console*, std::vector<std::string>);
+#define BIND_MEMBER_FUNC(MEMBER, INSTANCE) std::bind(MEMBER, INSTANCE, _1, _2)
 
 class ConFunc : public ConObject {
    public:

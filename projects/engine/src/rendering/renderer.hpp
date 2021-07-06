@@ -29,7 +29,7 @@ class Renderer {
       virtual const char* get_APIName() { return "Unknown API"; };
 
 
-   // Renderer state
+   // Enums
    public:
       enum class Status {
 	 Running 	= 0,
@@ -38,11 +38,17 @@ class Renderer {
 	 ShuttingDown 	= 2,
       };
 
+      enum class RenderType {
+	 GBuffer,
+	 Shadowmap,
+	 Default
+      };
+
    // Actual renderer functionality
    public:
       virtual void Initialize() = 0;
 
-      virtual void BeginRender(bool toGBuffer = true) = 0;
+      virtual void BeginRender(RenderType renderType) = 0;
       virtual Status EndRender() = 0;
       virtual void PresentRender() = 0;
 
@@ -95,7 +101,8 @@ class Renderer {
       bool showImGuiWindow = false;
       virtual void DrawImGuiWindow() = 0;
 
-      Model* lightingQuad;
+      Shader* lightingShader, *shadowmapShader;
+      Model* cameraQuad;
       virtual void DrawLightingQuad() = 0;
 };
 

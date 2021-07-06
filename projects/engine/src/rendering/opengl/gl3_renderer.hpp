@@ -15,7 +15,7 @@ class GL3Renderer : public Renderer {
 
       void Initialize() override;
       
-      void BeginRender(bool toGBuffer = true) override;
+      void BeginRender(RenderType renderType) override;
       Status EndRender() override;
       void PresentRender() override;
 
@@ -35,6 +35,8 @@ class GL3Renderer : public Renderer {
       uint gbufferFBO, gbufferDepthRBO;
       Texture* gbufferPositionTex, *gbufferNormalTex, *gbufferAlbedoTex, *gbufferEmissionTex;
       uint gbufferPositionID, gbufferNormalID, gbufferAlbedoID, gbufferEmissionID;
+
+      uint shadowmapFBO, shadowmapID;
 
       void CreateGBuffers();
 

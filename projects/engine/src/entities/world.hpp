@@ -27,6 +27,8 @@ class WorldData {
       float lightParams1[MAX_LIGHTS];
       float lightParams2[MAX_LIGHTS];
       int lightTypes[MAX_LIGHTS];
+
+      Light* lights[MAX_LIGHTS];
 };
 
 class World {
@@ -47,6 +49,8 @@ class World {
 
       bool showWindow = false;
       void DrawImGuiWindow();
+
+      void CFunc_CreateEntity(Console* console, std::vector<std::string> args);
 };
 
 #endif

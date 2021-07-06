@@ -1,3 +1,4 @@
+#include "entities/entity.hpp"
 #include <entities/world.hpp>
 
 #include <stdio.h>
@@ -14,11 +15,24 @@
 
 #include <imgui/misc/cpp/imgui_stdlib.h>
 
+#include <console/console.hpp>
+
+using namespace std::placeholders;
+
+void World::CFunc_CreateEntity(Console* console, std::vector<std::string> args) {
+   Entity* entity = new Entity();
+   if (args.size() >= 1)
+     entity->name = args[0];
+
+   entities.emplace_back(entity);
+}
+
 void World::CreateConObjects(Console* console) {
    if (console) {
       //
       // CFuncs
       //
+      console->CreateCFunc("ent_create", BIND_MEMBER_FUNC(&World::CFunc_CreateEntity, this));
 
       //console->Create
       //
@@ -38,7 +52,7 @@ void World::Update() {
 
       entities[e]->Update(this);
 
-      if (light != nullptr) {
+      if (light != nullptr && entities[e]->isVisible) {
 	 data.lightPositions[l] = light->position;
 	 data.lightDirections[l] = glm::rotate(light->rotation, glm::vec3(0, 0, 1));
 	 data.lightColors[l] = light->color;
@@ -47,6 +61,7 @@ void World::Update() {
 	 data.lightParams1[l] = light->param1;
 	 data.lightParams2[l] = light->param2;
 	 data.lightTypes[l] = (int)light->type;
+	 data.lights[l] = light;
 	 l++;	 
       }	 
    }
