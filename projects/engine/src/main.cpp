@@ -30,6 +30,8 @@
 
 #include <rendering/opengl/gl3_renderer.hpp>
 
+#include <scripting/mono/monoruntime.hpp>
+
 int main(int argc, char** argv) {
    Console console;
    Resources resources;
@@ -41,8 +43,10 @@ int main(int argc, char** argv) {
    CreateCommonConObjects(&console);
    world.CreateConObjects(&console);
    //PackerCreateConObjects(&console);
- 
-   Spinner spinner;
+
+   // Create the mono runtime, this is important to comment on since Mono could break or make this engine at times...
+   MonoScriptingBackend monoBackend;
+   monoBackend.Initialize();
 
    Renderer* renderer = new GL3Renderer();
 

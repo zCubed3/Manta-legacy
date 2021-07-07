@@ -13,6 +13,11 @@ if test -f ".MANTA_CONFIG"; then
 
    echo "Copying content to engine"
    cp -r "./projects/engine_data/." "${BUILD_PATH}/data"
+
+   CS_SOURCE_FILES=$(find ./projects/mantamono | grep -Ew ".+\.cs")
+   
+   csc "/target:library" "/out:${BUILD_PATH}/MantaMono.dll" $CS_SOURCE_FILES
+   echo $CS_SOURCE_FILES
 else
    printf ".MANTA_CONFIG not found, did you forget to run configure.sh?\n"
 fi

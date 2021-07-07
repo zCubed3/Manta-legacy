@@ -15,6 +15,8 @@ set(SOURCES
    "src/entities/entity.cpp"
    "src/entities/world.cpp"
 
+   "src/scripting/mono/monoruntime.cpp"
+
    "src/rendering/opengl/gl3_renderer.cpp"
    "src/rendering/opengl/assets/glmodel.cpp"
    "src/rendering/opengl/assets/glshader.cpp"
@@ -38,7 +40,12 @@ set(INCLUDE_DIRS
 if(DEFINED WIN32)
    set(LIBRARIES)
 else()
-   set(LIBRARIES "GL" "dl" "glfw" "GLEW") # GLFW is in here since we use generally
+   find_package(PkgConfig REQUIRED)
+
+   pkg_check_modules(MONOPKG REQUIRED mono-2)
+
+   set(LIBRARIES "GL" "dl" "glfw" "GLEW" ${MONOPKG_LIBRARIES})
+   list(APPEND INCLUDE_DIRS ${MONOPKG_INCLUDE_DIRS})
 endif()
 
 add_executable(MantaEngine ${SOURCES})
