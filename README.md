@@ -41,6 +41,7 @@ This software was written using NeoVim with many customizations and plugins to m
 3. Libraries
     * GLEW
     * GLFW3
+4. Mono (for Mono scripting support)
 
 #### Compiling the code
 
