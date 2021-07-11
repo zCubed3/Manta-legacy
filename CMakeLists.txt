@@ -20,6 +20,13 @@ set(CMAKE_SHARED_LIBRARY_PREFIX "")
 set(ENGINE_DIR ${PROJECTS_DIR}/engine)
 set(DEPENDS_DIR ${CMAKE_SOURCE_DIR}/dependencies)
 
+message("Building Manta as ${CMAKE_BUILD_TYPE}")
+
+# idk why CMake doesn't do this automatically
+if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+   add_compile_definitions("_DEBUG" "DEBUG")
+endif()
+
 # Builds the "engine", which is just the loader that brings all the modules together
 add_subdirectory(${ENGINE_DIR})
 

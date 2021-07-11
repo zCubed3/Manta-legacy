@@ -25,6 +25,18 @@ void setv(Console* console, std::vector<std::string> args) {
 bool cmdMode = false;
 void setCmdMode(Console* console, std::vector<std::string> args) { cmdMode = true; }
 
+void help(Console* console, std::vector<std::string> args) {
+   if (args.size() > 0) {
+      auto iter = console->objects.find(args[0]);
+      
+      if (iter != console->objects.end()) {
+	 printf("%s: %s\n", iter->first.c_str(), iter->second->help.c_str());
+      }
+   } else {
+      printf("Proper syntax is help [COMMAND_NAME_HERE], ex: help help, would print the help string for this command\n");
+   }
+}
+
 //
 // Executes all commands from a given file
 //

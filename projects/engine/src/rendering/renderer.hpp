@@ -61,8 +61,8 @@ class Renderer {
 
 	    console->CreateCVar("r_msaa_samples", "1");
 
-	    console->CreateCVar("r_shader_lighting", "./data/shaders/Lighting.glsl", true);
-	    console->CreateCVar("r_model_quad", "./data/models/ScreenQuad.obj", true);
+	    console->CreateCVar("r_shader_lighting", "./data/shaders/Lighting.glsl", "", true);
+	    console->CreateCVar("r_model_quad", "./data/models/ScreenQuad.obj", "", true);
 
 	    console->CreateCVar("width", "1024");
 	    console->CreateCVar("height", "768");

@@ -36,8 +36,8 @@ void IterateThroughPath(ResourcesPath& path) {
 void Resources::FindDataPaths() {
    // Get surface level directories
    ResourcesPath surfacePath;
-   surfacePath.path = "./";
-   for (auto& file : directory_iterator("./")) {
+   surfacePath.path = "./data";
+   for (auto& file : directory_iterator(surfacePath.path)) {
       if (file.is_directory()) {
 	 ResourcesPath resPath;
 	 resPath.path = file.path();

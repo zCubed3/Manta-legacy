@@ -19,6 +19,8 @@ class ConObject {
 
       bool isProtected; // Restricts usage / execution of this ConObject
       std::string signature;
+
+      std::string help = ""; // What is outputted when help [command] is ran
 };
 
 bool canCreateConObject();
@@ -65,8 +67,8 @@ class Console {
       std::unordered_map<std::string, ConObject*> objects;
       bool protectionDisabled = false; // Allows cheat / risky ConObjects to execute
 
-      void CreateCFunc(std::string signature, ConFuncBinding func, bool isProtected = false);
-      void CreateCVar(std::string signature, std::string data, bool isProtected = false);
+      void CreateCFunc(std::string signature, ConFuncBinding func, std::string help = "", bool isProtected = false);
+      void CreateCVar(std::string signature, std::string data, std::string help = "", bool isProtected = false);
 
       bool RegisterObject(ConObject* object);
 

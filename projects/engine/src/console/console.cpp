@@ -99,7 +99,7 @@ Console::~Console() {
    }
 }
 
-void Console::CreateCFunc(std::string signature, ConFuncBinding func, bool isProtected) {
+void Console::CreateCFunc(std::string signature, ConFuncBinding func, std::string help, bool isProtected) {
    if (canCreateConObject(signature))
    { 
       ConFunc* cfunc = new ConFunc(signature, func, isProtected);
@@ -113,7 +113,7 @@ void Console::CreateCFunc(std::string signature, ConFuncBinding func, bool isPro
    }
 }
 
-void Console::CreateCVar(std::string signature, std::string data, bool isProtected) {
+void Console::CreateCVar(std::string signature, std::string data, std::string help, bool isProtected) {
    if (canCreateConObject(signature))
    { 
       ConVar* cvar = new ConVar(signature, data, isProtected);

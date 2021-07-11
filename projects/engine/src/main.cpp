@@ -33,6 +33,11 @@
 #include <scripting/mono/monoruntime.hpp>
 
 int main(int argc, char** argv) {
+   #ifdef DEBUG
+   printf("[Debug]: This is a debug build of Manta, things will be slower seeing as compilation optimization is disabled plus debug info will be present!\n");
+   printf("[Debug]: Be warned, some additional behaviour may be present in a debug build that may or may not work correctly!\n");
+   #endif
+
    Console console;
    Resources resources;
    World world;
@@ -46,6 +51,11 @@ int main(int argc, char** argv) {
 
    // Create the mono runtime, this is important to comment on since Mono could break or make this engine at times...
    MonoScriptingBackend monoBackend;
+
+#ifdef DEBUG
+   monoBackend.debug = true;
+#endif
+
    monoBackend.Initialize();
 
    Renderer* renderer = new GL3Renderer();
