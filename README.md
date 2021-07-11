@@ -5,7 +5,7 @@ The Manta engine is a one man project to build a basic game engine capable of ma
 
 Parts of this software are inspired from features inside of well known game engines such as Id Tech 2 / Source, namely the console, on the surface they're functionally similar but I've extended the behaviour of my console implementation to fit my enigine's needs.
 
-This software was written using NeoVim with many customizations and plugins to make it adequate for C/C++ programming. Any formatting issues are the result of Vim and poor programming practices.
+This software was written using NeoVim with many customizations and plugins to make it adequate for C/C++ and C# programming. Any formatting issues are the result of Vim and poor programming practices.
 
 <!-- I am aware this table is a mess, just let it be for now, it isn't hurting anyone -->
 ### Supported Platforms
