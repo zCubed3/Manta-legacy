@@ -221,12 +221,14 @@ int main(int argc, char** argv) {
 	 ImGui::Checkbox("Renderer", &renderer->showImGuiWindow);
 	 ImGui::Checkbox("World", &world.showWindow);
 	 ImGui::Checkbox("Resources", &resources.showWindow);
+	 ImGui::Checkbox("Mono Debug", &monoBackend.showWindow);
 
 	 ImGui::End();
 
 	 world.DrawImGuiWindow();
 	 renderer->DrawImGuiWindow();
 	 resources.DrawImGuiWindow();
+	 monoBackend.DrawDebugWindow();
 
 	 renderer->EndImGui();
       }

@@ -1,6 +1,7 @@
 #ifndef MANTA_MONO_BACKEND_H
 #define MANTA_MONO_BACKEND_H
 
+#include <vector>
 #include <string>
 #include <unordered_map>
 
@@ -15,10 +16,18 @@ class MonoScriptingBackend {
       void RegisterCBindings();
       void TestRuntime();
 
+      void DrawDebugWindow();
+
       MonoDomain* mantaDomain;
       std::unordered_map<std::string, MonoAssembly*> loadedAssemblies;
 
       bool debug = false;
+      bool showWindow = false;
+
+      struct MonoAssemblyDebugInfo {
+	 std::unordered_map<std::string, std::vector<std::string>*> classes;
+      };
+      std::unordered_map<MonoAssembly*, MonoAssemblyDebugInfo*> loadedAssembliesDebugInfo;
 };
 
 #endif
