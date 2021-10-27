@@ -63,10 +63,6 @@ Shader *ShaderLoader::LoadShader(std::string path) {
     return buffer;
 }
 
-Material *Shader::CreateMaterial(std::string name, bool usingDefaults) {
-    return new Material(std::move(name), this, usingDefaults);
-}
-
 // Internally loaded shaders can't be reloaded for obvious reasons
 Shader *ShaderLoader::LoadCode(std::string name, std::string code) {
     Shader *buffer = new Shader();

@@ -1,11 +1,12 @@
 #ifndef MANTA_RESOURCES_H
 #define MANTA_RESOURCES_H
 
-// Combines several difference asset loaders into one structure
+// Combines several asset loaders into one structure
 
 #include "model.hpp"
 #include "shader.hpp"
 #include "texture.hpp"
+#include "material.hpp"
 
 #include <filesystem>
 
@@ -30,6 +31,7 @@ public:
     ModelLoader modelLoader;
     ShaderLoader shaderLoader;
     TextureLoader textureLoader;
+    MaterialLoader materialLoader;
 
     Model *LoadModel(std::string path);
 

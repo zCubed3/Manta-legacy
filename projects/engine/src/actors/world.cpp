@@ -82,7 +82,7 @@ void World::Draw(Renderer *renderer) {
     }
 }
 
-void World::DrawImGuiWindow() {
+void World::DrawImGuiWindow(Resources* resources) {
     if (!showWindow)
         return;
 
@@ -140,7 +140,7 @@ void World::DrawImGuiWindow() {
 
             if (!cantDrawX)
                 ImGui::SameLine();
-            entity->DrawImGui(this, e);
+            entity->DrawImGui(this, resources, e);
             ImGui::Spacing();
 
             e++;

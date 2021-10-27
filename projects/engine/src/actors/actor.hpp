@@ -15,6 +15,8 @@ class World;
 
 class Resources;
 
+class CComponent;
+
 // Because I kinda like UE4 terminology, Actors are prefixed with A, therefore, AActor!
 class AActor {
 public:
@@ -30,6 +32,10 @@ public:
 
     std::vector<Model **> models;
 
+    std::vector<CComponent*> components;
+
+    virtual void AddComponent(CComponent* pComponent);
+
     bool isEnabled = true;
     bool isVisible = true;
     bool isProtected = false; // Prevents deletion of this, useful for cameras and stuff
@@ -39,7 +45,7 @@ public:
     virtual void Draw(Renderer *renderer, Resources *resources);
 
     // This is usually ran inside of a tree
-    void DrawImGui(World *world, int index);
+    void DrawImGui(World *world, Resources* resources, int index);
 
     virtual void
     DrawImGuiSub(World *world, int index) {}; // By default this does nothing, but is useful for lights and stuff

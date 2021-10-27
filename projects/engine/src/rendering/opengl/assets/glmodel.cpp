@@ -13,6 +13,8 @@
 #include <rendering/opengl/glrenderer.hpp>
 #include <string>
 
+#include <assets/material.hpp>
+
 GLVertexBuffer::~GLVertexBuffer() {
     if (vao != GL_INVALID_INDEX)
         glDeleteVertexArrays(1, &vao);
@@ -45,13 +47,15 @@ void GLVertexBuffer::Populate(Model *model) {
     glBindVertexArray(0);
 }
 
-void GLVertexBuffer::Draw(Renderer *renderer, AActor *pActor, Shader *shader) {
-    if (shader)
-        shader->Bind();
-    else
+void GLVertexBuffer::Draw(Renderer *renderer, AActor *pActor, Material* material) {
+    if (material) {
+        material->Bind();
+    }
+    else {
         return;
+    }
 
-    GLShaderProgram *pProgram = dynamic_cast<GLShaderProgram *>(shader->program);
+    GLShaderProgram *pProgram = dynamic_cast<GLShaderProgram *>(material->pShader->program);
     GLRenderer *glRenderer = dynamic_cast<GLRenderer *>(renderer);
 
     if (pProgram) {

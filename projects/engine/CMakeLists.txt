@@ -14,13 +14,16 @@ set(SOURCES
         "src/assets/material_values/material_color.cpp"
         "src/assets/material_values/material_float.cpp"
 
-        "src/actors/engine/camera.cpp"
-        "src/actors/engine/light.cpp"
-        "src/actors/engine/skybox.cpp"
         "src/actors/actor.cpp"
         "src/actors/world.cpp"
 
+        "src/actors/engine/camera.cpp"
+        "src/actors/engine/light.cpp"
+        "src/actors/engine/skybox.cpp"
+
         "src/components/component.cpp"
+
+        "src/components/engine/renderer.cpp"
 
         "src/rendering/opengl/glrenderer.cpp"
         "src/rendering/opengl/assets/glmodel.cpp"

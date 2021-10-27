@@ -95,7 +95,7 @@ void GLRenderer::Initialize() {
         // Internal engine materials and shaders
         auto errorShader = resources->shaderLoader.LoadCode("engine#error", gl3ErrorShaderCode);
         CreateShaderProgram(errorShader);
-        Material::errorMaterial = errorShader->CreateMaterial("engine#error", false); // We disable defaults since this isn't a normal material
+        Material::errorMaterial = resources->materialLoader.CreateMaterial("engine#error", errorShader, false); // We disable defaults since this isn't a normal material
 
         // GBuffer Framebuffer
         glGenFramebuffers(1, &gbufferFBO);
@@ -104,8 +104,10 @@ void GLRenderer::Initialize() {
         // Load default content
         cameraQuad = resources->modelLoader.LoadModel(console->CVarGetData("r_model_quad", ""));
         CreateVertexBuffer(cameraQuad);
-        lightingShader = resources->shaderLoader.LoadShader(console->CVarGetData("r_shader_lighting", ""));
-        CreateShaderProgram(lightingShader);
+        auto shader = resources->shaderLoader.LoadShader(console->CVarGetData("r_shader_lighting", ""));
+        CreateShaderProgram(shader);
+
+        pLightingMaterial = resources->materialLoader.CreateMaterial("engine#deferred_lighting_pass", shader, false);
     } else {
         printf("Failed to initialize GLFW\n");
     }
@@ -335,8 +337,8 @@ void GLRenderer::DrawLightingQuad() {
     glActiveTexture(GL_TEXTURE4);
     glBindTexture(GL_TEXTURE_2D, gbufferEmissionID);
 
-    cameraQuad->shader = lightingShader;
-    cameraQuad->Draw(this, resources, nullptr);
+    pLightingMaterial->Bind();
+    cameraQuad->Draw(this, resources, nullptr, pLightingMaterial);
 }
 
 //

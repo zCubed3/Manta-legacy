@@ -55,7 +55,7 @@ public:
 
     bool showWindow = false;
 
-    void DrawImGuiWindow();
+    void DrawImGuiWindow(Resources* resources);
 
     void CFunc_CreateEntity(Console *console, std::vector<std::string> args);
 };

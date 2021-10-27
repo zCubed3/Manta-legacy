@@ -22,8 +22,6 @@ public:
     virtual ~ShaderProgram() = 0;
 };
 
-class Material;
-
 class Shader {
 public:
     std::string name; // Is usually the path unless internal
@@ -31,8 +29,6 @@ public:
     ShaderProgram *program;
 
     void Bind();
-
-    Material *CreateMaterial(std::string name, bool usingDefaults = true);
 };
 
 class ShaderLoader {

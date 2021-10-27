@@ -29,6 +29,8 @@ typedef struct ClearColor_T {
     float a = 1.0f;
 } ClearColor;
 
+class Material;
+
 class Renderer {
 public:
     virtual const char *get_APIName() { return "Unknown API"; };
@@ -113,7 +115,7 @@ public:
 
     virtual void DrawImGuiWindow() = 0;
 
-    Shader *lightingShader, *shadowmapShader;
+    Material *pLightingMaterial;
     Model *cameraQuad;
 
     virtual void DrawLightingQuad() = 0;

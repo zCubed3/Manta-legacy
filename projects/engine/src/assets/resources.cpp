@@ -11,6 +11,8 @@
 #include <actors/actor.hpp>
 #include <actors/world.hpp>
 
+#include <components/engine/renderer.hpp>
+
 using namespace std::filesystem;
 
 Resources::Resources() {
@@ -53,9 +55,6 @@ Model *Resources::LoadModel(std::string path) {
     Model *model = modelLoader.LoadModel(path);
 
     if (model) {
-        if (model->shader == nullptr)
-            model->shader = shaderLoader.GetShader("engine#error");
-
         renderer->CreateVertexBuffer(model);
     }
 
@@ -158,39 +157,21 @@ void Resources::DrawImGuiWindow() {
                 continue;
 
             const char *shaderName = "None";
-            if (model.second->shader)
-                shaderName = model.second->shader->name.c_str();
 
             if (ImGui::TreeNode(model.second->name.c_str())) {
                 ImGui::PushID(model.first.c_str());
                 if (ImGui::Button(
                         "Create Actor##resources_window_loaded_models_create_ent_")) { // Creates an empty entity with this model inside it
                     AActor *modelEnt = new AActor();
-                    modelEnt->models.emplace_back(&model.second);
+
+                    auto renderer = new CRenderer();
+                    renderer->models.emplace_back(&model.second);
+                    modelEnt->AddComponent(renderer);
+
                     modelEnt->name = model.second->name;
                     world->actors.emplace_back(modelEnt);
                 }
                 ImGui::PopID();
-
-                if (ImGui::BeginCombo("Shader", shaderName)) {
-                    for (auto &shader: shaderLoader.shaders) {
-                        if (!shader.second)
-                            continue;
-
-                        bool isSelected = false;
-
-                        if (model.second->shader)
-                            isSelected = model.second->shader == shader.second;
-
-                        if (ImGui::Selectable(shader.first.c_str(), isSelected))
-                            model.second->shader = shader.second;
-
-                        if (isSelected)
-                            ImGui::SetItemDefaultFocus();
-                    }
-
-                    ImGui::EndCombo();
-                }
 
                 ImGui::TreePop();
             }

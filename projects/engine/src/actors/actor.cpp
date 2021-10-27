@@ -5,11 +5,14 @@
 
 #include <assets/model.hpp>
 #include <assets/resources.hpp>
+#include <assets/material.hpp>
 
 #include <imgui/imgui.h>
 #include <imgui/misc/cpp/imgui_stdlib.h>
 
 #include <glm/glm/gtc/type_ptr.hpp>
+
+#include <components/component.hpp>
 
 void AActor::Update(World *world) {
     if (!isEnabled)
@@ -28,20 +31,13 @@ void AActor::Draw(Renderer *renderer, Resources *resources) {
     if (!isVisible)
         return;
 
-    for (int m = 0; m < models.size(); m++) {
-        if (!models[m])
-            continue;
-
-        if (!*models[m]) {
-            printf("Model #%i in entity is a nullptr!\n", m);
-            continue;
-        }
-
-        (*models[m])->Draw(renderer, resources, this);
+    for (auto & component : components) {
+        if (component->isVisible)
+            component->Draw(renderer, resources);
     }
 }
 
-void AActor::DrawImGui(World *world, int index) {
+void AActor::DrawImGui(World *world, Resources* resources, int index) {
     ImGui::PushID("entity_editor_");
     ImGui::PushID(index);
     if (ImGui::TreeNode(name.c_str())) {
@@ -89,6 +85,7 @@ void AActor::DrawImGui(World *world, int index) {
         ImGui::PopID();
         ImGui::PopID();
 
+        /*
         ImGui::SameLine();
         ImGui::PushID("entity_editor_models");
         ImGui::PushID(index);
@@ -160,12 +157,21 @@ void AActor::DrawImGui(World *world, int index) {
         }
         ImGui::PopID();
         ImGui::PopID();
+         */
 
         DrawImGuiSub(world, index);
+
+        for (auto& component : components)
+            component->DrawImGuiWindowSub(world, resources, index);
 
         ImGui::TreePop();
     }
     ImGui::PopID();
     ImGui::PopID();
 
+}
+
+void AActor::AddComponent(CComponent *pComponent) {
+    pComponent->owner = this;
+    components.emplace_back(pComponent); // TODO Safety!
 }

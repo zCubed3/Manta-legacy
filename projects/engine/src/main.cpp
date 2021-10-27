@@ -215,7 +215,7 @@ int main(int argc, char **argv) {
 
             ImGui::End();
 
-            world.DrawImGuiWindow();
+            world.DrawImGuiWindow(&resources);
             renderer->DrawImGuiWindow();
             resources.DrawImGuiWindow();
             console.DrawImGuiWindow();

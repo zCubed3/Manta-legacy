@@ -9,7 +9,7 @@ class GLVertexBuffer : public VertexBuffer {
 public:
     void Populate(Model *model);
 
-    void Draw(Renderer *renderer, AActor *pActor, Shader *shader);
+    void Draw(Renderer *renderer, AActor *pActor, Material* material);
 
     ~GLVertexBuffer();
 

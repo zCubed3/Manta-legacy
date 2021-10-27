@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <unordered_map>
 
 class MaterialValue;
 
@@ -24,6 +25,13 @@ public:
     std::vector<MaterialValue *> values;
 
     static Material *errorMaterial; // Fallback material, contains no inputs other than standard engine constants
+};
+
+class MaterialLoader {
+public:
+    Material* CreateMaterial(std::string name, Shader* shader, bool usingDefaults = true);
+
+    std::unordered_map<std::string, Material *> materials;
 };
 
 

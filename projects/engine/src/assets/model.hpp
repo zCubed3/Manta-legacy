@@ -17,11 +17,13 @@ class Renderer;
 
 class Resources;
 
+class Material;
+
 class VertexBuffer {
 public:
     virtual void Populate(Model *model) = 0;
 
-    virtual void Draw(Renderer *renderer, AActor *entity, Shader *shader) = 0; // Model::Draw wraps around this
+    virtual void Draw(Renderer *renderer, AActor *entity, Material* material) = 0; // Model::Draw wraps around this
 
     virtual ~VertexBuffer() {};
 };
@@ -44,9 +46,8 @@ public:
     std::string name = "Unnamed model"; // If the format supports it, we extract the name
 
     VertexBuffer *vertexBuffer = nullptr;
-    Shader *shader = nullptr;
 
-    void Draw(Renderer *renderer, Resources *resources, AActor *entity);
+    void Draw(Renderer *renderer, Resources *resources, AActor *entity, Material* material);
 };
 
 class ModelLoader {
