@@ -22,7 +22,6 @@ set(SOURCES
         "src/actors/engine/skybox.cpp"
 
         "src/components/component.cpp"
-
         "src/components/engine/renderer.cpp"
 
         "src/rendering/opengl/glrenderer.cpp"

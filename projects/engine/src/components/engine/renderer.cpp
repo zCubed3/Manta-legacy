@@ -28,7 +28,7 @@ void CRenderer::DrawImGuiWindowSub(World *world, Resources *resources, int index
         ImGui::PushID("entity_editor_component_renderer_model_add_button");
         ImGui::PushID(index);
         if (ImGui::Button("+")) {
-
+            models.emplace_back(nullptr);
         }
         ImGui::PopID();
         ImGui::PopID();
@@ -38,13 +38,18 @@ void CRenderer::DrawImGuiWindowSub(World *world, Resources *resources, int index
         ImGui::PushID("entity_editor_component_renderer_models");
         ImGui::PushID(index);
         if (ImGui::TreeNode("Models")) {
+            int deletion = -1;
+            int i = 0;
             for (auto &model: models) {
                 bool isEmpty = model == nullptr;
 
                 ImGui::PushID("entity_editor_component_renderer_model_remove_button");
                 ImGui::PushID(index);
                 if (ImGui::Button("X")) {
-                    models.remove()
+                    deletion = i;
+                    ImGui::PopID();
+                    ImGui::PopID();
+                    break;
                 }
                 ImGui::PopID();
                 ImGui::PopID();
@@ -54,7 +59,14 @@ void CRenderer::DrawImGuiWindowSub(World *world, Resources *resources, int index
                 ImGui::PushID("entity_editor_component_renderer_model_group");
                 ImGui::PushID(index);
 
-                if (ImGui::TreeNode(isEmpty ? "No Model" : (*model)->name.c_str())) {
+                char buffer[64];
+                sprintf(buffer, "Model Slot %i", i);
+
+                if (ImGui::TreeNode(buffer)) {
+                    for (auto &model: resources->modelLoader.loadedModels) {
+
+                    }
+
                     for (auto &material: resources->materialLoader.materials) {
 
                     }
@@ -64,9 +76,15 @@ void CRenderer::DrawImGuiWindowSub(World *world, Resources *resources, int index
 
                 ImGui::PopID();
                 ImGui::PopID();
+
+                i++;
             }
 
             ImGui::TreePop();
+
+            if (deletion >= 0) {
+                models.erase(models.begin() + deletion);
+            }
         }
         ImGui::PopID();
         ImGui::PopID();

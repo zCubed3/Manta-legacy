@@ -12,7 +12,7 @@ class CComponent {
 public:
     AActor* owner;
 
-    bool isVisible, isEnabled;
+    bool isVisible = true, isEnabled = true;
 
     virtual void Update() = 0;
     virtual void Draw(Renderer *renderer, Resources *resources) = 0;
