@@ -88,24 +88,24 @@ void main() {
       float lDot = 0.0;
 
       if (MANTA_lightTypes[l] != 0)
-	 lDot = dot(normalize(fragNorm), normalize(MANTA_lightPositions[l] - fragPos));
+     lDot = dot(normalize(fragNorm), normalize(MANTA_lightPositions[l] - fragPos));
       else
-	 lDot = dot(normalize(fragNorm), normalize(MANTA_lightDirections[l]));
+     lDot = dot(normalize(fragNorm), normalize(MANTA_lightDirections[l]));
 
       if (lDot <= 0.0)
-	 continue;
+     continue;
 
       float atten = 1;
       if (MANTA_lightTypes[l] == 1) // Point lights
-	 atten = sphereAtten(fragPos, MANTA_lightPositions[l], MANTA_lightRanges[l], MANTA_lightIntensities[l]);
+     atten = sphereAtten(fragPos, MANTA_lightPositions[l], MANTA_lightRanges[l], MANTA_lightIntensities[l]);
 
       if (MANTA_lightTypes[l] == 2) // Spot lights
-	 atten = spotAtten(fragPos, MANTA_lightPositions[l], MANTA_lightDirections[l], MANTA_lightRanges[l], MANTA_lightIntensities[l], MANTA_lightParams1[l], MANTA_lightParams2[l]);
+     atten = spotAtten(fragPos, MANTA_lightPositions[l], MANTA_lightDirections[l], MANTA_lightRanges[l], MANTA_lightIntensities[l], MANTA_lightParams1[l], MANTA_lightParams2[l]);
 
       vec3 specDir = MANTA_lightPositions[l] - fragPos;
 
       if (MANTA_lightTypes[l] == 0)
-	 specDir = MANTA_lightDirections[l] + fragPos;
+     specDir = MANTA_lightDirections[l] + fragPos;
 
       lighting += MANTA_lightColors[l] * lDot * atten;
       lighting += MANTA_lightColors[l] * blinnPhongSpecular(fragPos, fragNorm, specDir, 256) * atten;

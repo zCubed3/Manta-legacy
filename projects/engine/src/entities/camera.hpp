@@ -6,21 +6,22 @@
 class Renderer;
 
 class Camera : public Entity {
-   public:
-      float fieldOfView = 80;
+public:
+    float fieldOfView = 80;
 
-      float nearClip = 0.001f;
-      float farClip = 100.0f;
+    float nearClip = 0.001f;
+    float farClip = 100.0f;
 
-      glm::mat4 mView;
-      glm::mat4 mPerspective;
+    glm::mat4 mView;
+    glm::mat4 mPerspective;
 
-      bool ignoreConFov = true;
+    bool ignoreConFov = true;
 
-      Renderer* renderer;
+    Renderer *renderer;
 
-      virtual void Update(World* world) override;
-      virtual void DrawImGuiSub(World* world, int index) override;
+    virtual void Update(World *world) override;
+
+    virtual void DrawImGuiSub(World *world, int index) override;
 };
 
 #endif

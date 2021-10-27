@@ -19,134 +19,137 @@
 
 using namespace std::placeholders;
 
-void World::CFunc_CreateEntity(Console* console, std::vector<std::string> args) {
-   Entity* entity = new Entity();
-   if (args.size() >= 1)
-     entity->name = args[0];
+void World::CFunc_CreateEntity(Console *console, std::vector<std::string> args) {
+    Entity *entity = new Entity();
+    if (args.size() >= 1)
+        entity->name = args[0];
 
-   entities.emplace_back(entity);
+    entities.emplace_back(entity);
 }
 
-void World::CreateConObjects(Console* console) {
-   if (console) {
-      //
-      // CFuncs
-      //
-      console->CreateCFunc("ent_create", BIND_MEMBER_FUNC(&World::CFunc_CreateEntity, this));
+void World::CreateConObjects(Console *console) {
+    if (console) {
+        //
+        // CFuncs
+        //
+        console->CreateCFunc("ent_create", BIND_MEMBER_FUNC(&World::CFunc_CreateEntity, this));
 
-      //console->Create
-      //
-      this->console = console;
-   }
+        //console->Create
+        //
+        this->console = console;
+    }
 }
 
-void World::Update() {   
-   int l = 0;
-   for (int e = 0; e < entities.size(); e++) {
-      if (entities[e] == nullptr) {
-	 printf("Entity #%i is a nullptr\n", e);
-	 continue;
-      }
+void World::Update() {
+    int l = 0;
+    for (int e = 0; e < entities.size(); e++) {
+        if (entities[e] == nullptr) {
+            printf("Entity #%i is a nullptr\n", e);
+            continue;
+        }
 
-      Light* light = dynamic_cast<Light*>(entities[e]);
+        Light *light = dynamic_cast<Light *>(entities[e]);
 
-      entities[e]->Update(this);
+        entities[e]->Update(this);
 
-      if (light != nullptr && entities[e]->isVisible) {
-	 data.lightPositions[l] = light->position;
-	 data.lightDirections[l] = glm::rotate(light->rotation, glm::vec3(0, 0, 1));
-	 data.lightColors[l] = light->color;
-	 data.lightRanges[l] = light->range;
-	 data.lightIntensities[l] = light->intensity;
-	 data.lightParams1[l] = light->param1;
-	 data.lightParams2[l] = light->param2;
-	 data.lightTypes[l] = (int)light->type;
-	 data.lights[l] = light;
-	 l++;	 
-      }	 
-   }
+        if (light != nullptr && entities[e]->isVisible) {
+            data.lightPositions[l] = light->position;
+            data.lightDirections[l] = glm::rotate(light->rotation, glm::vec3(0, 0, 1));
+            data.lightColors[l] = light->color;
+            data.lightRanges[l] = light->range;
+            data.lightIntensities[l] = light->intensity;
+            data.lightParams1[l] = light->param1;
+            data.lightParams2[l] = light->param2;
+            data.lightTypes[l] = (int) light->type;
+            data.lights[l] = light;
+            l++;
+        }
+    }
 
-   data.lightCount = l;
+    data.lightCount = l;
 }
 
-void World::Draw(Renderer* renderer) {
-   timeTotal = (float)glfwGetTime();
-   timeDelta = timeTotal - timeLast;
-   timeLast = timeTotal;
+void World::Draw(Renderer *renderer) {
+    timeTotal = (float) glfwGetTime();
+    timeDelta = timeTotal - timeLast;
+    timeLast = timeTotal;
 
-   for (int e = 0; e < entities.size(); e++) {
-      if (entities[e] == nullptr)
-	 continue;
+    for (int e = 0; e < entities.size(); e++) {
+        if (entities[e] == nullptr)
+            continue;
 
-      entities[e]->Draw(renderer, resources);
-   }
+        entities[e]->Draw(renderer, resources);
+    }
 }
 
 void World::DrawImGuiWindow() {
-   if (!showWindow)
-      return;
+    if (!showWindow)
+        return;
 
-   ImGui::Begin("World");
+    ImGui::Begin("World");
 
-   if (ImGui::TreeNode("Create Entity##create_ent_menu")) {
-      if (ImGui::Button("+ Light")) {
-	 Light* light = new Light();
-	 light->name = "New Light";
-	 entities.emplace_back(light);
-      }
+    if (ImGui::TreeNode("Create Entity##create_ent_menu")) {
+        if (ImGui::Button("+ Light")) {
+            Light *light = new Light();
+            light->name = "New Light";
+            entities.emplace_back(light);
+        }
 
-      if (ImGui::Button("+ Entity"))
-	 entities.emplace_back(new Entity());
-   
-      ImGui::TreePop();
-   }
+        if (ImGui::Button("+ Entity"))
+            entities.emplace_back(new Entity());
 
-   if (ImGui::TreeNode("World Settings")) {
-      ImGui::DragFloat3("Ambient Color", glm::value_ptr(data.ambientColor), timeDelta, 0, 1);
-      
-      if (ImGui::TreeNode("World Info")) {
-	 ImGui::Text("Lights: %i", data.lightCount);
-	 ImGui::TreePop();
-      }
+        ImGui::TreePop();
+    }
 
-      ImGui::TreePop();
-   }
+    if (ImGui::TreeNode("World Settings")) {
+        ImGui::DragFloat3("Ambient Color", glm::value_ptr(data.ambientColor), timeDelta, 0, 1);
+
+        if (ImGui::TreeNode("World Info")) {
+            ImGui::Text("Lights: %i", data.lightCount);
+            ImGui::TreePop();
+        }
+
+        ImGui::TreePop();
+    }
 
 
-   int deletion = -1;
-   if (ImGui::TreeNode("Entities")) {
-      int e = 0;
-      for (const auto& entity : entities) {
-	 bool cantDrawX = false;
+    int deletion = -1;
+    if (ImGui::TreeNode("Entities")) {
+        int e = 0;
+        for (const auto &entity: entities) {
+            bool cantDrawX = false;
 
-	 if (entity)
-	    cantDrawX = entity->isProtected;
-	 
-	 if (!cantDrawX) {
-	    ImGui::PushID("delete_ent_"); ImGui::PushID(e);
-	    if (ImGui::Button("X")) {
-	       ImGui::PopID(); ImGui::PopID();
-	       deletion = e;
-	       break;
-	    }
-	    ImGui::PopID(); ImGui::PopID();
-	 }
+            if (entity)
+                cantDrawX = entity->isProtected;
 
-	 if (entity == nullptr)
-	    continue;
-	
-	 if (!cantDrawX)
-	    ImGui::SameLine();
-	 entity->DrawImGui(this, e);
-	 ImGui::Spacing();
+            if (!cantDrawX) {
+                ImGui::PushID("delete_ent_");
+                ImGui::PushID(e);
+                if (ImGui::Button("X")) {
+                    ImGui::PopID();
+                    ImGui::PopID();
+                    deletion = e;
+                    break;
+                }
+                ImGui::PopID();
+                ImGui::PopID();
+            }
 
-	 e++;
-      }
-      ImGui::TreePop();
-   }
+            if (entity == nullptr)
+                continue;
 
-   if (deletion >= 0)
-      entities.erase(entities.begin() + deletion);
+            if (!cantDrawX)
+                ImGui::SameLine();
+            entity->DrawImGui(this, e);
+            ImGui::Spacing();
 
-   ImGui::End();
+            e++;
+        }
+        ImGui::TreePop();
+    }
+
+    if (deletion >= 0)
+        entities.erase(entities.begin() + deletion);
+
+    ImGui::End();
 }

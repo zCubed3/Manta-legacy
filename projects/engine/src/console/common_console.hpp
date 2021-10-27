@@ -6,6 +6,6 @@ extern bool shouldQuit;
 
 class Console;
 
-void CreateCommonConObjects(Console* console);
+void CreateCommonConObjects(Console *console);
 
 #endif

@@ -6,36 +6,37 @@
 class Texture;
 
 class Light : public Entity {
-   public:
-      Light();
-      void CreateShadowmap();
+public:
+    Light();
 
-      glm::vec3 color = glm::vec3(1, 1, 1); 
-      float range = 10.0f;
-      float intensity = 1.0f;
+    void CreateShadowmap();
 
-      // Used for certain lighting types
-      // Spot: 1 = inner angle, 2 = outer angle
-      float param1 = 1.0f;
-      float param2 = 10.0f;
+    glm::vec3 color = glm::vec3(1, 1, 1);
+    float range = 10.0f;
+    float intensity = 1.0f;
 
-      enum class LightType {
-      	 Sun,
-	 Point,
-	 Spot
-      };
+    // Used for certain lighting types
+    // Spot: 1 = inner angle, 2 = outer angle
+    float param1 = 1.0f;
+    float param2 = 10.0f;
 
-      int shadowmapWidth = 256;
-      int shadowmapHeight = 256;
+    enum class LightType {
+        Sun,
+        Point,
+        Spot
+    };
 
-      LightType type;
+    int shadowmapWidth = 256;
+    int shadowmapHeight = 256;
 
-      Texture* shadowmap;
+    LightType type;
 
-      glm::mat4 mLightMatrix; // Lights are practically cameras
-      virtual void Update(World* world) override;
+    Texture *shadowmap;
 
-      virtual void DrawImGuiSub(World *world, int index) override;
+    glm::mat4 mLightMatrix; // Lights are practically cameras
+    virtual void Update(World *world) override;
+
+    virtual void DrawImGuiSub(World *world, int index) override;
 };
 
 #endif

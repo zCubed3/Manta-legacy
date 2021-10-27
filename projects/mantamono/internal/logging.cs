@@ -13,8 +13,7 @@ namespace Manta {
 
    public static partial class Debug {
       public static void Log(string message, bool newline=true) {
-	 CBindings.__c__printf($"{message}{(newline ? "\n" : "")}"); 
+        CBindings.__c__printf($"{message}{(newline ? "\n" : "")}");
       }
    }
-
 }

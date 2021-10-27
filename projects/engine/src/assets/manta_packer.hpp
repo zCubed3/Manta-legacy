@@ -9,6 +9,7 @@
 // Model packing
 //
 class Model;
-void MantaPackModel(Model* model, std::string output);
+
+void MantaPackModel(Model *model, std::string output);
 
 #endif

@@ -10,24 +10,27 @@ typedef struct _MonoDomain MonoDomain;
 typedef struct _MonoAssembly MonoAssembly;
 
 class MonoScriptingBackend {
-   public:
-      void Initialize();
-      void LoadAssemblies();
-      void RegisterCBindings();
-      void TestRuntime();
+public:
+    void Initialize();
 
-      void DrawDebugWindow();
+    void LoadAssemblies();
 
-      MonoDomain* mantaDomain;
-      std::unordered_map<std::string, MonoAssembly*> loadedAssemblies;
+    void RegisterCBindings();
 
-      bool debug = false;
-      bool showWindow = false;
+    void TestRuntime();
 
-      struct MonoAssemblyDebugInfo {
-	 std::unordered_map<std::string, std::vector<std::string>*> classes;
-      };
-      std::unordered_map<MonoAssembly*, MonoAssemblyDebugInfo*> loadedAssembliesDebugInfo;
+    void DrawDebugWindow();
+
+    MonoDomain *mantaDomain;
+    std::unordered_map<std::string, MonoAssembly *> loadedAssemblies;
+
+    bool debug = false;
+    bool showWindow = false;
+
+    struct MonoAssemblyDebugInfo {
+        std::unordered_map<std::string, std::vector<std::string> *> classes;
+    };
+    std::unordered_map<MonoAssembly *, MonoAssemblyDebugInfo *> loadedAssembliesDebugInfo;
 };
 
 #endif

@@ -6,14 +6,16 @@
 typedef unsigned int uint;
 
 class GL3VertexBuffer : public VertexBuffer {
-   public:
-      void Populate(Model* model);
-      void Draw(Renderer* renderer, Entity* entity, Shader* shader);
-      ~GL3VertexBuffer();
+public:
+    void Populate(Model *model);
 
-   protected:
-      uint vao, vbo, ibo; // IBO stands for "index buffer object"
-      uint indices;
+    void Draw(Renderer *renderer, Entity *entity, Shader *shader);
+
+    ~GL3VertexBuffer();
+
+protected:
+    uint vao, vbo, ibo; // IBO stands for "index buffer object"
+    uint indices;
 };
 
 #endif

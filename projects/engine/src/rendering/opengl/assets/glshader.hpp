@@ -7,16 +7,18 @@
 typedef unsigned int uint;
 
 class GL3ShaderProgram : public ShaderProgram {
-   public:
-      bool Compile(Shader* shader);
-      void Bind();
+public:
+    bool Compile(Shader *shader);
 
-      ~GL3ShaderProgram();
+    void Bind();
 
-      std::unordered_map<std::string, int> uniforms;
-      int getUniform(std::string name);
+    ~GL3ShaderProgram();
 
-      uint program;
+    std::unordered_map<std::string, int> uniforms;
+
+    int getUniform(std::string name);
+
+    uint program;
 };
 
 #endif

@@ -10,37 +10,43 @@ typedef struct GLFWwindow GLFWwindow;
 class Texture;
 
 class GL3Renderer : public Renderer {
-   public:
-      virtual const char* get_APIName() override { return "OpenGL 3.3"; };
+public:
+    virtual const char *get_APIName() override { return "OpenGL 3.3"; };
 
-      void Initialize() override;
-      
-      void BeginRender(RenderType renderType) override;
-      Status EndRender() override;
-      void PresentRender() override;
+    void Initialize() override;
 
-      void CreateVertexBuffer(Model* model) override;
-      void CreateShaderProgram(Shader* shader) override;
-      void CreateTextureBuffer(Texture* texture) override;
+    void BeginRender(RenderType renderType) override;
 
-      virtual void CreateConObjects(Console* console) override;
+    Status EndRender() override;
 
-      void InitImGui() override;
-      void BeginImGui() override;
-      void EndImGui() override;
+    void PresentRender() override;
 
-      void DrawImGuiWindow() override;
+    void CreateVertexBuffer(Model *model) override;
 
-      bool gbufferInited = false;
-      uint gbufferFBO, gbufferDepthRBO;
-      Texture* gbufferPositionTex, *gbufferNormalTex, *gbufferAlbedoTex, *gbufferEmissionTex;
-      uint gbufferPositionID, gbufferNormalID, gbufferAlbedoID, gbufferEmissionID;
+    void CreateShaderProgram(Shader *shader) override;
 
-      uint shadowmapFBO, shadowmapID;
+    void CreateTextureBuffer(Texture *texture) override;
 
-      void CreateGBuffers();
+    virtual void CreateConObjects(Console *console) override;
 
-      void DrawLightingQuad() override; 
+    void InitImGui() override;
+
+    void BeginImGui() override;
+
+    void EndImGui() override;
+
+    void DrawImGuiWindow() override;
+
+    bool gbufferInited = false;
+    uint gbufferFBO, gbufferDepthRBO;
+    Texture *gbufferPositionTex, *gbufferNormalTex, *gbufferAlbedoTex, *gbufferEmissionTex;
+    uint gbufferPositionID, gbufferNormalID, gbufferAlbedoID, gbufferEmissionID;
+
+    uint shadowmapFBO, shadowmapID;
+
+    void CreateGBuffers();
+
+    void DrawLightingQuad() override;
 };
 
 extern std::string gl3ErrorShaderCode; // Fallback shader that is used in place of a nullptr

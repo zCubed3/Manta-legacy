@@ -30,71 +30,71 @@
 // 		2 = uv
 //
 // Indice aka int
- 
-void MantaPackModel(Model* model, std::string output) {
-   if (!model) {
-      printf("Provided model was a nullptr!\n");
-      return;
-   }
 
-   std::ofstream file(output.c_str(), std::ofstream::out | std::ofstream::trunc);
+void MantaPackModel(Model *model, std::string output) {
+    if (!model) {
+        printf("Provided model was a nullptr!\n");
+        return;
+    }
 
-   if (!file.is_open()) {
-      printf("Failed to open / create file, %s\n", output.c_str());
-      return;
-   }
+    std::ofstream file(output.c_str(), std::ofstream::out | std::ofstream::trunc);
 
-   //file << "# .mmdls's are meant to be used by the Manta engine\n";
+    if (!file.is_open()) {
+        printf("Failed to open / create file, %s\n", output.c_str());
+        return;
+    }
 
-   char name[256];
-   strcpy(name, model->name.c_str());
-   file.write(name, sizeof(name));
+    //file << "# .mmdls's are meant to be used by the Manta engine\n";
 
-   int size = model->vertices.size();   
-   file.write(reinterpret_cast<char*>(&size), sizeof(int));
+    char name[256];
+    strcpy(name, model->name.c_str());
+    file.write(name, sizeof(name));
 
-   Spinner spinner;
+    int size = model->vertices.size();
+    file.write(reinterpret_cast<char *>(&size), sizeof(int));
 
-   printf("Compressing model to Manta-friendly format\n");
+    Spinner spinner;
 
-   for (int v = 0; v < model->vertices.size(); v++) {
-      printf("\rWriting vertex data %c", spinner.character);
-      spinner.Spin();
+    printf("Compressing model to Manta-friendly format\n");
 
-      float data[8];
-      Model::Vertex vert = model->vertices[v];
+    for (int v = 0; v < model->vertices.size(); v++) {
+        printf("\rWriting vertex data %c", spinner.character);
+        spinner.Spin();
 
-      data[0] = vert.position.x;
-      data[1] = vert.position.y;
-      data[2] = vert.position.z;
+        float data[8];
+        Model::Vertex vert = model->vertices[v];
 
-      data[3] = vert.normal.x;
-      data[4] = vert.normal.y;
-      data[5] = vert.normal.z;
+        data[0] = vert.position.x;
+        data[1] = vert.position.y;
+        data[2] = vert.position.z;
 
-      data[6] = vert.uv0.x;
-      data[7] = vert.uv0.y;
+        data[3] = vert.normal.x;
+        data[4] = vert.normal.y;
+        data[5] = vert.normal.z;
 
-      char buffer[sizeof(float) * 8];
-      memcpy(buffer, data, sizeof(float) * 8);
+        data[6] = vert.uv0.x;
+        data[7] = vert.uv0.y;
 
-      file.write(reinterpret_cast<char*>(&data), sizeof(float) * 8);
-   }
+        char buffer[sizeof(float) * 8];
+        memcpy(buffer, data, sizeof(float) * 8);
 
-   size = model->triangles.size();
-   file.write(reinterpret_cast<char*>(&size), sizeof(int));
+        file.write(reinterpret_cast<char *>(&data), sizeof(float) * 8);
+    }
 
-   printf("\n");
+    size = model->triangles.size();
+    file.write(reinterpret_cast<char *>(&size), sizeof(int));
 
-   for (int t = 0; t < model->triangles.size(); t++) {
-      printf("\rWriting int data %c", spinner.character);
-      spinner.Spin();
+    printf("\n");
 
-      int data = model->triangles[t];
-      file.write(reinterpret_cast<char*>(&data), sizeof(int));
-   }
+    for (int t = 0; t < model->triangles.size(); t++) {
+        printf("\rWriting int data %c", spinner.character);
+        spinner.Spin();
 
-   printf("\n");
+        int data = model->triangles[t];
+        file.write(reinterpret_cast<char *>(&data), sizeof(int));
+    }
 
-   file.close();
+    printf("\n");
+
+    file.close();
 }

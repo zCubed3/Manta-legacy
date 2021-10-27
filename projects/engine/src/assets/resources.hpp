@@ -10,38 +10,43 @@
 #include <filesystem>
 
 class Console;
+
 class World;
 
 struct ResourcesPath {
-   std::filesystem::path path; // This current path
-   std::vector<ResourcesPath> childPaths;
-   std::vector<std::filesystem::path> files;
+    std::filesystem::path path; // This current path
+    std::vector<ResourcesPath> childPaths;
+    std::vector<std::filesystem::path> files;
 };
 
 class Resources {
-   public:
-      Resources();
-      void FindDataPaths();
+public:
+    Resources();
 
-      std::vector<ResourcesPath> dataPaths;
+    void FindDataPaths();
 
-      ModelLoader modelLoader;
-      ShaderLoader shaderLoader;
-      TextureLoader textureLoader;
+    std::vector<ResourcesPath> dataPaths;
 
-      Model* LoadModel(std::string path);
-      Shader* LoadShader(std::string path);
-      Texture* LoadTexture(std::string path);
+    ModelLoader modelLoader;
+    ShaderLoader shaderLoader;
+    TextureLoader textureLoader;
 
-      bool showWindow = false;
-      void DrawImGuiWindow();
+    Model *LoadModel(std::string path);
 
-      void TryLoadFromExtension(std::string path, std::string extension);
+    Shader *LoadShader(std::string path);
 
-      Renderer* renderer;
-      World* world;
+    Texture *LoadTexture(std::string path);
 
-      std::string inputBuffer;
+    bool showWindow = false;
+
+    void DrawImGuiWindow();
+
+    void TryLoadFromExtension(std::string path, std::string extension);
+
+    Renderer *renderer;
+    World *world;
+
+    std::string inputBuffer;
 };
 
 #endif
