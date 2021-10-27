@@ -9,15 +9,20 @@ set(SOURCES
         "src/assets/model.cpp"
         "src/assets/shader.cpp"
         "src/assets/resources.cpp"
+        "src/assets/material.cpp"
 
-        "src/entities/camera.cpp"
-        "src/entities/light.cpp"
-        "src/entities/entity.cpp"
-        "src/entities/world.cpp"
+        "src/assets/material_values/material_color.cpp"
+        "src/assets/material_values/material_float.cpp"
 
-        "src/scripting/mono/monoruntime.cpp"
+        "src/actors/engine/camera.cpp"
+        "src/actors/engine/light.cpp"
+        "src/actors/engine/skybox.cpp"
+        "src/actors/actor.cpp"
+        "src/actors/world.cpp"
 
-        "src/rendering/opengl/gl3_renderer.cpp"
+        "src/components/component.cpp"
+
+        "src/rendering/opengl/glrenderer.cpp"
         "src/rendering/opengl/assets/glmodel.cpp"
         "src/rendering/opengl/assets/glshader.cpp"
         "src/rendering/opengl/assets/gltexture.cpp"
@@ -40,12 +45,15 @@ set(INCLUDE_DIRS
 if (DEFINED WIN32)
     set(LIBRARIES)
 else ()
-    find_package(PkgConfig REQUIRED)
+    #find_package(PkgConfig REQUIRED)
 
-    pkg_check_modules(MONOPKG REQUIRED mono-2)
+    #pkg_check_modules(MONOPKG REQUIRED mono-2)
 
-    set(LIBRARIES "GL" "dl" "glfw" "GLEW" ${MONOPKG_LIBRARIES})
-    list(APPEND INCLUDE_DIRS ${MONOPKG_INCLUDE_DIRS})
+    #${MONOPKG_LIBRARIES}
+    #${MONOPKG_INCLUDE_DIRS}
+
+    set(LIBRARIES "GL" "dl" "glfw" "GLEW")
+    list(APPEND INCLUDE_DIRS)
 endif ()
 
 add_executable(MantaEngine ${SOURCES})

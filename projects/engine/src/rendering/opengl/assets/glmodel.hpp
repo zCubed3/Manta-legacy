@@ -5,13 +5,13 @@
 
 typedef unsigned int uint;
 
-class GL3VertexBuffer : public VertexBuffer {
+class GLVertexBuffer : public VertexBuffer {
 public:
     void Populate(Model *model);
 
-    void Draw(Renderer *renderer, Entity *entity, Shader *shader);
+    void Draw(Renderer *renderer, AActor *pActor, Shader *shader);
 
-    ~GL3VertexBuffer();
+    ~GLVertexBuffer();
 
 protected:
     uint vao, vbo, ibo; // IBO stands for "index buffer object"

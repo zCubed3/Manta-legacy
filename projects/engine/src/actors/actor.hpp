@@ -15,7 +15,8 @@ class World;
 
 class Resources;
 
-class Entity {
+// Because I kinda like UE4 terminology, Actors are prefixed with A, therefore, AActor!
+class AActor {
 public:
     std::string name = "New entity", nameBuffer = "";
 
@@ -25,6 +26,7 @@ public:
     glm::quat rotation;
 
     glm::mat4 mModel;
+    glm::mat4 mModel_it; // Model matrice's inverse transpose (easier to calculate on the CPU than GPU)
 
     std::vector<Model **> models;
 

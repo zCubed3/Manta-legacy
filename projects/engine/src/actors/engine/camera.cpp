@@ -1,5 +1,5 @@
 #include "camera.hpp"
-#include "world.hpp"
+#include "actors/world.hpp"
 
 #include "glm/glm/ext/matrix_transform.hpp"
 #include <glm/glm/gtc/matrix_transform.hpp>
@@ -11,8 +11,8 @@
 
 #include <imgui/imgui.h>
 
-void Camera::Update(World *world) {
-    Entity::Update(world);
+void ACamera::Update(World *world) {
+    AActor::Update(world);
 
     glm::vec3 forward = glm::rotate(rotation, glm::vec3(0, 0, 1));
 
@@ -27,7 +27,7 @@ void Camera::Update(World *world) {
                                         nearClip, farClip);
 }
 
-void Camera::DrawImGuiSub(World *world, int index) {
+void ACamera::DrawImGuiSub(World *world, int index) {
     ImGui::PushID("entity_editor_light");
     ImGui::PushID(index);
     if (ImGui::TreeNode("Camera")) {

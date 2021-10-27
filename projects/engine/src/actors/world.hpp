@@ -4,9 +4,9 @@
 #include <vector>
 #include <glm/glm/glm.hpp>
 
-class Entity;
+class AActor;
 
-class Light;
+class ALight;
 
 class Console;
 
@@ -14,7 +14,7 @@ class Renderer;
 
 class Resources;
 
-#include <entities/light.hpp>
+#include <actors/engine/light.hpp>
 
 #define MAX_LIGHTS 32
 
@@ -32,12 +32,12 @@ public:
     float lightParams2[MAX_LIGHTS];
     int lightTypes[MAX_LIGHTS];
 
-    Light *lights[MAX_LIGHTS];
+    ALight *lights[MAX_LIGHTS];
 };
 
 class World {
 public:
-    std::vector<Entity *> entities;
+    std::vector<AActor *> actors;
 
     WorldData data;
     Console *console;

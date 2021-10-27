@@ -1,13 +1,13 @@
 #ifndef MANTA_LIGHT_H
 #define MANTA_LIGHT_H
 
-#include "entity.hpp"
+#include "actors/actor.hpp"
 
 class Texture;
 
-class Light : public Entity {
+class ALight : public AActor {
 public:
-    Light();
+    ALight();
 
     void CreateShadowmap();
 

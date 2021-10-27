@@ -1,12 +1,12 @@
-#include "entities/entity.hpp"
-#include <entities/world.hpp>
+#include "actors/actor.hpp"
+#include <actors/world.hpp>
 
 #include <stdio.h>
 
 #include <assets/resources.hpp>
 #include <assets/model.hpp>
 
-#include <entities/light.hpp>
+#include <actors/engine/light.hpp>
 
 #include <glm/glm/gtc/type_ptr.hpp>
 #include <GLFW/glfw3.h>
@@ -20,11 +20,11 @@
 using namespace std::placeholders;
 
 void World::CFunc_CreateEntity(Console *console, std::vector<std::string> args) {
-    Entity *entity = new Entity();
+    AActor *entity = new AActor();
     if (args.size() >= 1)
         entity->name = args[0];
 
-    entities.emplace_back(entity);
+    actors.emplace_back(entity);
 }
 
 void World::CreateConObjects(Console *console) {
@@ -42,17 +42,17 @@ void World::CreateConObjects(Console *console) {
 
 void World::Update() {
     int l = 0;
-    for (int e = 0; e < entities.size(); e++) {
-        if (entities[e] == nullptr) {
-            printf("Entity #%i is a nullptr\n", e);
+    for (int e = 0; e < actors.size(); e++) {
+        if (actors[e] == nullptr) {
+            printf("Actor #%i is a nullptr\n", e);
             continue;
         }
 
-        Light *light = dynamic_cast<Light *>(entities[e]);
+        ALight *light = dynamic_cast<ALight *>(actors[e]);
 
-        entities[e]->Update(this);
+        actors[e]->Update(this);
 
-        if (light != nullptr && entities[e]->isVisible) {
+        if (light != nullptr && actors[e]->isVisible) {
             data.lightPositions[l] = light->position;
             data.lightDirections[l] = glm::rotate(light->rotation, glm::vec3(0, 0, 1));
             data.lightColors[l] = light->color;
@@ -74,11 +74,11 @@ void World::Draw(Renderer *renderer) {
     timeDelta = timeTotal - timeLast;
     timeLast = timeTotal;
 
-    for (int e = 0; e < entities.size(); e++) {
-        if (entities[e] == nullptr)
+    for (int e = 0; e < actors.size(); e++) {
+        if (actors[e] == nullptr)
             continue;
 
-        entities[e]->Draw(renderer, resources);
+        actors[e]->Draw(renderer, resources);
     }
 }
 
@@ -88,15 +88,15 @@ void World::DrawImGuiWindow() {
 
     ImGui::Begin("World");
 
-    if (ImGui::TreeNode("Create Entity##create_ent_menu")) {
+    if (ImGui::TreeNode("Create Actor##create_ent_menu")) {
         if (ImGui::Button("+ Light")) {
-            Light *light = new Light();
+            ALight *light = new ALight();
             light->name = "New Light";
-            entities.emplace_back(light);
+            actors.emplace_back(light);
         }
 
-        if (ImGui::Button("+ Entity"))
-            entities.emplace_back(new Entity());
+        if (ImGui::Button("+ Actor"))
+            actors.emplace_back(new AActor());
 
         ImGui::TreePop();
     }
@@ -114,9 +114,9 @@ void World::DrawImGuiWindow() {
 
 
     int deletion = -1;
-    if (ImGui::TreeNode("Entities")) {
+    if (ImGui::TreeNode("Actors")) {
         int e = 0;
-        for (const auto &entity: entities) {
+        for (const auto &entity: actors) {
             bool cantDrawX = false;
 
             if (entity)
@@ -149,7 +149,7 @@ void World::DrawImGuiWindow() {
     }
 
     if (deletion >= 0)
-        entities.erase(entities.begin() + deletion);
+        actors.erase(actors.begin() + deletion);
 
     ImGui::End();
 }

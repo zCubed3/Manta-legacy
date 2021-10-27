@@ -8,8 +8,8 @@
 
 #include <console/console.hpp>
 
-#include <entities/entity.hpp>
-#include <entities/world.hpp>
+#include <actors/actor.hpp>
+#include <actors/world.hpp>
 
 using namespace std::filesystem;
 
@@ -164,11 +164,11 @@ void Resources::DrawImGuiWindow() {
             if (ImGui::TreeNode(model.second->name.c_str())) {
                 ImGui::PushID(model.first.c_str());
                 if (ImGui::Button(
-                        "Create Entity##resources_window_loaded_models_create_ent_")) { // Creates an empty entity with this model inside it
-                    Entity *modelEnt = new Entity();
+                        "Create Actor##resources_window_loaded_models_create_ent_")) { // Creates an empty entity with this model inside it
+                    AActor *modelEnt = new AActor();
                     modelEnt->models.emplace_back(&model.second);
                     modelEnt->name = model.second->name;
-                    world->entities.emplace_back(modelEnt);
+                    world->actors.emplace_back(modelEnt);
                 }
                 ImGui::PopID();
 
@@ -201,6 +201,7 @@ void Resources::DrawImGuiWindow() {
 
     if (ImGui::TreeNode("Loaded Textures##resources_window_loaded_textures")) {
         for (auto &texture: textureLoader.loadedTextures) {
+            ImGui::Text("%s", texture.second->name.c_str());
             ImGui::Image((void *) (intptr_t) texture.second->texBuffer->handle, ImVec2(100, 100));
         }
         ImGui::TreePop();

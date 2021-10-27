@@ -9,9 +9,9 @@ typedef struct GLFWwindow GLFWwindow;
 
 class Texture;
 
-class GL3Renderer : public Renderer {
+class GLRenderer : public Renderer {
 public:
-    virtual const char *get_APIName() override { return "OpenGL 3.3"; };
+    virtual const char *get_APIName() override { return "OpenGL 4.6"; };
 
     void Initialize() override;
 
@@ -39,8 +39,8 @@ public:
 
     bool gbufferInited = false;
     uint gbufferFBO, gbufferDepthRBO;
-    Texture *gbufferPositionTex, *gbufferNormalTex, *gbufferAlbedoTex, *gbufferEmissionTex;
-    uint gbufferPositionID, gbufferNormalID, gbufferAlbedoID, gbufferEmissionID;
+    Texture *gbufferPositionTex, *gbufferNormalTex, *gbufferAlbedoTex, *gbufferMRSTex, *gbufferEmissionTex;
+    uint gbufferPositionID, gbufferNormalID, gbufferAlbedoID, gbufferMRSID, gbufferEmissionID;
 
     uint shadowmapFBO, shadowmapID;
 

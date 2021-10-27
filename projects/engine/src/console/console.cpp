@@ -1,12 +1,14 @@
 #include "console.hpp"
 
 #include <functional>
-#include <stdio.h>
+#include <iostream>
 #include <string.h>
 
 #include <regex>
 #include <iostream>
 #include <fstream>
+
+#include <imgui/imgui.h>
 
 ConObject::ConObject(std::string signature, bool isProtected) {
     this->signature = signature;
@@ -113,34 +115,35 @@ void Console::CreateCFunc(std::string signature, ConFuncBinding func, std::strin
     }
 }
 
-void Console::CreateCVar(std::string signature, std::string data, std::string help, bool isProtected) {
+void Console::CreateCVar(const std::string &signature, std::string data, const std::string &help, bool isProtected) {
     if (canCreateConObject(signature)) {
-        ConVar *cvar = new ConVar(signature, data, isProtected);
+        auto *pConVar = new ConVar(signature, std::move(data), isProtected);
 
-        if (RegisterObject(cvar))
-            printf("Registered CVar '%s'\n", signature.c_str());
-        else {
-            printf("Failed to register CVar'%s'\n", signature.c_str());
-            delete cvar;
+        try {
+            RegisterObject(pConVar);
+            std::cout << "Registered CVar '" << signature << "'\n";
+        }
+        catch (std::exception &e) {
+            std::cerr << "Caught an exception when trying to register '" << signature << "'\n" << e.what() << "\n";
+            delete pConVar;
         }
     }
 }
 
 bool Console::RegisterObject(ConObject *object) {
-    if (object == nullptr) {
-        printf("Given ConObject was a nullptr!\n");
-        return false;
+    if (object == nullptr)
+        throw std::runtime_error("Given ConObject was a nullptr!");
+
+    bool found = (int) objects.count(object->signature) > 0;
+
+    if (found) {
+        std::cerr << "An object is already registered with a signature of " << object->signature << "\n";
+        throw std::runtime_error(
+                "Can't register two ConObject's with the same signature! Did you accidentally try to set something up twice?");
     }
 
-    int found = objects.count(object->signature);
-
-    if (found > 0) {
-        printf("An object is already registered with a signature of %s\n", object->signature.c_str());
-        return false;
-    } else {
-        objects.emplace(object->signature, object);
-        return true;
-    }
+    objects.emplace(object->signature, object);
+    return true;
 }
 
 void ProcessObject(ConObject **object, Console *console, std::vector<std::string> *args) {
@@ -148,7 +151,7 @@ void ProcessObject(ConObject **object, Console *console, std::vector<std::string
         (*object)->Execute(console, *args);
         args->clear();
 
-        // This isn't very good code but it helps keep clutter down
+        // This isn't very good code, but it helps keep clutter down
     }
 }
 
@@ -275,3 +278,28 @@ std::string Console::CVarGetData(std::string signature, std::string default_) {
     return default_;
 }
 
+Console::Console() {
+    inputBuffer.resize(CONSOLE_MAX_INPUT_SIZE);
+}
+
+void Console::DrawImGuiWindow() {
+    if (!showWindow)
+        return;
+
+    ImGui::Begin("Console");
+
+    ImVec2 contentRegion = ImGui::GetContentRegionAvail();
+
+    ImGui::BeginChild("Console Output", ImVec2(0, contentRegion.y - 24), true, ImGuiWindowFlags_AlwaysAutoResize);
+
+    ImGui::TextUnformatted("TODO");
+
+    ImGui::EndChild();
+
+    if (ImGui::InputTextWithHint("Fackts", "Enter command here...", inputBuffer.data(), CONSOLE_MAX_INPUT_SIZE,
+                                 ImGuiInputTextFlags_EnterReturnsTrue)) {
+        std::cout << "Hola\n";
+    }
+
+    ImGui::End();
+}

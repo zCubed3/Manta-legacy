@@ -4,7 +4,7 @@
 #include <manta_macros.hpp>
 #include <console/console.hpp>
 
-#include <entities/camera.hpp>
+#include <actors/engine/camera.hpp>
 
 class Renderer;
 
@@ -103,7 +103,7 @@ public:
     float windowHeight = 100;
     bool vsync = true;
 
-    Camera *camera;
+    ACamera *camera;
 
     std::vector<Model *> modelQueue;
 

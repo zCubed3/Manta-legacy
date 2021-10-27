@@ -1,5 +1,5 @@
-#ifndef MANTA_PACKER_H
-#define MANTA_PACKER_H
+#ifndef MANTA_PACKER_HPP
+#define MANTA_PACKER_HPP
 
 // This is a collection of Manta specific datatypes that are meant to optimize the data stored and read by the engine
 

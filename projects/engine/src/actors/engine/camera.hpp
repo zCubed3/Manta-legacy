@@ -1,11 +1,11 @@
 #ifndef MANTA_CAMERAENT_H
 #define MANTA_CAMERAENT_H
 
-#include "entity.hpp"
+#include "actors/actor.hpp"
 
 class Renderer;
 
-class Camera : public Entity {
+class ACamera : public AActor {
 public:
     float fieldOfView = 80;
 

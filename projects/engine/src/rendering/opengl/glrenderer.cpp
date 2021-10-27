@@ -1,4 +1,4 @@
-#include "gl3_renderer.hpp"
+#include "glrenderer.hpp"
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -12,14 +12,15 @@
 #include "assets/glshader.hpp"
 #include "assets/gltexture.hpp"
 
-#include <entities/light.hpp>
-#include <entities/world.hpp>
+#include <actors/engine/light.hpp>
+#include <actors/world.hpp>
 
 #include <imgui/imgui.h>
 #include <imgui/backends/imgui_impl_glfw.h>
 #include <imgui/backends/imgui_impl_opengl3.h>
 
 #include <assets/resources.hpp>
+#include <assets/material.hpp>
 
 //
 // Callbacks
@@ -33,7 +34,7 @@ void OnFramebufferResize(GLFWwindow *window, int width, int height) {
     if (!rendererRaw)
         return;
 
-    GL3Renderer *renderer = (GL3Renderer *) rendererRaw;
+    GLRenderer *renderer = (GLRenderer *) rendererRaw;
 
     if (renderer) {
         renderer->windowWidth = width;
@@ -47,16 +48,16 @@ void OnFramebufferResize(GLFWwindow *window, int width, int height) {
 //
 
 // Shadowmaps based on https://learnopengl.com/Advanced-Lighting/Shadows/Shadow-Mapping
-void GL3Renderer::Initialize() {
+void GLRenderer::Initialize() {
     glewExperimental = true; // Enables more features
 
     if (glfwInit()) {
         printf("Initialized GLFW\n");
         glfwWindowHint(GLFW_RESIZABLE, console->CVarGetBool("r_window_resizable", false));
         glfwWindowHint(GLFW_SAMPLES, console->CVarGetInt("r_msaa_samples", 1));
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
 
         GLFWmonitor *monitor = nullptr;
 
@@ -70,8 +71,8 @@ void GL3Renderer::Initialize() {
         // Supply the renderer some info
         int intWidth, intHeight;
         glfwGetWindowSize(window, &intWidth, &intHeight);
-        windowWidth = intWidth;
-        windowHeight = intHeight;
+        windowWidth = (float) intWidth;
+        windowHeight = (float) intHeight;
 
         // Depth testing
         glEnable(GL_DEPTH_TEST);
@@ -91,8 +92,10 @@ void GL3Renderer::Initialize() {
             return;
         }
 
-        // Internal engine shaders
-        CreateShaderProgram(resources->shaderLoader.LoadCode("engine#error", gl3ErrorShaderCode));
+        // Internal engine materials and shaders
+        auto errorShader = resources->shaderLoader.LoadCode("engine#error", gl3ErrorShaderCode);
+        CreateShaderProgram(errorShader);
+        Material::errorMaterial = errorShader->CreateMaterial("engine#error", false); // We disable defaults since this isn't a normal material
 
         // GBuffer Framebuffer
         glGenFramebuffers(1, &gbufferFBO);
@@ -108,19 +111,21 @@ void GL3Renderer::Initialize() {
     }
 }
 
-void GL3Renderer::BeginRender(RenderType renderType) {
+void GLRenderer::BeginRender(RenderType renderType) {
     if (renderType == RenderType::GBuffer) {
         glBindFramebuffer(GL_FRAMEBUFFER, gbufferFBO);
 
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, gbufferPositionID, 0);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, gbufferNormalID, 0);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, gbufferAlbedoID, 0);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, gbufferEmissionID, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, gbufferMRSID, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT4, GL_TEXTURE_2D, gbufferEmissionID, 0);
 
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, gbufferDepthRBO);
 
-        uint buffers[4] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3};
-        glDrawBuffers(4, buffers);
+        uint buffers[5] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3,
+                           GL_COLOR_ATTACHMENT4};
+        glDrawBuffers(5, buffers);
     }
 
     if (renderType == RenderType::Shadowmap) {
@@ -139,7 +144,7 @@ void GL3Renderer::BeginRender(RenderType renderType) {
         glfwSwapInterval(vsync);
 }
 
-Renderer::Status GL3Renderer::EndRender() {
+Renderer::Status GLRenderer::EndRender() {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     Renderer::Status state = Renderer::Status::Running;
@@ -152,75 +157,75 @@ Renderer::Status GL3Renderer::EndRender() {
     return state;
 }
 
-void GL3Renderer::PresentRender() {
+void GLRenderer::PresentRender() {
     glfwSwapBuffers(window);
 }
 
-void GL3Renderer::InitImGui() {
+void GLRenderer::InitImGui() {
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 150");
 }
 
-void GL3Renderer::BeginImGui() {
+void GLRenderer::BeginImGui() {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 }
 
-void GL3Renderer::EndImGui() {
+void GLRenderer::EndImGui() {
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
-void GL3Renderer::CreateVertexBuffer(Model *model) {
+void GLRenderer::CreateVertexBuffer(Model *model) {
     if (model) {
         if (model->vertexBuffer) {
             printf("Model already has a vertex buffer, deleting it!\n");
             delete model->vertexBuffer;
         }
 
-        model->vertexBuffer = new GL3VertexBuffer();
+        model->vertexBuffer = new GLVertexBuffer();
         model->vertexBuffer->Populate(model);
     }
 }
 
-void GL3Renderer::CreateShaderProgram(Shader *shader) {
+void GLRenderer::CreateShaderProgram(Shader *shader) {
     if (shader) {
         if (shader->program != nullptr) {
             printf("Shader already has a program, deleting it!\n");
             delete shader->program;
         }
 
-        GL3ShaderProgram *program = new GL3ShaderProgram();
+        auto *program = new GLShaderProgram();
         if (program->Compile(shader))
             shader->program = program;
     }
 }
 
-void GL3Renderer::CreateTextureBuffer(Texture *texture) {
+void GLRenderer::CreateTextureBuffer(Texture *texture) {
     if (texture) {
         if (texture->texBuffer) {
             printf("Texture already has a texture buffer, deleting it!\n");
             delete texture->texBuffer;
         }
 
-        texture->texBuffer = new GL3TextureBuffer();
+        texture->texBuffer = new GLTextureBuffer();
         texture->texBuffer->Populate(texture);
     }
 }
 
-void GL3Renderer::CreateConObjects(Console *console) {
+void GLRenderer::CreateConObjects(Console *console) {
     Renderer::CreateConObjects(console);
     // Doesn't do anything yet
 }
 
-void GL3Renderer::DrawImGuiWindow() {
+void GLRenderer::DrawImGuiWindow() {
     if (!showImGuiWindow)
         return;
 
     ImGui::Begin("Renderer");
 
-    ImGui::Text("OpenGL 3.3");
+    ImGui::Text("%s", get_APIName());
     ImGui::Checkbox("VSync", &vsync);
 
     if (ImGui::TreeNode("GBuffer Visualization##gbuf_vis_opengl")) {
@@ -239,6 +244,10 @@ void GL3Renderer::DrawImGuiWindow() {
                      ImVec2(1, 0));
         ImGui::Spacing();
 
+        ImGui::Text("MRS:");
+        ImGui::Image((void *) (intptr_t) gbufferMRSID, ImVec2(windowWidth / 4, windowHeight / 4), ImVec2(0, 1),
+                     ImVec2(1, 0));
+
         ImGui::Text("Emissive:");
         ImGui::Image((void *) (intptr_t) gbufferEmissionID, ImVec2(windowWidth / 4, windowHeight / 4), ImVec2(0, 1),
                      ImVec2(1, 0));
@@ -249,8 +258,9 @@ void GL3Renderer::DrawImGuiWindow() {
     ImGui::End();
 }
 
-void GL3Renderer::CreateGBuffers() {
-    std::vector<Texture *> gbuffers{gbufferPositionTex, gbufferNormalTex, gbufferAlbedoTex, gbufferEmissionTex};
+void GLRenderer::CreateGBuffers() {
+    std::vector<Texture *> gbuffers{gbufferPositionTex, gbufferNormalTex, gbufferAlbedoTex, gbufferMRSTex,
+                                    gbufferEmissionTex};
 
     if (!gbufferInited) {
         gbufferPositionTex = resources->textureLoader.CreateTexture("engine#gbuffer#position", windowWidth,
@@ -271,6 +281,14 @@ void GL3Renderer::CreateGBuffers() {
                                                                   Texture::TextureType::Texture2D,
                                                                   Texture::Format::Internal, Texture::Filtering::Point);
 
+        gbufferMRSTex = resources->textureLoader.CreateTexture("engine#gbuffer#mrs", windowWidth,
+                                                               windowHeight,
+                                                               Texture::TextureType::Texture2D,
+                                                               Texture::Format::Internal,
+                                                               Texture::Filtering::Point);
+
+        gbufferMRSTex->dataFormat = Texture::DataFormat::RGBA_16F;
+
         gbufferEmissionTex = resources->textureLoader.CreateTexture("engine#gbuffer#emission", windowWidth,
                                                                     windowHeight,
                                                                     Texture::TextureType::Texture2D,
@@ -279,7 +297,7 @@ void GL3Renderer::CreateGBuffers() {
 
         glGenRenderbuffers(1, &gbufferDepthRBO);
 
-        gbuffers = {gbufferPositionTex, gbufferNormalTex, gbufferAlbedoTex, gbufferEmissionTex};
+        gbuffers = {gbufferPositionTex, gbufferNormalTex, gbufferAlbedoTex, gbufferMRSTex, gbufferEmissionTex};
 
         gbufferInited = true;
     } else {
@@ -297,10 +315,11 @@ void GL3Renderer::CreateGBuffers() {
     gbufferPositionID = gbufferPositionTex->texBuffer->handle;
     gbufferNormalID = gbufferNormalTex->texBuffer->handle;
     gbufferAlbedoID = gbufferAlbedoTex->texBuffer->handle;
+    gbufferMRSID = gbufferMRSTex->texBuffer->handle;
     gbufferEmissionID = gbufferEmissionTex->texBuffer->handle;
 }
 
-void GL3Renderer::DrawLightingQuad() {
+void GLRenderer::DrawLightingQuad() {
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, gbufferPositionID);
 
@@ -311,6 +330,9 @@ void GL3Renderer::DrawLightingQuad() {
     glBindTexture(GL_TEXTURE_2D, gbufferAlbedoID);
 
     glActiveTexture(GL_TEXTURE3);
+    glBindTexture(GL_TEXTURE_2D, gbufferMRSID);
+
+    glActiveTexture(GL_TEXTURE4);
     glBindTexture(GL_TEXTURE_2D, gbufferEmissionID);
 
     cameraQuad->shader = lightingShader;
@@ -326,24 +348,21 @@ std::string gl3ErrorShaderCode = R"(
 layout(location = 0) in vec3 _vertex;
 layout(location = 1) in vec3 _normal;
 
-uniform mat4 MANTA_mM;
-uniform mat4 MANTA_mV;
-uniform mat4 MANTA_mP;
+uniform mat4 MANTA_MATRIX_M;
+uniform mat4 MANTA_MATRIX_V;
+uniform mat4 MANTA_MATRIX_P;
+uniform mat4 MANTA_MATRIX_M_IT;
 
 out vec3 vert_position;
 out vec3 normal;
 
 void main() {
-  mat4 mMVP = MANTA_mP * MANTA_mV * MANTA_mM;
+  mat4 mMVP = MANTA_MATRIX_P * MANTA_MATRIX_V * MANTA_MATRIX_M;
   gl_Position = mMVP * vec4(_vertex, 1.0);
 
-  vert_position = (MANTA_mM * vec4(_vertex, 1.0)).xyz;
+  vert_position = (MANTA_MATRIX_M * vec4(_vertex, 1.0)).xyz;
 
-  mat3 mx3norm = mat3(MANTA_mM);
-  mx3norm = inverse(mx3norm);
-  mx3norm = transpose(mx3norm);
-
-  normal = (mx3norm * _normal);
+  normal = (MANTA_MATRIX_M * vec4(_normal, 1)).xyz;
 }
 
 #endif
@@ -351,19 +370,21 @@ void main() {
 #ifdef FRAGMENT
 layout(location = 0) out vec4 out_position;
 layout(location = 1) out vec4 out_normal;
-layout(location = 3) out vec4 out_emission;
+layout(location = 3) out vec4 out_mrs;
+layout(location = 4) out vec4 out_emission;
 
-uniform float MANTA_fTime;
+uniform float MANTA_TIME;
 
 in vec3 vert_position;
 in vec3 normal;
 
 void main() {
-   out_position = vec4(vert_position, 1);
-   out_normal = vec4(normal, 1);
+    out_position = vec4(vert_position, 1);
+    out_normal = vec4(normal, 1);
 
-   // Color is #ff7300
-   out_emission = vec4(vec3(1.0, 0.45098039215, 0.0) * abs(sin(MANTA_fTime * 2)), 1.0);
+    // Color is #ff7300
+    out_emission = vec4(vec3(1.0, 0.45098039215, 0.0) * abs(sin(MANTA_TIME * 2)), 1.0);
+    out_mrs = vec4(0.0, 1.0, 0.0, 1.0);
 }
 
 #endif

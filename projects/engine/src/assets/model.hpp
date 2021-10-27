@@ -11,7 +11,7 @@ class Shader;
 
 class Model;
 
-class Entity;
+class AActor;
 
 class Renderer;
 
@@ -21,7 +21,7 @@ class VertexBuffer {
 public:
     virtual void Populate(Model *model) = 0;
 
-    virtual void Draw(Renderer *renderer, Entity *entity, Shader *shader) = 0; // Model::Draw wraps around this
+    virtual void Draw(Renderer *renderer, AActor *entity, Shader *shader) = 0; // Model::Draw wraps around this
 
     virtual ~VertexBuffer() {};
 };
@@ -46,7 +46,7 @@ public:
     VertexBuffer *vertexBuffer = nullptr;
     Shader *shader = nullptr;
 
-    void Draw(Renderer *renderer, Resources *resources, Entity *entity);
+    void Draw(Renderer *renderer, Resources *resources, AActor *entity);
 };
 
 class ModelLoader {

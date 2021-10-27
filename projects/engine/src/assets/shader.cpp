@@ -8,6 +8,8 @@
 #include <fstream>
 
 #include <chrono>
+#include <utility>
+#include "material.hpp"
 
 ShaderProgram::~ShaderProgram() {} // Silence the compiler
 
@@ -59,6 +61,10 @@ Shader *ShaderLoader::LoadShader(std::string path) {
 
     shaders.emplace(path, buffer);
     return buffer;
+}
+
+Material *Shader::CreateMaterial(std::string name, bool usingDefaults) {
+    return new Material(std::move(name), this, usingDefaults);
 }
 
 // Internally loaded shaders can't be reloaded for obvious reasons

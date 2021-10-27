@@ -1,4 +1,0 @@
-#!/bin/bash
-
-# This script is basically nothing, it only defines some parameters
-CS_PROJ_BIN=Manta.Internal

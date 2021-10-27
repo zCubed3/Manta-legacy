@@ -2,12 +2,12 @@
 
 #include <GL/glew.h>
 
-GL3TextureBuffer::~GL3TextureBuffer() {
+GLTextureBuffer::~GLTextureBuffer() {
     if (handle != GL_INVALID_INDEX)
         glDeleteTextures(1, &handle);
 }
 
-void GL3TextureBuffer::Populate(Texture *texture) {
+void GLTextureBuffer::Populate(Texture *texture) {
     if (texture) {
         glGenTextures(1, &handle);
         glBindTexture(GL_TEXTURE_2D, handle);

@@ -1,4 +1,4 @@
-#include "entities/entity.hpp"
+#include "actors/actor.hpp"
 #include <rendering/renderer.hpp>
 
 #include <manta_macros.hpp>
@@ -17,8 +17,8 @@
 #include <console/console.hpp>
 #include <console/common_console.hpp>
 
-#include <entities/world.hpp>
-#include <entities/light.hpp>
+#include <actors/world.hpp>
+#include <actors/engine/light.hpp>
 
 #include <common/spinner.hpp>
 
@@ -28,9 +28,7 @@
 
 #include <glm/glm/gtc/quaternion.hpp>
 
-#include <rendering/opengl/gl3_renderer.hpp>
-
-#include <scripting/mono/monoruntime.hpp>
+#include <rendering/opengl/glrenderer.hpp>
 
 int main(int argc, char **argv) {
 #ifdef DEBUG
@@ -49,16 +47,7 @@ int main(int argc, char **argv) {
     world.CreateConObjects(&console);
     //PackerCreateConObjects(&console);
 
-    // Create the mono runtime, this is important to comment on since Mono could break or make this engine at times...
-    MonoScriptingBackend monoBackend;
-
-#ifdef DEBUG
-    monoBackend.debug = true;
-#endif
-
-    monoBackend.Initialize();
-
-    Renderer *renderer = new GL3Renderer();
+    Renderer *renderer = new GLRenderer();
 
     if (renderer == nullptr) {
         printf("Fatal: Failed to create renderer\n");
@@ -78,7 +67,7 @@ int main(int argc, char **argv) {
     renderer->world = &world;
     renderer->Initialize();
 
-    Camera camera;
+    ACamera camera;
     camera.position = glm::vec3(0, 0, 3);
     camera.euler = glm::vec3(0, 180, 0);
     camera.ignoreConFov = false;
@@ -88,14 +77,14 @@ int main(int argc, char **argv) {
 
     renderer->camera = &camera;
 
-    world.entities.emplace_back(&camera);
+    world.actors.emplace_back(&camera);
 
-    Light testLight1, testLight2, testLight3;
-    std::vector<Light *> testLights = {&testLight1, &testLight2, &testLight3};
+    ALight testLight1, testLight2, testLight3;
+    std::vector<ALight *> testLights = {&testLight1, &testLight2, &testLight3};
 
     for (int l = 0; l < testLights.size(); l++) {
-        testLights[l]->type = Light::LightType::Point;
-        world.entities.emplace_back(testLights[l]);
+        testLights[l]->type = ALight::LightType::Point;
+        world.actors.emplace_back(testLights[l]);
 
         testLights[l]->scale = glm::vec3(1, 1, 1) * 0.1f;
         testLights[l]->name = "Orbit Light";
@@ -105,9 +94,9 @@ int main(int argc, char **argv) {
     testLight2.color = glm::vec3(0, 1, 0);
     testLight3.color = glm::vec3(0, 0, 1);
 
-    Light cameraSpot;
+    ALight cameraSpot;
     cameraSpot.color = glm::vec3(1, 1, 1);
-    cameraSpot.type = Light::LightType::Spot;
+    cameraSpot.type = ALight::LightType::Spot;
     cameraSpot.range = 5.0f;
 
     cameraSpot.param1 = 10.0f;
@@ -116,7 +105,7 @@ int main(int argc, char **argv) {
     cameraSpot.position = glm::vec3(0, 3, 0);
     cameraSpot.euler = glm::vec3(90, 0, 0);
 
-    //world.entities.emplace_back(&cameraSpot);
+    //world.actors.emplace_back(&cameraSpot);
 
     Renderer::Status state;
 
@@ -222,14 +211,14 @@ int main(int argc, char **argv) {
             ImGui::Checkbox("Renderer", &renderer->showImGuiWindow);
             ImGui::Checkbox("World", &world.showWindow);
             ImGui::Checkbox("Resources", &resources.showWindow);
-            ImGui::Checkbox("Mono Debug", &monoBackend.showWindow);
+            ImGui::Checkbox("Console", &console.showWindow);
 
             ImGui::End();
 
             world.DrawImGuiWindow();
             renderer->DrawImGuiWindow();
             resources.DrawImGuiWindow();
-            monoBackend.DrawDebugWindow();
+            console.DrawImGuiWindow();
 
             renderer->EndImGui();
         }

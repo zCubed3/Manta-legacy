@@ -3,9 +3,9 @@
 
 #include <assets/texture.hpp>
 
-class GL3TextureBuffer : public TextureBuffer {
+class GLTextureBuffer : public TextureBuffer {
 public:
-    virtual ~GL3TextureBuffer() override;
+    virtual ~GLTextureBuffer() override;
 
     void Populate(Texture *texture) override;
 };

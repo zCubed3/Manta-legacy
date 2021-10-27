@@ -1,4 +1,4 @@
-#include "entity.hpp"
+#include "actor.hpp"
 #include "world.hpp"
 
 #include <stdio.h>
@@ -11,7 +11,7 @@
 
 #include <glm/glm/gtc/type_ptr.hpp>
 
-void Entity::Update(World *world) {
+void AActor::Update(World *world) {
     if (!isEnabled)
         return;
 
@@ -20,9 +20,11 @@ void Entity::Update(World *world) {
     mModel = glm::translate(glm::mat4(1.0f), position);
     mModel *= glm::toMat4(rotation);
     mModel = glm::scale(mModel, scale);
+
+    mModel_it = glm::transpose(glm::inverse(mModel));
 }
 
-void Entity::Draw(Renderer *renderer, Resources *resources) {
+void AActor::Draw(Renderer *renderer, Resources *resources) {
     if (!isVisible)
         return;
 
@@ -39,7 +41,7 @@ void Entity::Draw(Renderer *renderer, Resources *resources) {
     }
 }
 
-void Entity::DrawImGui(World *world, int index) {
+void AActor::DrawImGui(World *world, int index) {
     ImGui::PushID("entity_editor_");
     ImGui::PushID(index);
     if (ImGui::TreeNode(name.c_str())) {

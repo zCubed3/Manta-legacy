@@ -15,7 +15,7 @@
 
 #include <assets/resources.hpp>
 
-void Model::Draw(Renderer *renderer, Resources *resources, Entity *entity) {
+void Model::Draw(Renderer *renderer, Resources *resources, AActor *entity) {
     if (renderer == nullptr) {
         printf("Can't Draw a model without a valid renderer!\n");
         return;

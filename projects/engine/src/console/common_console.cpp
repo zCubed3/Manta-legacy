@@ -22,11 +22,6 @@ void setv(Console *console, std::vector<std::string> args) {
     }
 }
 
-// Causes the engine to not load any visuals instead it acts as a command parser
-bool cmdMode = false;
-
-void setCmdMode(Console *console, std::vector<std::string> args) { cmdMode = true; }
-
 void help(Console *console, std::vector<std::string> args) {
     if (args.size() > 0) {
         auto iter = console->objects.find(args[0]);
@@ -77,5 +72,4 @@ void CreateCommonConObjects(Console *console) {
     console->CreateCFunc("setv", &setv);
     console->CreateCFunc("exec", &exec);
     console->CreateCFunc("e_disable_protection", &disableProtection);
-    console->CreateCFunc("e_cmdmode", &setCmdMode);
 }

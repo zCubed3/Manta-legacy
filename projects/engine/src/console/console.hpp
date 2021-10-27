@@ -8,6 +8,8 @@
 
 #include "manta_macros.hpp"
 
+#define CONSOLE_MAX_INPUT_SIZE 255
+
 class Console;
 
 class ConObject {
@@ -68,14 +70,19 @@ public:
 //
 class Console {
 public:
+    Console();
+
     ~Console();
 
     std::unordered_map<std::string, ConObject *> objects;
     bool protectionDisabled = false; // Allows cheat / risky ConObjects to execute
 
+    bool showWindow = false; // For ImGui
+
     void CreateCFunc(std::string signature, ConFuncBinding func, std::string help = "", bool isProtected = false);
 
-    void CreateCVar(std::string signature, std::string data, std::string help = "", bool isProtected = false);
+    void
+    CreateCVar(const std::string &signature, std::string data, const std::string &help = "", bool isProtected = false);
 
     bool RegisterObject(ConObject *object);
 
@@ -92,6 +99,10 @@ public:
     std::string CVarGetData(std::string signature, std::string default_);
 
     bool canCreateConObject(std::string signature);
+
+    std::string inputBuffer;
+
+    void DrawImGuiWindow();
 };
 
 #endif
