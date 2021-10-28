@@ -32,9 +32,9 @@ public:
 
     std::vector<Model **> models;
 
-    std::vector<CComponent*> components;
+    std::vector<CComponent *> components;
 
-    virtual void AddComponent(CComponent* pComponent);
+    virtual void AddComponent(CComponent *pComponent);
 
     bool isEnabled = true;
     bool isVisible = true;
@@ -45,7 +45,7 @@ public:
     virtual void Draw(Renderer *renderer, Resources *resources);
 
     // This is usually ran inside of a tree
-    void DrawImGui(World *world, Resources* resources, int index);
+    void DrawImGui(World *world, Resources *resources, int index);
 
     virtual void
     DrawImGuiSub(World *world, int index) {}; // By default this does nothing, but is useful for lights and stuff

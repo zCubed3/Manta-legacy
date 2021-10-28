@@ -17,11 +17,6 @@ public:
 
 class Texture {
 public:
-    enum class TextureType {
-        Texture2D,
-        Texture3D
-    };
-
     enum class Format {
         Float, Byte, Internal
     };
@@ -36,12 +31,11 @@ public:
     };
 
 public:
-    Texture(std::string name, int width, int height, TextureType type, Format format, Filtering filtering);
+    Texture(std::string name, int width, int height, Format format, Filtering filtering);
 
     void Resize(int newWidth, int newHeight);
 
     int width, height;
-    TextureType type;
 
     Format format;
     Filtering filtering;
@@ -58,11 +52,11 @@ public:
 
 class TextureLoader {
 public:
-    Texture *CreateTexture(std::string name, int width, int height, Texture::TextureType type,
+    Texture *CreateTexture(std::string name, int width, int height,
                            Texture::Format format = Texture::Format::Byte,
                            Texture::Filtering filtering = Texture::Filtering::Bilinear);
 
-    Texture *LoadFromFile(std::string path, Texture::TextureType type, Texture::Format format = Texture::Format::Byte,
+    Texture *LoadFromFile(std::string path, std::string id = "", Texture::Format format = Texture::Format::Byte,
                           Texture::Filtering filtering = Texture::Filtering::Point);
 
     std::unordered_map<std::string, Texture *> loadedTextures;

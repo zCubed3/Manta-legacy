@@ -22,7 +22,7 @@ uniform sampler2D MANTA_GBUFFER_ALBEDO; //GBuffer Albedo
 uniform sampler2D MANTA_GBUFFER_MRS; //GBuffer combined metallic, roughness, and specular maps
 uniform sampler2D MANTA_GBUFFER_EMISSION; //GBuffer Emission
 
-uniform sampler3D MANTA_REFLECTION_CUBEMAP;
+uniform samplerCube MANTA_CUBEMAP_ENVIRONMENT;
 
 uniform int MANTA_LIGHT_COUNT;
 uniform vec3 MANTA_LIGHT_POSITIONS[32];
@@ -118,13 +118,13 @@ void main() {
    vec3 fragPos = texture2D(MANTA_GBUFFER_POS, uv).rgb;
    vec3 fragNorm = texture2D(MANTA_GBUFFER_NORMAL, uv).rgb;
 
-   if (fragPos == vec3(0) && fragNorm == vec3(0)) { // There must be nothing here
-      color = vec3(0);
-      return;
-   }
-
    vec3 fragColor = texture2D(MANTA_GBUFFER_ALBEDO, uv).rgb;
    vec3 fragEmiss = texture2D(MANTA_GBUFFER_EMISSION, uv).rgb;
+
+   if (fragPos == vec3(0) && fragNorm == vec3(0)) { // There must be nothing here that requires shading, just draw the emissive (skyboxes and other effects)
+      color = fragEmiss;
+      return;
+   }
 
    vec3 normal = normalize(fragNorm);
    vec3 view = normalize(MANTA_CAMERA_POSITION - fragPos);
@@ -162,6 +162,8 @@ void main() {
       float denominator = 4.0 * max(dot(normal, view), 0.0) * max(dot(normal, light), 0.0);
       vec3 specular = numerator / max(denominator, 0.001);
 
+      vec3 environment = textureLod(MANTA_CUBEMAP_ENVIRONMENT, reflect(view, normalize(fragNorm)), roughness * 4).xyz;
+
       vec3 radiance = MANTA_LIGHT_COLORS[l] * atten;
 
       vec3 kS = F;
@@ -169,12 +171,16 @@ void main() {
 
       kD *= 1.0 - metallic;
 
+      environment *= F;
+
       float NdotL = max(dot(normal, light), 0.0);
-      Lo += (kD * albedo.xyz / PI + specular) * radiance * NdotL;
+      Lo += ((kD * albedo.xyz / PI + specular) * radiance * NdotL) + environment;
    }
 
    vec3 ambient = MANTA_AMBIENT_COLOR * fragColor;
    color = (ambient + Lo) + fragEmiss;
+
+   //color = texture(MANTA_CUBEMAP_ENVIRONMENT, fragNorm).xyz;
 }
 
 #endif

@@ -6,8 +6,11 @@
 #include <actors/engine/camera.hpp>
 
 #include <assets/resources.hpp>
+#include <assets/cubemap.hpp>
 
 #include <rendering/renderer.hpp>
+
+#include <GL/glew.h>
 
 void ASkybox::Update(World *world) {
     if (pCamera != nullptr) {
@@ -23,7 +26,11 @@ void ASkybox::Draw(Renderer *renderer, Resources *resources) {
     renderer->SetCullingMode(Renderer::CullMode::None);
     renderer->SetDepthTestMode(Renderer::DepthMode::None);
 
-    resources->modelLoader.loadedModels["engine#cube"]->Draw(renderer, resources, this, resources->materialLoader.materials["engine#skybox"]);
+    glActiveTexture(GL_TEXTURE5);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, pCubemap->buffer->handle);
+
+    resources->modelLoader.loadedModels["engine#cube"]->Draw(renderer, resources, this,
+                                                             resources->materialLoader.materials["engine#skybox"]);
 
     // Restore old rendering
     renderer->SetCullingMode(Renderer::CullMode::Back);

@@ -30,6 +30,12 @@
 
 #include <rendering/opengl/glrenderer.hpp>
 
+#include <actors/engine/skybox.hpp>
+
+#include <assets/cubemap.hpp>
+
+#include <rendering/opengl/assets/glcubemap.hpp>
+
 int main(int argc, char **argv) {
 #ifdef DEBUG
     printf("[Debug]: This is a debug build of Manta, things will be slower seeing as compilation optimization is disabled plus debug info will be present!\n");
@@ -71,6 +77,13 @@ int main(int argc, char **argv) {
     world.renderer = renderer;
 
     resources.Prewarm();
+
+    auto test = resources.LoadTexture("test.jpg");
+    Cubemap* cubemap = new Cubemap(test, test, test, test, test, test);
+    cubemap->buffer = new GLCubemapBuffer();
+    cubemap->buffer->Populate(cubemap);
+
+    world.pSkybox->pCubemap = cubemap;
 
     ALight testLight1, testLight2, testLight3;
     std::vector<ALight *> testLights = {&testLight1, &testLight2, &testLight3};
@@ -127,8 +140,6 @@ int main(int argc, char **argv) {
     while (true) {
         glfwPollEvents();
 
-        world.Update();
-
         for (int l = 0; l < testLights.size(); l++) {
             int o = l + 1;
             testLights[l]->position = glm::vec3(sinf(world.timeTotal + piThird * o) * 3,
@@ -180,6 +191,8 @@ int main(int argc, char **argv) {
 
         //printf("\rRunning %c", spinner.character);
         //spinner.Spin();
+
+        world.Update();
 
         // Render GBuffers
         renderer->BeginRender(Renderer::RenderType::GBuffer);

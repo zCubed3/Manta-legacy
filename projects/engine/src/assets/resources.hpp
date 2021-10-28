@@ -23,6 +23,7 @@ struct ResourcesPath {
 class Resources {
 public:
     Resources();
+
     void Prewarm(); // Loads default content
 
     void FindDataPaths();
@@ -36,9 +37,11 @@ public:
 
     Model *LoadModel(std::string path, std::string id = "");
 
-    Shader *LoadShader(std::string path);
+    Shader *LoadShader(std::string path, std::string id = "");
 
-    Texture *LoadTexture(std::string path);
+    Texture *LoadTexture(std::string path, std::string id = "");
+
+    Material *LoadMaterial(std::string name, std::string path, std::string id = "", bool usingDefaults = true);
 
     bool showWindow = false;
 

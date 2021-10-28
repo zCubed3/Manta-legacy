@@ -16,24 +16,24 @@ void main() {
 
   vert_position = (MANTA_MATRIX_M * vec4(_vertex, 1.0)).xyz;  
   normal = (MANTA_MATRIX_M_IT * vec4(_normal, 1.0)).xyz;
-
-  uv = _uv;
 }
 
 #endif
 
 #ifdef FRAGMENT
-layout(location = 0) out vec4 out_position;
-layout(location = 1) out vec4 out_normal;
 layout(location = 4) out vec4 out_emission;
 
 in vec3 vert_position;
 in vec3 normal;
 
+uniform samplerCube MANTA_CUBEMAP_ENVIRONMENT;
+
+uniform vec3 MANTA_CAMERA_POSITION;
+
 void main() {
-   out_position = vec4(vert_position, 1);
-   out_normal = vec4(normal, 1);
-   out_emission = vec4(0, 0, 0, 1);
+    vec3 direction = normalize(vert_position - MANTA_CAMERA_POSITION);
+
+    out_emission = texture(MANTA_CUBEMAP_ENVIRONMENT, direction);
 }
 
 #endif

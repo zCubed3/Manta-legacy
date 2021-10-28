@@ -12,15 +12,15 @@
 
 class CRenderer : public CComponent {
 public:
-    std::vector<std::pair<Model**, Material**>> models;
+    std::vector<std::pair<Model **, Material **>> models;
 
     void Update() override;
 
     void Draw(Renderer *renderer, Resources *resources) override;
 
-    void AddModel(Model** pModel, Material** pMaterial);
+    void AddModel(Model **pModel, Material **pMaterial);
 
-    void DrawImGuiWindowSub(World *world, Resources* resources, int index) override;
+    void DrawImGuiWindowSub(World *world, Resources *resources, int index) override;
 };
 
 

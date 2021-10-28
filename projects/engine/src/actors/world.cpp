@@ -30,7 +30,7 @@ World::World() {
     camera->euler = glm::vec3(0, 180, 0);
     camera->ignoreConFov = false;
 
-    ASkybox* skybox = new ASkybox();
+    ASkybox *skybox = new ASkybox();
     skybox->isProtected = true;
     skybox->name = "Skybox";
 
@@ -40,6 +40,7 @@ World::World() {
     actors.emplace_back(camera);
 
     pCamera = camera;
+    pSkybox = skybox;
 }
 
 void World::CFunc_CreateEntity(Console *console, std::vector<std::string> args) {
@@ -105,7 +106,7 @@ void World::Draw(Renderer *renderer) {
     }
 }
 
-void World::DrawImGuiWindow(Resources* resources) {
+void World::DrawImGuiWindow(Resources *resources) {
     if (!showWindow)
         return;
 

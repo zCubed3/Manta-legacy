@@ -8,7 +8,7 @@
 void CRenderer::Update() {}
 
 void CRenderer::Draw(Renderer *renderer, Resources *resources) {
-    for (auto& model: models) {
+    for (auto &model: models) {
         if (!model.first)
             return;
 
@@ -22,8 +22,8 @@ void CRenderer::Draw(Renderer *renderer, Resources *resources) {
 }
 
 // Just so we don't have to do std::pair constantly
-void CRenderer::AddModel(Model** pModel, Material** pMaterial) {
-    models.emplace_back(std::pair<Model**, Material**>(pModel, pMaterial));
+void CRenderer::AddModel(Model **pModel, Material **pMaterial) {
+    models.emplace_back(std::pair<Model **, Material **>(pModel, pMaterial));
 }
 
 void CRenderer::DrawImGuiWindowSub(World *world, Resources *resources, int index) {

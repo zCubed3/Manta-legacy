@@ -31,13 +31,13 @@ void AActor::Draw(Renderer *renderer, Resources *resources) {
     if (!isVisible)
         return;
 
-    for (auto & component : components) {
+    for (auto &component: components) {
         if (component->isVisible)
             component->Draw(renderer, resources);
     }
 }
 
-void AActor::DrawImGui(World *world, Resources* resources, int index) {
+void AActor::DrawImGui(World *world, Resources *resources, int index) {
     ImGui::PushID("entity_editor_");
     ImGui::PushID(index);
     if (ImGui::TreeNode(name.c_str())) {
@@ -80,7 +80,7 @@ void AActor::DrawImGui(World *world, Resources* resources, int index) {
 
         DrawImGuiSub(world, index);
 
-        for (auto& component : components)
+        for (auto &component: components)
             component->DrawImGuiWindowSub(world, resources, index);
 
         ImGui::TreePop();

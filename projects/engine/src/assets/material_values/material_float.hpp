@@ -12,6 +12,7 @@ public:
     MaterialFloat(std::string location, float value);
 
     void BindValue(Shader *pShader) override;
+
     void DrawProperty(World *world, std::string identifier) override;
 
     float value;

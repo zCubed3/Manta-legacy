@@ -10,6 +10,7 @@ set(SOURCES
         "src/assets/shader.cpp"
         "src/assets/resources.cpp"
         "src/assets/material.cpp"
+        "src/assets/cubemap.cpp"
 
         "src/assets/material_values/material_color.cpp"
         "src/assets/material_values/material_float.cpp"
@@ -28,6 +29,7 @@ set(SOURCES
         "src/rendering/opengl/assets/glmodel.cpp"
         "src/rendering/opengl/assets/glshader.cpp"
         "src/rendering/opengl/assets/gltexture.cpp"
+        "src/rendering/opengl/assets/glcubemap.cpp"
 
         "${DEPENDS_DIR}/imgui/imgui.cpp"
         "${DEPENDS_DIR}/imgui/imgui_internal.h"

@@ -15,7 +15,7 @@
 
 #include <assets/resources.hpp>
 
-void Model::Draw(Renderer *renderer, Resources *resources, AActor *entity, Material* material) {
+void Model::Draw(Renderer *renderer, Resources *resources, AActor *entity, Material *material) {
     if (renderer == nullptr) {
         printf("Can't Draw a model without a valid renderer!\n");
         return;
@@ -26,17 +26,17 @@ void Model::Draw(Renderer *renderer, Resources *resources, AActor *entity, Mater
         exit(0);
     }
 
-   //Shader *usedShader = shader;
+    //Shader *usedShader = shader;
 
-   //if (!usedShader) { // If we're missing a Shader, default to the error shader
-   //    ShaderLoader loader = resources->shaderLoader;
-   //    usedShader = loader.GetShader("engine#error");
+    //if (!usedShader) { // If we're missing a Shader, default to the error shader
+    //    ShaderLoader loader = resources->shaderLoader;
+    //    usedShader = loader.GetShader("engine#error");
 
-   //    if (!usedShader) {
-   //        printf("Failed to fallback on the error shader!");
-   //        return;
-   //    }
-   //}
+    //    if (!usedShader) {
+    //        printf("Failed to fallback on the error shader!");
+    //        return;
+    //    }
+    //}
 
     if (vertexBuffer)
         vertexBuffer->Draw(renderer, entity, material);

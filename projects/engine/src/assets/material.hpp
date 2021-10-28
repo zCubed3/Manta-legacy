@@ -8,7 +8,9 @@
 class MaterialValue;
 
 class Shader;
+
 class Resources;
+
 class World;
 
 #define RENAME_BUFFER_LEN 256
@@ -25,7 +27,7 @@ public:
     void Bind();
 
     // Returns a bool because if we rename it we can't continue iterating within the for loop otherwise we segfault!
-    bool DrawImGui(World *world, Resources* resources);
+    bool DrawImGui(World *world, Resources *resources);
 
     std::string name;
     Shader *pShader;
@@ -38,7 +40,7 @@ public:
 
 class MaterialLoader {
 public:
-    Material* CreateMaterial(std::string name, Shader* shader, bool usingDefaults = true);
+    Material *CreateMaterial(std::string name, Shader *shader, bool usingDefaults = true);
 
     std::unordered_map<std::string, Material *> materials;
 };

@@ -97,7 +97,8 @@ void GLRenderer::Initialize() {
         // Internal engine materials and shaders
         auto errorShader = resources->shaderLoader.LoadCode("engine#error", gl3ErrorShaderCode);
         CreateShaderProgram(errorShader);
-        Material::errorMaterial = resources->materialLoader.CreateMaterial("engine#error", errorShader, false); // We disable defaults since this isn't a normal material
+        Material::errorMaterial = resources->materialLoader.CreateMaterial("engine#error", errorShader,
+                                                                           false); // We disable defaults since this isn't a normal material
 
         // GBuffer Framebuffer
         glGenFramebuffers(1, &gbufferFBO);
@@ -260,25 +261,21 @@ void GLRenderer::CreateGBuffers() {
     if (!gbufferInited) {
         gbufferPositionTex = resources->textureLoader.CreateTexture("engine#gbuffer#position", windowWidth,
                                                                     windowHeight,
-                                                                    Texture::TextureType::Texture2D,
                                                                     Texture::Format::Internal,
                                                                     Texture::Filtering::Point);
 
         gbufferPositionTex->dataFormat = Texture::DataFormat::RGBA_16F;
 
         gbufferNormalTex = resources->textureLoader.CreateTexture("engine#gbuffer#normal", windowWidth, windowHeight,
-                                                                  Texture::TextureType::Texture2D,
                                                                   Texture::Format::Internal, Texture::Filtering::Point);
 
         gbufferNormalTex->dataFormat = Texture::DataFormat::RGBA_16F;
 
         gbufferAlbedoTex = resources->textureLoader.CreateTexture("engine#gbuffer#albedo", windowWidth, windowHeight,
-                                                                  Texture::TextureType::Texture2D,
                                                                   Texture::Format::Internal, Texture::Filtering::Point);
 
         gbufferMRSTex = resources->textureLoader.CreateTexture("engine#gbuffer#mrs", windowWidth,
                                                                windowHeight,
-                                                               Texture::TextureType::Texture2D,
                                                                Texture::Format::Internal,
                                                                Texture::Filtering::Point);
 
@@ -286,7 +283,6 @@ void GLRenderer::CreateGBuffers() {
 
         gbufferEmissionTex = resources->textureLoader.CreateTexture("engine#gbuffer#emission", windowWidth,
                                                                     windowHeight,
-                                                                    Texture::TextureType::Texture2D,
                                                                     Texture::Format::Internal,
                                                                     Texture::Filtering::Point);
 

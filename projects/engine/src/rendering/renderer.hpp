@@ -129,6 +129,7 @@ public:
     virtual void DrawLightingQuad() = 0;
 
     virtual void SetCullingMode(CullMode mode) = 0;
+
     virtual void SetDepthTestMode(DepthMode mode) = 0;
 };
 

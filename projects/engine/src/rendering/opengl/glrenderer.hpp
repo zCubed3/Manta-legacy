@@ -47,7 +47,9 @@ public:
     void CreateGBuffers();
 
     void DrawLightingQuad() override;
+
     void SetCullingMode(CullMode mode) override;
+
     void SetDepthTestMode(DepthMode mode) override;
 };
 

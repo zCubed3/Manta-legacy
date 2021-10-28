@@ -4,6 +4,7 @@
 #include <string>
 
 class Shader;
+
 class World;
 
 class MaterialValue { // Abstract class that just holds material values and handles binding them to the rendering pipeline

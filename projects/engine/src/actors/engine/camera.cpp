@@ -23,7 +23,8 @@ void ACamera::Update(World *world) {
             fieldOfView = world->console->CVarGetInt("fov", 90);
 
     if (world->renderer != nullptr)
-        mPerspective = glm::perspective(glm::radians(fieldOfView), world->renderer->windowWidth / world->renderer->windowHeight,
+        mPerspective = glm::perspective(glm::radians(fieldOfView),
+                                        world->renderer->windowWidth / world->renderer->windowHeight,
                                         nearClip, farClip);
 }
 

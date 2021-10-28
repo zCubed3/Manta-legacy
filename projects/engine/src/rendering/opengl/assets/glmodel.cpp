@@ -47,11 +47,10 @@ void GLVertexBuffer::Populate(Model *model) {
     glBindVertexArray(0);
 }
 
-void GLVertexBuffer::Draw(Renderer *renderer, AActor *pActor, Material* material) {
+void GLVertexBuffer::Draw(Renderer *renderer, AActor *pActor, Material *material) {
     if (material) {
         material->Bind();
-    }
-    else {
+    } else {
         return;
     }
 
@@ -67,6 +66,8 @@ void GLVertexBuffer::Draw(Renderer *renderer, AActor *pActor, Material* material
         pProgram->setInt("MANTA_GBUFFER_ALBEDO", 2);
         pProgram->setInt("MANTA_GBUFFER_MRS", 3);
         pProgram->setInt("MANTA_GBUFFER_EMISSION", 4);
+
+        pProgram->setInt("MANTA_CUBEMAP_ENVIRONMENT", 5);
 
         if (pActor) {
             pProgram->setMat4x4("MANTA_MATRIX_M", pActor->mModel);

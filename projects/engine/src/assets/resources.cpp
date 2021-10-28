@@ -26,17 +26,19 @@ Resources::Resources() {
 void Resources::Prewarm() {
     std::cout << "Prewarming engine content...\n";
 
+    // Base models
     LoadModel("engine/base/models/cube.obj", "engine#cube");
     LoadModel("engine/base/models/quad.obj", "engine#quad");
+    LoadModel("engine/base/models/plane.obj", "engine#plane");
+    LoadModel("engine/base/models/sphere.obj", "engine#sphere");
 
-    auto deferredLightingShader = LoadShader("engine/base/shaders/deferred_lighting.glsl");
-    materialLoader.CreateMaterial("engine#deferred_lighting", deferredLightingShader, false);
+    // Base textures
+    LoadTexture("engine/base/textures/brdf_lut.png", "engine#brdf_lut");
 
-    auto standardShader = LoadShader("engine/base/shaders/standard.glsl");
-    materialLoader.CreateMaterial("engine#standard", standardShader, true);
-
-    auto skyboxShader = LoadShader("engine/base/shaders/skybox.glsl");
-    materialLoader.CreateMaterial("engine#skybox", skyboxShader, false);
+    // Materials
+    LoadMaterial("engine#standard", "engine/base/shaders/standard.glsl", "engine#shader#standard", true);
+    LoadMaterial("engine#skybox", "engine/base/shaders/skybox.glsl", "engine#shader#skybox", true);
+    LoadMaterial("engine#deferred_lighting", "engine/base/shaders/deferred_lighting.glsl", "engine#shader#deferred_lighting", true);
 }
 
 void IterateThroughPath(ResourcesPath &path) {
@@ -85,7 +87,7 @@ Model *Resources::LoadModel(std::string path, std::string id) {
     return model;
 }
 
-Shader *Resources::LoadShader(std::string path) {
+Shader *Resources::LoadShader(std::string path, std::string id) {
     Shader *shader = shaderLoader.LoadShader(path);
 
     if (shader)
@@ -94,19 +96,24 @@ Shader *Resources::LoadShader(std::string path) {
     return shader;
 }
 
-Texture *Resources::LoadTexture(std::string path) {
-    // If path contains _3D, it's a cubemap
-
-    Texture::TextureType type = Texture::TextureType::Texture2D;
-    if (strstr(path.c_str(), "_3D"))
-        type = Texture::TextureType::Texture3D;
-
-    Texture *texture = textureLoader.LoadFromFile(path, type);
+Texture *Resources::LoadTexture(std::string path, std::string id) {
+    Texture *texture = textureLoader.LoadFromFile(path, id);
 
     if (texture)
         renderer->CreateTextureBuffer(texture);
 
     return texture;
+}
+
+Material *Resources::LoadMaterial(std::string name, std::string path, std::string id, bool usingDefaults) {
+    // First we load the shader for the given material
+    auto shader = LoadShader(path, id);
+
+    if (shader) {
+        return materialLoader.CreateMaterial(name, shader, true);
+    }
+
+    return nullptr;
 }
 
 void Resources::TryLoadFromExtension(std::string path, std::string extension) {

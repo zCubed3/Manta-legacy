@@ -4,7 +4,7 @@
 
 #include <stb_image.h>
 
-Texture::Texture(std::string name, int width, int height, TextureType type, Format format, Filtering filtering) {
+Texture::Texture(std::string name, int width, int height, Format format, Filtering filtering) {
     this->name = name;
 
     if (format == Format::Byte)
@@ -15,7 +15,6 @@ Texture::Texture(std::string name, int width, int height, TextureType type, Form
 
     this->width = width;
     this->height = height;
-    this->type = type;
     this->format = format;
     this->filtering = filtering;
 }
@@ -39,17 +38,17 @@ void Texture::Resize(int newWidth, int newHeight) {
 }
 
 Texture *
-TextureLoader::CreateTexture(std::string name, int width, int height, Texture::TextureType type, Texture::Format format,
+TextureLoader::CreateTexture(std::string name, int width, int height, Texture::Format format,
                              Texture::Filtering filtering) {
     if (loadedTextures.count(name) > 0)
         return loadedTextures[name];
 
-    Texture *texture = new Texture(name, width, height, type, format, filtering);
+    Texture *texture = new Texture(name, width, height, format, filtering);
     loadedTextures.emplace(name, texture);
     return texture;
 }
 
-Texture *TextureLoader::LoadFromFile(std::string path, Texture::TextureType type, Texture::Format format,
+Texture *TextureLoader::LoadFromFile(std::string path, std::string id, Texture::Format format,
                                      Texture::Filtering filtering) {
     printf("Loading texture from %s\n", path.c_str());
     int width, height, channels;
@@ -60,7 +59,7 @@ Texture *TextureLoader::LoadFromFile(std::string path, Texture::TextureType type
         return nullptr;
     }
 
-    Texture *texture = new Texture(path, width, height, type, format, filtering);
+    Texture *texture = new Texture(path, width, height, format, filtering);
     delete texture->byteData;
     texture->byteData = bytes;
 
@@ -75,7 +74,13 @@ Texture *TextureLoader::LoadFromFile(std::string path, Texture::TextureType type
     }
 
     printf("Done loading texture!\n");
-    loadedTextures.emplace(path, texture);
+
+    std::string location = path;
+
+    if (!id.empty())
+        location = id;
+
+    loadedTextures.emplace(location, texture);
     return texture;
 }
 

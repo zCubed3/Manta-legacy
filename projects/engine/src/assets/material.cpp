@@ -36,12 +36,12 @@ void Material::RegisterValue(MaterialValue *value) {
 void Material::Bind() {
     pShader->Bind(); // TODO SAFETY!
 
-    for (auto& value : values) {
+    for (auto &value: values) {
         value->BindValue(pShader);
     }
 }
 
-bool Material::DrawImGui(World *world, Resources* resources) {
+bool Material::DrawImGui(World *world, Resources *resources) {
     ImGui::PushID("resources_window_materials_entry");
     if (ImGui::TreeNode(name.c_str())) {
         if (ImGui::InputText("Name", renameBuffer.data(), RENAME_BUFFER_LEN, ImGuiInputTextFlags_EnterReturnsTrue)) {
@@ -60,7 +60,7 @@ bool Material::DrawImGui(World *world, Resources* resources) {
             return true;
         }
 
-        for (auto& value: values) {
+        for (auto &value: values) {
             value->DrawProperty(world, name);
         }
 
@@ -72,7 +72,7 @@ bool Material::DrawImGui(World *world, Resources* resources) {
 }
 
 // TODO: Safety
-Material *MaterialLoader::CreateMaterial(std::string name, Shader* shader, bool usingDefaults) {
+Material *MaterialLoader::CreateMaterial(std::string name, Shader *shader, bool usingDefaults) {
     auto mat = new Material(name, shader, usingDefaults);
     materials.emplace(name, mat);
     return mat;

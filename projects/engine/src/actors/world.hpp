@@ -36,6 +36,7 @@ public:
 };
 
 class ACamera;
+class ASkybox;
 
 class World {
 public:
@@ -45,9 +46,10 @@ public:
     Console *console;
     Resources *resources;
 
-    Renderer* renderer;
+    Renderer *renderer;
 
-    ACamera* pCamera;
+    ACamera *pCamera;
+    ASkybox *pSkybox;
 
     World();
 
@@ -63,7 +65,7 @@ public:
 
     bool showWindow = false;
 
-    void DrawImGuiWindow(Resources* resources);
+    void DrawImGuiWindow(Resources *resources);
 
     void CFunc_CreateEntity(Console *console, std::vector<std::string> args);
 };
