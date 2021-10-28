@@ -52,7 +52,7 @@ public:
 
 class ModelLoader {
 public:
-    Model *LoadModel(std::string path);
+    Model *LoadModel(std::string path, std::string id = "");
 
     Model *CreateModel(std::string name, std::vector<Model::Vertex> vertices, std::vector<unsigned int> triangles);
 

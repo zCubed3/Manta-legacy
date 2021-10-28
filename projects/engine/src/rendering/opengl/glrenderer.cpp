@@ -82,6 +82,8 @@ void GLRenderer::Initialize() {
         glEnable(GL_CULL_FACE);
         glCullFace(GL_BACK);
 
+        glEnable(GL_DITHER);
+
         //glEnable(GL_FRAMEBUFFER_SRGB);
 
         glfwSetWindowUserPointer(window, this);
@@ -100,14 +102,6 @@ void GLRenderer::Initialize() {
         // GBuffer Framebuffer
         glGenFramebuffers(1, &gbufferFBO);
         CreateGBuffers();
-
-        // Load default content
-        cameraQuad = resources->modelLoader.LoadModel(console->CVarGetData("r_model_quad", ""));
-        CreateVertexBuffer(cameraQuad);
-        auto shader = resources->shaderLoader.LoadShader(console->CVarGetData("r_shader_lighting", ""));
-        CreateShaderProgram(shader);
-
-        pLightingMaterial = resources->materialLoader.CreateMaterial("engine#deferred_lighting_pass", shader, false);
     } else {
         printf("Failed to initialize GLFW\n");
     }
@@ -142,8 +136,7 @@ void GLRenderer::BeginRender(RenderType renderType) {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    if (vsync)
-        glfwSwapInterval(vsync);
+    glfwSwapInterval(vsync);
 }
 
 Renderer::Status GLRenderer::EndRender() {
@@ -337,8 +330,45 @@ void GLRenderer::DrawLightingQuad() {
     glActiveTexture(GL_TEXTURE4);
     glBindTexture(GL_TEXTURE_2D, gbufferEmissionID);
 
-    pLightingMaterial->Bind();
-    cameraQuad->Draw(this, resources, nullptr, pLightingMaterial);
+    SetCullingMode(CullMode::None);
+    auto lighting = resources->materialLoader.materials["engine#deferred_lighting"];
+    resources->modelLoader.loadedModels["engine#quad"]->Draw(this, resources, nullptr, lighting);
+}
+
+void GLRenderer::SetCullingMode(CullMode mode) {
+    switch (mode) {
+        case CullMode::None:
+            glDisable(GL_CULL_FACE);
+            return;
+
+        case CullMode::Front:
+            glEnable(GL_CULL_FACE);
+            glCullFace(GL_FRONT);
+            return;
+
+        case CullMode::Back:
+            glEnable(GL_CULL_FACE);
+            glCullFace(GL_BACK);
+            return;
+    }
+}
+
+void GLRenderer::SetDepthTestMode(DepthMode mode) {
+    switch (mode) {
+        case DepthMode::None:
+            glDisable(GL_DEPTH_TEST);
+            return;
+
+        case DepthMode::Less:
+            glEnable(GL_DEPTH_TEST);
+            glDepthFunc(GL_LESS);
+            return;
+
+        case DepthMode::Greater:
+            glEnable(GL_DEPTH_TEST);
+            glDepthFunc(GL_GREATER);
+            return;
+    }
 }
 
 //
@@ -372,6 +402,7 @@ void main() {
 #ifdef FRAGMENT
 layout(location = 0) out vec4 out_position;
 layout(location = 1) out vec4 out_normal;
+layout(location = 2) out vec4 out_color;
 layout(location = 3) out vec4 out_mrs;
 layout(location = 4) out vec4 out_emission;
 
@@ -384,6 +415,7 @@ void main() {
     out_position = vec4(vert_position, 1);
     out_normal = vec4(normal, 1);
 
+    out_color = vec4(0, 0, 0, 1);
     // Color is #ff7300
     out_emission = vec4(vec3(1.0, 0.45098039215, 0.0) * abs(sin(MANTA_TIME * 2)), 1.0);
     out_mrs = vec4(0.0, 1.0, 0.0, 1.0);

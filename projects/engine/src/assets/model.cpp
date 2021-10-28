@@ -44,7 +44,7 @@ void Model::Draw(Renderer *renderer, Resources *resources, AActor *entity, Mater
         printf("Error: Model lacks a VertexBuffer, please assign it one!\n");
 }
 
-Model *ModelLoader::LoadModel(std::string path) {
+Model *ModelLoader::LoadModel(std::string path, std::string id) {
     std::ifstream file(path);
 
     if (!file.is_open()) {
@@ -216,8 +216,13 @@ Model *ModelLoader::LoadModel(std::string path) {
     }
 
     if (recognized) {
+        std::string location = path;
+
+        if (!id.empty())
+            location = id;
+
         if (!exists)
-            loadedModels.emplace(path, buffer);
+            loadedModels.emplace(location, buffer);
 
         auto end = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);

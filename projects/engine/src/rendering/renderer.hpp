@@ -51,6 +51,14 @@ public:
         Default
     };
 
+    enum class CullMode {
+        Back, Front, None
+    };
+
+    enum class DepthMode {
+        Less, Greater, None
+    };
+
     // Actual renderer functionality
 public:
     virtual void Initialize() = 0;
@@ -119,6 +127,9 @@ public:
     Model *cameraQuad;
 
     virtual void DrawLightingQuad() = 0;
+
+    virtual void SetCullingMode(CullMode mode) = 0;
+    virtual void SetDepthTestMode(DepthMode mode) = 0;
 };
 
 #endif

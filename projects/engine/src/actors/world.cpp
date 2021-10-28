@@ -17,7 +17,30 @@
 
 #include <console/console.hpp>
 
+#include <actors/engine/skybox.hpp>
+#include <actors/engine/camera.hpp>
+
 using namespace std::placeholders;
+
+World::World() {
+    auto camera = new ACamera();
+    camera->isProtected = true;
+    camera->name = "World Camera";
+    camera->position = glm::vec3(0, 0, 3);
+    camera->euler = glm::vec3(0, 180, 0);
+    camera->ignoreConFov = false;
+
+    ASkybox* skybox = new ASkybox();
+    skybox->isProtected = true;
+    skybox->name = "Skybox";
+
+    skybox->pCamera = camera;
+
+    actors.emplace_back(skybox);
+    actors.emplace_back(camera);
+
+    pCamera = camera;
+}
 
 void World::CFunc_CreateEntity(Console *console, std::vector<std::string> args) {
     AActor *entity = new AActor();

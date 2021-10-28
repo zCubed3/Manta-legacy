@@ -17,8 +17,6 @@ public:
 
     bool ignoreConFov = true;
 
-    Renderer *renderer;
-
     virtual void Update(World *world) override;
 
     virtual void DrawImGuiSub(World *world, int index) override;

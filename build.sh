@@ -14,7 +14,8 @@ if test -f ".MANTA_CONFIG"; then
    make -C ${CMAKE_PATH}
 
    echo "Copying content to engine"
-   cp -r "./projects/engine_data/." "${BUILD_PATH}/data"
+   cp -r "./projects/engine_data/." "${BUILD_PATH}"
+   mkdir -p "${BUILD_PATH}data"
 else
    printf ".MANTA_CONFIG not found, did you forget to run configure.sh?\n"
 fi

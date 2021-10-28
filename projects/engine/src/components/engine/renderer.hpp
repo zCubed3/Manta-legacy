@@ -6,16 +6,19 @@
 #define MANTA_RENDERER_HPP
 
 #include <assets/model.hpp>
+#include <unordered_map>
 
 #include "../component.hpp"
 
 class CRenderer : public CComponent {
 public:
-    std::vector<Model**> models;
+    std::vector<std::pair<Model**, Material**>> models;
 
     void Update() override;
 
     void Draw(Renderer *renderer, Resources *resources) override;
+
+    void AddModel(Model** pModel, Material** pMaterial);
 
     void DrawImGuiWindowSub(World *world, Resources* resources, int index) override;
 };

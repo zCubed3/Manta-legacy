@@ -29,7 +29,7 @@ public:
     int shadowmapWidth = 256;
     int shadowmapHeight = 256;
 
-    LightType type;
+    LightType type = LightType::Sun;
 
     Texture *shadowmap;
 

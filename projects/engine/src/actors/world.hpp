@@ -35,6 +35,8 @@ public:
     ALight *lights[MAX_LIGHTS];
 };
 
+class ACamera;
+
 class World {
 public:
     std::vector<AActor *> actors;
@@ -42,6 +44,12 @@ public:
     WorldData data;
     Console *console;
     Resources *resources;
+
+    Renderer* renderer;
+
+    ACamera* pCamera;
+
+    World();
 
     void CreateConObjects(Console *console);
 

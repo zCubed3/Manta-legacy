@@ -10,8 +10,9 @@ public:
     MaterialColor(std::string location, glm::vec4 color);
 
     void BindValue(Shader *pShader) override;
+    void DrawProperty(World *world, std::string identifier) override;
 
-    glm::vec4 color{};
+    glm::vec4 color {};
 };
 
 

@@ -8,17 +8,22 @@
 void CRenderer::Update() {}
 
 void CRenderer::Draw(Renderer *renderer, Resources *resources) {
-    for (int m = 0; m < models.size(); m++) {
-        if (!models[m])
-            continue;
+    for (auto& model: models) {
+        if (!model.first)
+            return;
 
-        if (!*models[m]) {
-            printf("Model #%i in entity is a nullptr!\n", m);
+        if (!*model.first) {
+            printf("Model is a nullptr!\n");
             continue;
         }
 
-        (*models[m])->Draw(renderer, resources, owner, Material::errorMaterial);
+        (*model.first)->Draw(renderer, resources, owner, *model.second);
     }
+}
+
+// Just so we don't have to do std::pair constantly
+void CRenderer::AddModel(Model** pModel, Material** pMaterial) {
+    models.emplace_back(std::pair<Model**, Material**>(pModel, pMaterial));
 }
 
 void CRenderer::DrawImGuiWindowSub(World *world, Resources *resources, int index) {
@@ -28,7 +33,7 @@ void CRenderer::DrawImGuiWindowSub(World *world, Resources *resources, int index
         ImGui::PushID("entity_editor_component_renderer_model_add_button");
         ImGui::PushID(index);
         if (ImGui::Button("+")) {
-            models.emplace_back(nullptr);
+            AddModel(nullptr, &Material::errorMaterial);
         }
         ImGui::PopID();
         ImGui::PopID();
@@ -41,8 +46,6 @@ void CRenderer::DrawImGuiWindowSub(World *world, Resources *resources, int index
             int deletion = -1;
             int i = 0;
             for (auto &model: models) {
-                bool isEmpty = model == nullptr;
-
                 ImGui::PushID("entity_editor_component_renderer_model_remove_button");
                 ImGui::PushID(index);
                 if (ImGui::Button("X")) {
@@ -63,13 +66,59 @@ void CRenderer::DrawImGuiWindowSub(World *world, Resources *resources, int index
                 sprintf(buffer, "Model Slot %i", i);
 
                 if (ImGui::TreeNode(buffer)) {
-                    for (auto &model: resources->modelLoader.loadedModels) {
+                    bool isEmpty = model.first == nullptr;
 
+                    if (!isEmpty)
+                        isEmpty = *model.first == nullptr;
+
+                    auto name = (isEmpty ? "None" : (*model.first)->name.c_str());
+                    ImGui::Text("Model:");
+
+                    ImGui::PushID("entity_editor_component_renderer_model_slot_combo");
+                    ImGui::PushID(index);
+                    if (ImGui::BeginCombo("##model_slot_model", name)) {
+                        int unique = 0;
+                        for (auto &loadedModel: resources->modelLoader.loadedModels) {
+                            ImGui::PushID("entity_editor_component_renderer_model_slot_combo_entry");
+                            ImGui::PushID(index);
+                            ImGui::PushID(unique);
+
+                            if (ImGui::Selectable(loadedModel.second->name.c_str(), false))
+                                model.first = &loadedModel.second;
+
+                            ImGui::PopID();
+                            ImGui::PopID();
+                            ImGui::PopID();
+                        }
+
+                        ImGui::EndCombo();
                     }
+                    ImGui::PopID();
+                    ImGui::PopID();
 
-                    for (auto &material: resources->materialLoader.materials) {
+                    ImGui::Text("Material:");
 
+                    ImGui::PushID("entity_editor_component_renderer_model_slot_combo_material");
+                    ImGui::PushID(index);
+                    if (ImGui::BeginCombo("##model_slot_model", (*model.second)->name.c_str())) {
+                        int unique = 0;
+                        for (auto &loadedMaterial: resources->materialLoader.materials) {
+                            ImGui::PushID("entity_editor_component_renderer_model_slot_combo_entry");
+                            ImGui::PushID(index);
+                            ImGui::PushID(unique);
+
+                            if (ImGui::Selectable(loadedMaterial.first.c_str(), false))
+                                model.second = &loadedMaterial.second;
+
+                            ImGui::PopID();
+                            ImGui::PopID();
+                            ImGui::PopID();
+                        }
+
+                        ImGui::EndCombo();
                     }
+                    ImGui::PopID();
+                    ImGui::PopID();
 
                     ImGui::TreePop();
                 }

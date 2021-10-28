@@ -47,6 +47,8 @@ public:
     void CreateGBuffers();
 
     void DrawLightingQuad() override;
+    void SetCullingMode(CullMode mode) override;
+    void SetDepthTestMode(DepthMode mode) override;
 };
 
 extern std::string gl3ErrorShaderCode; // Fallback shader that is used in place of a nullptr

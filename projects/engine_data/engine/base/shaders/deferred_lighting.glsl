@@ -22,6 +22,8 @@ uniform sampler2D MANTA_GBUFFER_ALBEDO; //GBuffer Albedo
 uniform sampler2D MANTA_GBUFFER_MRS; //GBuffer combined metallic, roughness, and specular maps
 uniform sampler2D MANTA_GBUFFER_EMISSION; //GBuffer Emission
 
+uniform sampler3D MANTA_REFLECTION_CUBEMAP;
+
 uniform int MANTA_LIGHT_COUNT;
 uniform vec3 MANTA_LIGHT_POSITIONS[32];
 uniform vec3 MANTA_LIGHT_DIRECTIONS[32];

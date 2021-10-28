@@ -8,6 +8,10 @@
 class MaterialValue;
 
 class Shader;
+class Resources;
+class World;
+
+#define RENAME_BUFFER_LEN 256
 
 // Defines some basic and universal properties almost every shader will end up using
 // Plus supports the ability for the user to slap their own bindings on top
@@ -20,11 +24,16 @@ public:
 
     void Bind();
 
+    // Returns a bool because if we rename it we can't continue iterating within the for loop otherwise we segfault!
+    bool DrawImGui(World *world, Resources* resources);
+
     std::string name;
     Shader *pShader;
     std::vector<MaterialValue *> values;
 
     static Material *errorMaterial; // Fallback material, contains no inputs other than standard engine constants
+
+    std::string renameBuffer;
 };
 
 class MaterialLoader {

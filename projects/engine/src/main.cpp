@@ -59,25 +59,18 @@ int main(int argc, char **argv) {
 
     resources.renderer = renderer;
 
-    console.ParseExecFile("./data/autoexec"); // Autoexec is the default autoexec path
+    console.ParseExecFile("./autoexec"); // Autoexec is the default autoexec path
     console.ParseCommandLine(argc, argv);
 
     console.CVarGetData("gamename", "Test");
 
     renderer->world = &world;
     renderer->Initialize();
+    renderer->camera = world.pCamera;
 
-    ACamera camera;
-    camera.position = glm::vec3(0, 0, 3);
-    camera.euler = glm::vec3(0, 180, 0);
-    camera.ignoreConFov = false;
-    camera.renderer = renderer;
-    camera.isProtected = true;
-    camera.name = "Scene Camera";
+    world.renderer = renderer;
 
-    renderer->camera = &camera;
-
-    world.actors.emplace_back(&camera);
+    resources.Prewarm();
 
     ALight testLight1, testLight2, testLight3;
     std::vector<ALight *> testLights = {&testLight1, &testLight2, &testLight3};
@@ -129,6 +122,8 @@ int main(int argc, char **argv) {
     ImGuiIO &imguiIO = ImGui::GetIO();
     imguiIO.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
+    auto camera = world.pCamera;
+
     while (true) {
         glfwPollEvents();
 
@@ -151,19 +146,19 @@ int main(int argc, char **argv) {
         glfwGetCursorPos(renderer->window, &nowMouseX, &nowMouseY);
 
         if (lockCursor) {
-            camera.euler += glm::vec3(nowMouseY - mouseY, mouseX - nowMouseX, 0) * 0.1f;
+            camera->euler += glm::vec3(nowMouseY - mouseY, mouseX - nowMouseX, 0) * 0.1f;
 
             if (glfwGetKey(renderer->window, GLFW_KEY_W))
-                camera.position += glm::rotate(camera.rotation, glm::vec3(0, 0, 1)) * world.timeDelta;
+                camera->position += glm::rotate(camera->rotation, glm::vec3(0, 0, 1)) * world.timeDelta;
 
             if (glfwGetKey(renderer->window, GLFW_KEY_S))
-                camera.position += glm::rotate(camera.rotation, glm::vec3(0, 0, -1)) * world.timeDelta;
+                camera->position += glm::rotate(camera->rotation, glm::vec3(0, 0, -1)) * world.timeDelta;
 
             if (glfwGetKey(renderer->window, GLFW_KEY_A))
-                camera.position += glm::rotate(camera.rotation, glm::vec3(1, 0, 0)) * world.timeDelta;
+                camera->position += glm::rotate(camera->rotation, glm::vec3(1, 0, 0)) * world.timeDelta;
 
             if (glfwGetKey(renderer->window, GLFW_KEY_D))
-                camera.position += glm::rotate(camera.rotation, glm::vec3(-1, 0, 0)) * world.timeDelta;
+                camera->position += glm::rotate(camera->rotation, glm::vec3(-1, 0, 0)) * world.timeDelta;
         }
 
         if (glfwGetKey(renderer->window, GLFW_KEY_ESCAPE) == GLFW_PRESS && !hasLocked) {
@@ -178,8 +173,8 @@ int main(int argc, char **argv) {
         mouseX = nowMouseX;
         mouseY = nowMouseY;
 
-        cameraSpot.position = camera.position;
-        cameraSpot.euler = camera.euler;
+        cameraSpot.position = camera->position;
+        cameraSpot.euler = camera->euler;
 
         //testEnt.euler += glm::vec3(1, 0, 0);
 

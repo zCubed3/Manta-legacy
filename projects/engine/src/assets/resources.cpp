@@ -13,10 +13,30 @@
 
 #include <components/engine/renderer.hpp>
 
+#include <assets/material_values/material_value.hpp>
+
+#include <iostream>
+
 using namespace std::filesystem;
 
 Resources::Resources() {
     FindDataPaths();
+}
+
+void Resources::Prewarm() {
+    std::cout << "Prewarming engine content...\n";
+
+    LoadModel("engine/base/models/cube.obj", "engine#cube");
+    LoadModel("engine/base/models/quad.obj", "engine#quad");
+
+    auto deferredLightingShader = LoadShader("engine/base/shaders/deferred_lighting.glsl");
+    materialLoader.CreateMaterial("engine#deferred_lighting", deferredLightingShader, false);
+
+    auto standardShader = LoadShader("engine/base/shaders/standard.glsl");
+    materialLoader.CreateMaterial("engine#standard", standardShader, true);
+
+    auto skyboxShader = LoadShader("engine/base/shaders/skybox.glsl");
+    materialLoader.CreateMaterial("engine#skybox", skyboxShader, false);
 }
 
 void IterateThroughPath(ResourcesPath &path) {
@@ -36,11 +56,15 @@ void IterateThroughPath(ResourcesPath &path) {
 
 void Resources::FindDataPaths() {
     // Get surface level directories
+    dataPaths.clear();
+
     ResourcesPath surfacePath;
     surfacePath.path = "./data";
+
     for (auto &file: directory_iterator(surfacePath.path)) {
         if (file.is_directory()) {
             ResourcesPath resPath;
+
             resPath.path = file.path();
             IterateThroughPath(resPath);
             surfacePath.childPaths.emplace_back(resPath);
@@ -51,8 +75,8 @@ void Resources::FindDataPaths() {
     dataPaths.emplace_back(surfacePath);
 }
 
-Model *Resources::LoadModel(std::string path) {
-    Model *model = modelLoader.LoadModel(path);
+Model *Resources::LoadModel(std::string path, std::string id) {
+    Model *model = modelLoader.LoadModel(path, id);
 
     if (model) {
         renderer->CreateVertexBuffer(model);
@@ -144,11 +168,19 @@ void Resources::DrawImGuiWindow() {
         LoadShader(inputBuffer);
     }
 
+    if (ImGui::Button("Refresh explorer##resources_reload_explorer")) {
+        FindDataPaths();
+    }
+
     if (ImGui::TreeNode("Explorer##resources_window_explorer")) {
         for (auto &path: dataPaths)
             DrawImGuiPaths(this, path);
 
         ImGui::TreePop();
+    }
+
+    if (ImGui::Button("Refresh engine content##resources_reload_engine_content")) {
+        Prewarm();
     }
 
     if (ImGui::TreeNode("Loaded Models##resources_window_loaded_models")) {
@@ -165,7 +197,7 @@ void Resources::DrawImGuiWindow() {
                     AActor *modelEnt = new AActor();
 
                     auto renderer = new CRenderer();
-                    renderer->models.emplace_back(&model.second);
+                    renderer->AddModel(&model.second, &Material::errorMaterial);
                     modelEnt->AddComponent(renderer);
 
                     modelEnt->name = model.second->name;
@@ -175,6 +207,37 @@ void Resources::DrawImGuiWindow() {
 
                 ImGui::TreePop();
             }
+        }
+
+        ImGui::TreePop();
+    }
+
+    if (ImGui::TreeNode("Loaded Shaders##resources_window_loaded_shaders")) {
+        for (auto &shader: shaderLoader.shaders) {
+            ImGui::PushID("resources_window_loaded_shaders_shader_entry");
+            if (ImGui::TreeNode(shader.second->name.c_str())) {
+                ImGui::PushID("resources_window_loaded_shaders_shader_entry_create_material");
+                ImGui::PushID(shader.second->name.c_str());
+
+                if (ImGui::Button("Create Material")) {
+                    materialLoader.CreateMaterial("New Material", shader.second);
+                }
+
+                ImGui::PopID();
+                ImGui::PopID();
+
+                ImGui::TreePop();
+            }
+            ImGui::PopID();
+        }
+
+        ImGui::TreePop();
+    }
+
+    if (ImGui::TreeNode("Materials##resources_window_materials")) {
+        for (auto &material: materialLoader.materials) {
+            if (material.second->DrawImGui(world, this))
+                break;
         }
 
         ImGui::TreePop();
