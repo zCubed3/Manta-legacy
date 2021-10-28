@@ -26,6 +26,7 @@ public:
     void CreateShaderProgram(Shader *shader) override;
 
     void CreateTextureBuffer(Texture *texture) override;
+    void CreateCubemapBuffer(Cubemap *cubemap) override;
 
     virtual void CreateConObjects(Console *console) override;
 

@@ -33,7 +33,7 @@ public:
 
 class ShaderLoader {
 public:
-    Shader *LoadShader(std::string path);
+    Shader *LoadShader(std::string path, std::string id = "");
 
     Shader *LoadCode(std::string name, std::string code = "");
 

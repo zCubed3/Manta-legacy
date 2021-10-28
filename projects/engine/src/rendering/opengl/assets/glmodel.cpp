@@ -69,6 +69,8 @@ void GLVertexBuffer::Draw(Renderer *renderer, AActor *pActor, Material *material
 
         pProgram->setInt("MANTA_CUBEMAP_ENVIRONMENT", 5);
 
+        pProgram->setInt("MANTA_TEX_BRDF_LUT", 6);
+
         if (pActor) {
             pProgram->setMat4x4("MANTA_MATRIX_M", pActor->mModel);
             pProgram->setMat4x4("MANTA_MATRIX_M_IT", pActor->mModel_it);

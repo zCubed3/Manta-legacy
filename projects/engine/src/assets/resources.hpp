@@ -7,6 +7,7 @@
 #include "shader.hpp"
 #include "texture.hpp"
 #include "material.hpp"
+#include "cubemap.hpp"
 
 #include <filesystem>
 
@@ -40,6 +41,8 @@ public:
     Shader *LoadShader(std::string path, std::string id = "");
 
     Texture *LoadTexture(std::string path, std::string id = "");
+
+    Cubemap *LoadCubemap(std::string path, std::string id = "");
 
     Material *LoadMaterial(std::string name, std::string path, std::string id = "", bool usingDefaults = true);
 

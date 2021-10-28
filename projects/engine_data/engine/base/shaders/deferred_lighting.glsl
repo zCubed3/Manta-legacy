@@ -24,6 +24,8 @@ uniform sampler2D MANTA_GBUFFER_EMISSION; //GBuffer Emission
 
 uniform samplerCube MANTA_CUBEMAP_ENVIRONMENT;
 
+uniform sampler2D MANTA_TEX_BRDF_LUT; // BRDF LUT
+
 uniform int MANTA_LIGHT_COUNT;
 uniform vec3 MANTA_LIGHT_POSITIONS[32];
 uniform vec3 MANTA_LIGHT_DIRECTIONS[32];
@@ -165,6 +167,9 @@ void main() {
       vec3 environment = textureLod(MANTA_CUBEMAP_ENVIRONMENT, reflect(view, normalize(fragNorm)), roughness * 4).xyz;
 
       vec3 radiance = MANTA_LIGHT_COLORS[l] * atten;
+
+      vec2 brdf = texture(MANTA_TEX_BRDF_LUT, vec2(max(dot(normal, view), 0.0), roughness)).rg;
+      //vec3 specular = environment * (F * brdf.x + brdf.y);
 
       vec3 kS = F;
       vec3 kD = vec3(1.0) - kS;

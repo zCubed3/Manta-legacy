@@ -30,6 +30,7 @@ typedef struct ClearColor_T {
 } ClearColor;
 
 class Material;
+class Cubemap;
 
 class Renderer {
 public:
@@ -98,6 +99,7 @@ public:
     virtual void CreateShaderProgram(Shader *shader) = 0;
 
     virtual void CreateTextureBuffer(Texture *texture) = 0;
+    virtual void CreateCubemapBuffer(Cubemap *cubemap) = 0;
 
     // ImGui
     virtual void InitImGui() = 0;

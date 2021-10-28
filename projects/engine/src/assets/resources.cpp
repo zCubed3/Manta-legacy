@@ -37,8 +37,8 @@ void Resources::Prewarm() {
 
     // Materials
     LoadMaterial("engine#standard", "engine/base/shaders/standard.glsl", "engine#shader#standard", true);
-    LoadMaterial("engine#skybox", "engine/base/shaders/skybox.glsl", "engine#shader#skybox", true);
-    LoadMaterial("engine#deferred_lighting", "engine/base/shaders/deferred_lighting.glsl", "engine#shader#deferred_lighting", true);
+    LoadMaterial("engine#skybox", "engine/base/shaders/skybox.glsl", "engine#shader#skybox", false);
+    LoadMaterial("engine#deferred_lighting", "engine/base/shaders/deferred_lighting.glsl", "engine#shader#deferred_lighting", false);
 }
 
 void IterateThroughPath(ResourcesPath &path) {
@@ -88,7 +88,7 @@ Model *Resources::LoadModel(std::string path, std::string id) {
 }
 
 Shader *Resources::LoadShader(std::string path, std::string id) {
-    Shader *shader = shaderLoader.LoadShader(path);
+    Shader *shader = shaderLoader.LoadShader(path, id);
 
     if (shader)
         renderer->CreateShaderProgram(shader);
@@ -103,6 +103,21 @@ Texture *Resources::LoadTexture(std::string path, std::string id) {
         renderer->CreateTextureBuffer(texture);
 
     return texture;
+}
+
+Cubemap *Resources::LoadCubemap(std::string path, std::string id) {
+    Texture *base = textureLoader.LoadFromFile(path);
+
+    if (base) {
+        auto cubemap = new Cubemap(base, base, base, base, base, base);
+
+        if (cubemap)
+            renderer->CreateCubemapBuffer(cubemap);
+
+        return cubemap;
+    }
+
+    return nullptr;
 }
 
 Material *Resources::LoadMaterial(std::string name, std::string path, std::string id, bool usingDefaults) {

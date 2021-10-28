@@ -19,7 +19,7 @@ void Shader::Bind() {
 }
 
 // Use GetShader
-Shader *ShaderLoader::LoadShader(std::string path) {
+Shader *ShaderLoader::LoadShader(std::string path, std::string id) {
     if (!strstr(path.c_str(), ".glsl")) {
         printf("Provided file didn't end in .glsl, %s, ignoring it!\n", path.c_str());
         return nullptr;
@@ -35,7 +35,12 @@ Shader *ShaderLoader::LoadShader(std::string path) {
     // Track the time taken to load
     auto start = std::chrono::high_resolution_clock::now();
 
-    Shader *buffer = GetShader(path);
+    std::string location = path;
+
+    if (!id.empty())
+        location = id;
+
+    Shader *buffer = GetShader(location);
 
     if (buffer == nullptr)
         buffer = new Shader();
@@ -59,7 +64,7 @@ Shader *ShaderLoader::LoadShader(std::string path) {
 
     printf("Loaded shader from %s, took %li ms\n", path.c_str(), duration.count());
 
-    shaders.emplace(path, buffer);
+    shaders.emplace(location, buffer);
     return buffer;
 }
 

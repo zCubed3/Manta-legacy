@@ -11,6 +11,7 @@
 #include "assets/glmodel.hpp"
 #include "assets/glshader.hpp"
 #include "assets/gltexture.hpp"
+#include "assets/glcubemap.hpp"
 
 #include <actors/engine/light.hpp>
 #include <actors/world.hpp>
@@ -210,6 +211,18 @@ void GLRenderer::CreateTextureBuffer(Texture *texture) {
     }
 }
 
+void GLRenderer::CreateCubemapBuffer(Cubemap *cubemap) {
+    if (cubemap) {
+        if (cubemap->buffer) {
+            printf("Cubemap already has a texture buffer, deleting it!\n");
+            delete cubemap->buffer;
+        }
+
+        cubemap->buffer = new GLCubemapBuffer();
+        cubemap->buffer->Populate(cubemap);
+    }
+}
+
 void GLRenderer::CreateConObjects(Console *console) {
     Renderer::CreateConObjects(console);
     // Doesn't do anything yet
@@ -325,6 +338,9 @@ void GLRenderer::DrawLightingQuad() {
 
     glActiveTexture(GL_TEXTURE4);
     glBindTexture(GL_TEXTURE_2D, gbufferEmissionID);
+
+    glActiveTexture(GL_TEXTURE6);
+    glBindTexture(GL_TEXTURE_2D, resources->textureLoader.loadedTextures["engine#brdf_lut"]->texBuffer->handle);
 
     SetCullingMode(CullMode::None);
     auto lighting = resources->materialLoader.materials["engine#deferred_lighting"];

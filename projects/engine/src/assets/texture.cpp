@@ -80,6 +80,7 @@ Texture *TextureLoader::LoadFromFile(std::string path, std::string id, Texture::
     if (!id.empty())
         location = id;
 
+    texture->name = location;
     loadedTextures.emplace(location, texture);
     return texture;
 }
