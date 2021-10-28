@@ -134,6 +134,7 @@ int main(int argc, char **argv) {
 
     ImGuiIO &imguiIO = ImGui::GetIO();
     imguiIO.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+    //dimguiIO.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
     auto camera = world.pCamera;
 
@@ -229,6 +230,12 @@ int main(int argc, char **argv) {
             console.DrawImGuiWindow();
 
             renderer->EndImGui();
+
+            if (imguiIO.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+            {
+                ImGui::UpdatePlatformWindows();
+                ImGui::RenderPlatformWindowsDefault();
+            }
         }
 
         renderer->PresentRender();

@@ -164,7 +164,7 @@ void main() {
       float denominator = 4.0 * max(dot(normal, view), 0.0) * max(dot(normal, light), 0.0);
       vec3 specular = numerator / max(denominator, 0.001);
 
-      vec3 environment = textureLod(MANTA_CUBEMAP_ENVIRONMENT, reflect(view, normalize(fragNorm)), roughness * 4).xyz;
+      vec3 environment = textureLod(MANTA_CUBEMAP_ENVIRONMENT, reflect(-view, normalize(fragNorm)), roughness * 4).xyz;
 
       vec3 radiance = MANTA_LIGHT_COLORS[l] * atten;
 
