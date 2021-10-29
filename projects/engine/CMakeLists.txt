@@ -1,6 +1,10 @@
 set(SOURCES
         "src/main.cpp"
 
+        "src/core/engine.cpp"
+
+        "src/game/demo/demo.cpp"
+
         "src/console/console.cpp"
         "src/console/common_console.cpp"
 
@@ -32,6 +36,7 @@ set(SOURCES
         "src/rendering/opengl/assets/glcubemap.cpp"
 
         "${DEPENDS_DIR}/imgui/imgui.cpp"
+        "${DEPENDS_DIR}/imgui/imgui_demo.cpp"
         "${DEPENDS_DIR}/imgui/imgui_internal.h"
         "${DEPENDS_DIR}/imgui/imgui_draw.cpp"
         "${DEPENDS_DIR}/imgui/imgui_tables.cpp"

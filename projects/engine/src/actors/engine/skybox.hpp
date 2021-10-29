@@ -12,7 +12,7 @@ public:
     ACamera *pCamera;
     Cubemap *pCubemap;
 
-    virtual void Update(World *world) override;
+    virtual void Update(MEngine *engine) override;
 
     virtual void Draw(Renderer *renderer, Resources *resources) override;
 };

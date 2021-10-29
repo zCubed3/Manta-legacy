@@ -64,7 +64,7 @@ void World::CreateConObjects(Console *console) {
     }
 }
 
-void World::Update() {
+void World::Update(MEngine *engine) {
     int l = 0;
     for (int e = 0; e < actors.size(); e++) {
         if (actors[e] == nullptr) {
@@ -74,7 +74,7 @@ void World::Update() {
 
         ALight *light = dynamic_cast<ALight *>(actors[e]);
 
-        actors[e]->Update(this);
+        actors[e]->Update(engine);
 
         if (light != nullptr && actors[e]->isVisible) {
             data.lightPositions[l] = light->position;

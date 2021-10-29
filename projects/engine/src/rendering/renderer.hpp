@@ -47,9 +47,9 @@ public:
     };
 
     enum class RenderType {
-        GBuffer,
+        GBuffer, // Use this when drawing geometry to write it to the GBuffer
         Shadowmap,
-        Default
+        Default // Default just does the final lighting pass
     };
 
     enum class CullMode {

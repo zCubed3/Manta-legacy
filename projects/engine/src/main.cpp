@@ -20,8 +20,6 @@
 #include <actors/world.hpp>
 #include <actors/engine/light.hpp>
 
-#include <common/spinner.hpp>
-
 #include <GLFW/glfw3.h>
 
 #include <imgui/imgui.h>
@@ -36,11 +34,18 @@
 
 #include <rendering/opengl/assets/glcubemap.hpp>
 
+#include <core/engine.hpp>
+
 int main(int argc, char **argv) {
 #ifdef DEBUG
     printf("[Debug]: This is a debug build of Manta, things will be slower seeing as compilation optimization is disabled plus debug info will be present!\n");
     printf("[Debug]: Be warned, some additional behaviour may be present in a debug build that may or may not work correctly!\n");
 #endif
+
+    // Here's the concept behind MEngine
+    // Create it and call EngineLoop(), then forget about it!
+    MEngine engine;
+    engine.EngineLoop();
 
     Console console;
     Resources resources;
@@ -78,12 +83,8 @@ int main(int argc, char **argv) {
 
     resources.Prewarm();
 
-    auto test = resources.LoadTexture("test.jpg");
-    Cubemap* cubemap = new Cubemap(test, test, test, test, test, test);
-    cubemap->buffer = new GLCubemapBuffer();
-    cubemap->buffer->Populate(cubemap);
-
-    world.pSkybox->pCubemap = cubemap;
+    // Skybox needs to be set to something
+    world.pSkybox->pCubemap = resources.cubemapLoader.cubemaps["engine#default_cubemap"];
 
     ALight testLight1, testLight2, testLight3;
     std::vector<ALight *> testLights = {&testLight1, &testLight2, &testLight3};
@@ -130,11 +131,10 @@ int main(int argc, char **argv) {
 
     ImGui::StyleColorsDark(&style);
 
-    style.WindowRounding = 1.0f;
-
     ImGuiIO &imguiIO = ImGui::GetIO();
     imguiIO.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-    //dimguiIO.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+
+    imguiIO.Fonts->AddFontFromFileTTF("engine/base/fonts/Roboto-Regular.ttf", 14);
 
     auto camera = world.pCamera;
 
@@ -192,8 +192,6 @@ int main(int argc, char **argv) {
 
         //printf("\rRunning %c", spinner.character);
         //spinner.Spin();
-
-        world.Update();
 
         // Render GBuffers
         renderer->BeginRender(Renderer::RenderType::GBuffer);

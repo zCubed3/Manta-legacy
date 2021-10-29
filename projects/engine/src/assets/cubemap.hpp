@@ -24,4 +24,9 @@ public:
     CubemapBuffer *buffer;
 };
 
+class CubemapLoader {
+public:
+    std::unordered_map<std::string, Cubemap*> cubemaps;
+};
+
 #endif

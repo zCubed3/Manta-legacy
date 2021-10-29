@@ -8,7 +8,6 @@
 #include <string>
 #include <string.h>
 
-#include <common/spinner.hpp>
 
 #include <console/console.hpp>
 
@@ -53,13 +52,10 @@ void MantaPackModel(Model *model, std::string output) {
     int size = model->vertices.size();
     file.write(reinterpret_cast<char *>(&size), sizeof(int));
 
-    Spinner spinner;
-
     printf("Compressing model to Manta-friendly format\n");
 
     for (int v = 0; v < model->vertices.size(); v++) {
-        printf("\rWriting vertex data %c", spinner.character);
-        spinner.Spin();
+        printf("\rWriting vertex data %c...");
 
         float data[8];
         Model::Vertex vert = model->vertices[v];
@@ -87,8 +83,7 @@ void MantaPackModel(Model *model, std::string output) {
     printf("\n");
 
     for (int t = 0; t < model->triangles.size(); t++) {
-        printf("\rWriting int data %c", spinner.character);
-        spinner.Spin();
+        printf("\rWriting int data %c...");
 
         int data = model->triangles[t];
         file.write(reinterpret_cast<char *>(&data), sizeof(int));

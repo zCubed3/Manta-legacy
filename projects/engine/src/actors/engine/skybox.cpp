@@ -12,12 +12,12 @@
 
 #include <GL/glew.h>
 
-void ASkybox::Update(World *world) {
+void ASkybox::Update(MEngine *engine) {
     if (pCamera != nullptr) {
         position = pCamera->position;
     }
 
-    AActor::Update(world);
+    AActor::Update(engine);
 }
 
 void ASkybox::Draw(Renderer *renderer, Resources *resources) {

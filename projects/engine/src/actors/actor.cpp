@@ -14,7 +14,10 @@
 
 #include <components/component.hpp>
 
-void AActor::Update(World *world) {
+#include <core/engine.hpp>
+
+// Normally actors just update their matrices
+void AActor::Update(MEngine *engine) {
     if (!isEnabled)
         return;
 

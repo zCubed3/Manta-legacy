@@ -17,6 +17,8 @@ class Resources;
 
 class CComponent;
 
+class MEngine;
+
 // Because I kinda like UE4 terminology, Actors are prefixed with A, therefore, AActor!
 class AActor {
 public:
@@ -40,7 +42,7 @@ public:
     bool isVisible = true;
     bool isProtected = false; // Prevents deletion of this, useful for cameras and stuff
 
-    virtual void Update(World *world);
+    virtual void Update(MEngine *engine);
 
     virtual void Draw(Renderer *renderer, Resources *resources);
 

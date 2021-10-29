@@ -1,5 +1,4 @@
 #include "camera.hpp"
-#include "actors/world.hpp"
 
 #include "glm/glm/ext/matrix_transform.hpp"
 #include <glm/glm/gtc/matrix_transform.hpp>
@@ -11,20 +10,22 @@
 
 #include <imgui/imgui.h>
 
-void ACamera::Update(World *world) {
-    AActor::Update(world);
+#include <core/engine.hpp>
+
+void ACamera::Update(MEngine *engine) {
+    AActor::Update(engine);
 
     glm::vec3 forward = glm::rotate(rotation, glm::vec3(0, 0, 1));
 
     mView = glm::lookAt(position, position + forward, glm::rotate(rotation, glm::vec3(0, 1, 0)));
 
-    if (!ignoreConFov && world)
-        if (world->console)
-            fieldOfView = world->console->CVarGetInt("fov", 90);
+    if (!ignoreConFov)
+        if (engine)
+            fieldOfView = engine->console.CVarGetInt("fov", 90);
 
-    if (world->renderer != nullptr)
+    if (engine->renderer != nullptr)
         mPerspective = glm::perspective(glm::radians(fieldOfView),
-                                        world->renderer->windowWidth / world->renderer->windowHeight,
+                                        engine->renderer->windowWidth / engine->renderer->windowHeight,
                                         nearClip, farClip);
 }
 

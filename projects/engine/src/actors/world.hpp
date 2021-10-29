@@ -38,6 +38,8 @@ public:
 class ACamera;
 class ASkybox;
 
+class MEngine;
+
 class World {
 public:
     std::vector<AActor *> actors;
@@ -55,7 +57,7 @@ public:
 
     void CreateConObjects(Console *console);
 
-    void Update();
+    void Update(MEngine *engine);
 
     void Draw(Renderer *renderer);
 

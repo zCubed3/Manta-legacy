@@ -9,7 +9,6 @@
 #include <regex>
 
 #include "shader.hpp"
-#include <common/spinner.hpp>
 
 #include <rendering/renderer.hpp>
 

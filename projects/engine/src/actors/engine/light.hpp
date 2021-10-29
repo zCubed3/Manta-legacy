@@ -34,7 +34,7 @@ public:
     Texture *shadowmap;
 
     glm::mat4 mLightMatrix; // Lights are practically cameras
-    virtual void Update(World *world) override;
+    virtual void Update(MEngine *engine) override;
 
     virtual void DrawImGuiSub(World *world, int index) override;
 };

@@ -9,6 +9,8 @@ typedef struct GLFWwindow GLFWwindow;
 
 class Texture;
 
+#define MANTA_RENDERER_TYPE GLRenderer
+
 class GLRenderer : public Renderer {
 public:
     virtual const char *get_APIName() override { return "OpenGL 4.6"; };

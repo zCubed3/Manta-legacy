@@ -17,8 +17,8 @@ void ALight::CreateShadowmap() {
 
 }
 
-void ALight::Update(World *world) {
-    AActor::Update(world);
+void ALight::Update(MEngine *engine) {
+    AActor::Update(engine);
 
     glm::mat4 view = glm::lookAt(position, position + glm::rotate(rotation, glm::vec3(0, 0, 1)), glm::vec3(0, 1, 0));
     glm::mat4 projection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.001f, 10.0f);

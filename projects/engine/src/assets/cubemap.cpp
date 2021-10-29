@@ -7,4 +7,6 @@ Cubemap::Cubemap(Texture *top, Texture *bottom, Texture *right, Texture *left, T
     this->left = left;
     this->forward = forward;
     this->back = back;
+
+    this->buffer = nullptr;
 }

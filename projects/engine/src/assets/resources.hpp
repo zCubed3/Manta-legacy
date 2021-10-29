@@ -35,6 +35,7 @@ public:
     ShaderLoader shaderLoader;
     TextureLoader textureLoader;
     MaterialLoader materialLoader;
+    CubemapLoader cubemapLoader;
 
     Model *LoadModel(std::string path, std::string id = "");
 
@@ -42,6 +43,7 @@ public:
 
     Texture *LoadTexture(std::string path, std::string id = "");
 
+    Cubemap *CreateCubemap(std::string id);
     Cubemap *LoadCubemap(std::string path, std::string id = "");
 
     Material *LoadMaterial(std::string name, std::string path, std::string id = "", bool usingDefaults = true);

@@ -33,7 +33,12 @@ void Resources::Prewarm() {
     LoadModel("engine/base/models/sphere.obj", "engine#sphere");
 
     // Base textures
+    LoadTexture("engine/base/textures/white.png", "engine#white");
+    LoadTexture("engine/base/textures/black.png", "engine#black");
     LoadTexture("engine/base/textures/brdf_lut.png", "engine#brdf_lut");
+
+    // Base cubemaps
+    CreateCubemap("engine#default_cubemap");
 
     // Materials
     LoadMaterial("engine#standard", "engine/base/shaders/standard.glsl", "engine#shader#standard", true);
@@ -103,6 +108,23 @@ Texture *Resources::LoadTexture(std::string path, std::string id) {
         renderer->CreateTextureBuffer(texture);
 
     return texture;
+}
+
+// Returns a cubemap auto populated with engine#black
+Cubemap *Resources::CreateCubemap(std::string id) {
+    auto black = textureLoader.loadedTextures["engine#black"];
+
+    if (black) {
+        auto cubemap = new Cubemap(black, black, black, black, black, black);
+
+        if (cubemap)
+            renderer->CreateCubemapBuffer(cubemap);
+
+        cubemapLoader.cubemaps.emplace(id, cubemap);
+        return cubemap;
+    }
+
+    return nullptr;
 }
 
 Cubemap *Resources::LoadCubemap(std::string path, std::string id) {
