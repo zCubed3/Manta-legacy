@@ -20,9 +20,11 @@
 #include <actors/engine/skybox.hpp>
 #include <actors/engine/camera.hpp>
 
+#include <core/engine.hpp>
+
 using namespace std::placeholders;
 
-World::World() {
+void World::Initialize(MEngine *engine) {
     auto camera = new ACamera();
     camera->isProtected = true;
     camera->name = "World Camera";
@@ -36,11 +38,13 @@ World::World() {
 
     skybox->pCamera = camera;
 
-    actors.emplace_back(skybox);
-    actors.emplace_back(camera);
+    AddActor(engine, skybox);
+    AddActor(engine, camera);
 
     pCamera = camera;
     pSkybox = skybox;
+
+    engine->renderer->camera = camera;
 }
 
 void World::CFunc_CreateEntity(Console *console, std::vector<std::string> args) {
@@ -62,6 +66,11 @@ void World::CreateConObjects(Console *console) {
         //
         this->console = console;
     }
+}
+
+void World::AddActor(MEngine *engine, AActor *actor) {
+    actors.emplace_back(actor);
+    actor->Start(engine);
 }
 
 void World::Update(MEngine *engine) {
@@ -93,7 +102,7 @@ void World::Update(MEngine *engine) {
     data.lightCount = l;
 }
 
-void World::Draw(Renderer *renderer) {
+void World::Draw(MEngine* engine) {
     timeTotal = (float) glfwGetTime();
     timeDelta = timeTotal - timeLast;
     timeLast = timeTotal;
@@ -102,7 +111,7 @@ void World::Draw(Renderer *renderer) {
         if (actors[e] == nullptr)
             continue;
 
-        actors[e]->Draw(renderer, resources);
+        actors[e]->Draw(engine);
     }
 }
 
@@ -126,7 +135,7 @@ void World::DrawImGuiWindow(Resources *resources) {
     }
 
     if (ImGui::TreeNode("World Settings")) {
-        ImGui::DragFloat3("Ambient Color", glm::value_ptr(data.ambientColor), timeDelta, 0, 1);
+        ImGui::ColorEdit3("Ambient Color", glm::value_ptr(data.ambientColor));
 
         if (ImGui::TreeNode("World Info")) {
             ImGui::Text("Lights: %i", data.lightCount);

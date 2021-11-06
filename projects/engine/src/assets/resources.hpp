@@ -15,6 +15,8 @@ class Console;
 
 class World;
 
+class MEngine;
+
 struct ResourcesPath {
     std::filesystem::path path; // This current path
     std::vector<ResourcesPath> childPaths;
@@ -25,7 +27,7 @@ class Resources {
 public:
     Resources();
 
-    void Prewarm(); // Loads default content
+    void LoadBaseContent(MEngine* engine); // Loads default content
 
     void FindDataPaths();
 
@@ -37,25 +39,23 @@ public:
     MaterialLoader materialLoader;
     CubemapLoader cubemapLoader;
 
-    Model *LoadModel(std::string path, std::string id = "");
+    Model *LoadModel(MEngine* engine, std::string path, std::string id = "");
 
-    Shader *LoadShader(std::string path, std::string id = "");
+    Shader *LoadShader(MEngine* engine, std::string path, std::string id = "");
 
-    Texture *LoadTexture(std::string path, std::string id = "");
+    Texture *LoadTexture(MEngine* engine, std::string path, std::string id = "");
 
-    Cubemap *CreateCubemap(std::string id);
-    Cubemap *LoadCubemap(std::string path, std::string id = "");
+    Cubemap *CreateCubemap(MEngine* engine, std::string id);
+    Cubemap *LoadCubemap(MEngine* engine, std::string path, std::string id = "");
 
-    Material *LoadMaterial(std::string name, std::string path, std::string id = "", bool usingDefaults = true);
+    Material *LoadMaterial(MEngine* engine, std::string name, std::string path, std::string id = "", bool usingDefaults = true);
+    Material *CreateMaterial(MEngine* engine, std::string name, std::string shader_id, bool usingDefaults = true);
 
     bool showWindow = false;
 
-    void DrawImGuiWindow();
+    void DrawImGuiWindow(MEngine* engine);
 
-    void TryLoadFromExtension(std::string path, std::string extension);
-
-    Renderer *renderer;
-    World *world;
+    void TryLoadFromExtension(MEngine* engine, std::string path, std::string extension);
 
     std::string inputBuffer;
 };

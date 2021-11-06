@@ -19,11 +19,13 @@ class Resources;
 
 class Material;
 
+class MEngine;
+
 class VertexBuffer {
 public:
     virtual void Populate(Model *model) = 0;
 
-    virtual void Draw(Renderer *renderer, AActor *entity, Material *material) = 0; // Model::Draw wraps around this
+    virtual void Draw(MEngine* engine, AActor *entity, Material *material) = 0; // Model::Draw wraps around this
 
     virtual ~VertexBuffer() {};
 };
@@ -47,7 +49,7 @@ public:
 
     VertexBuffer *vertexBuffer = nullptr;
 
-    void Draw(Renderer *renderer, Resources *resources, AActor *entity, Material *material);
+    void Draw(MEngine* engine, AActor *entity, Material *material);
 };
 
 class ModelLoader {

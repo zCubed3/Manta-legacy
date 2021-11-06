@@ -15,6 +15,8 @@
 
 #include <assets/material.hpp>
 
+#include <core/engine.hpp>
+
 GLVertexBuffer::~GLVertexBuffer() {
     if (vao != GL_INVALID_INDEX)
         glDeleteVertexArrays(1, &vao);
@@ -47,7 +49,7 @@ void GLVertexBuffer::Populate(Model *model) {
     glBindVertexArray(0);
 }
 
-void GLVertexBuffer::Draw(Renderer *renderer, AActor *pActor, Material *material) {
+void GLVertexBuffer::Draw(MEngine* engine, AActor *pActor, Material *material) {
     if (material) {
         material->Bind();
     } else {
@@ -55,7 +57,7 @@ void GLVertexBuffer::Draw(Renderer *renderer, AActor *pActor, Material *material
     }
 
     GLShaderProgram *pProgram = dynamic_cast<GLShaderProgram *>(material->pShader->program);
-    GLRenderer *glRenderer = dynamic_cast<GLRenderer *>(renderer);
+    GLRenderer *glRenderer = dynamic_cast<GLRenderer *>(engine->renderer);
 
     if (pProgram) {
         uint program = pProgram->program;
@@ -76,47 +78,45 @@ void GLVertexBuffer::Draw(Renderer *renderer, AActor *pActor, Material *material
             pProgram->setMat4x4("MANTA_MATRIX_M_IT", pActor->mModel_it);
         }
 
-        if (renderer->camera) {
-            pProgram->setMat4x4("MANTA_MATRIX_V", renderer->camera->mView);
-            pProgram->setMat4x4("MANTA_MATRIX_P", renderer->camera->mPerspective);
-            pProgram->setVec3("MANTA_CAMERA_POSITION", renderer->camera->position);
+        if (engine->world.pCamera) {
+            pProgram->setMat4x4("MANTA_MATRIX_V", engine->world.pCamera->mView);
+            pProgram->setMat4x4("MANTA_MATRIX_P", engine->world.pCamera->mPerspective);
+            pProgram->setVec3("MANTA_CAMERA_POSITION", engine->world.pCamera->position);
         }
 
-        if (renderer->world) {
-            pProgram->setInt("MANTA_LIGHT_COUNT", renderer->world->data.lightCount);
+        pProgram->setInt("MANTA_LIGHT_COUNT", engine->world.data.lightCount);
 
-            pProgram->setVec3("MANTA_AMBIENT_COLOR", renderer->world->data.ambientColor);
+        pProgram->setVec3("MANTA_AMBIENT_COLOR", engine->world.data.ambientColor);
 
-            char locationString[64];
+        char locationString[64];
 
-            for (int l = 0; l < renderer->world->data.lightCount; l++) {
-                sprintf(locationString, "MANTA_LIGHT_POSITIONS[%i]", l);
-                pProgram->setVec3(locationString, renderer->world->data.lightPositions[l]);
+        for (int l = 0; l < engine->world.data.lightCount; l++) {
+            sprintf(locationString, "MANTA_LIGHT_POSITIONS[%i]", l);
+            pProgram->setVec3(locationString, engine->world.data.lightPositions[l]);
 
-                sprintf(locationString, "MANTA_LIGHT_DIRECTIONS[%i]", l);
-                pProgram->setVec3(locationString, renderer->world->data.lightDirections[l]);
+            sprintf(locationString, "MANTA_LIGHT_DIRECTIONS[%i]", l);
+            pProgram->setVec3(locationString, engine->world.data.lightDirections[l]);
 
-                sprintf(locationString, "MANTA_LIGHT_COLORS[%i]", l);
-                pProgram->setVec3(locationString, renderer->world->data.lightColors[l]);
+            sprintf(locationString, "MANTA_LIGHT_COLORS[%i]", l);
+            pProgram->setVec3(locationString, engine->world.data.lightColors[l]);
 
-                sprintf(locationString, "MANTA_LIGHT_RANGES[%i]", l);
-                pProgram->setFloat(locationString, renderer->world->data.lightRanges[l]);
+            sprintf(locationString, "MANTA_LIGHT_RANGES[%i]", l);
+            pProgram->setFloat(locationString, engine->world.data.lightRanges[l]);
 
-                sprintf(locationString, "MANTA_LIGHT_INTENSITIES[%i]", l);
-                pProgram->setFloat(locationString, renderer->world->data.lightIntensities[l]);
+            sprintf(locationString, "MANTA_LIGHT_INTENSITIES[%i]", l);
+            pProgram->setFloat(locationString, engine->world.data.lightIntensities[l]);
 
-                sprintf(locationString, "MANTA_LIGHT_PARAMS1[%i]", l);
-                pProgram->setFloat(locationString, renderer->world->data.lightParams1[l]);
+            sprintf(locationString, "MANTA_LIGHT_PARAMS1[%i]", l);
+            pProgram->setFloat(locationString, engine->world.data.lightParams1[l]);
 
-                sprintf(locationString, "MANTA_LIGHT_PARAMS2[%i]", l);
-                pProgram->setFloat(locationString, renderer->world->data.lightParams2[l]);
+            sprintf(locationString, "MANTA_LIGHT_PARAMS2[%i]", l);
+            pProgram->setFloat(locationString, engine->world.data.lightParams2[l]);
 
-                sprintf(locationString, "MANTA_LIGHT_TYPES[%i]", l);
-                pProgram->setInt(locationString, renderer->world->data.lightTypes[l]);
-            }
-
-            glUniform1f(glGetUniformLocation(program, "MANTA_TIME"), renderer->world->timeTotal);
+            sprintf(locationString, "MANTA_LIGHT_TYPES[%i]", l);
+            pProgram->setInt(locationString, engine->world.data.lightTypes[l]);
         }
+
+        glUniform1f(glGetUniformLocation(program, "MANTA_TIME"), engine->world.timeTotal);
     }
 
     glBindVertexArray(vao);

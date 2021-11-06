@@ -16,7 +16,7 @@ class MGame;
 // Prefixed with M, M for Master (or Manta), which denotes this is a core datatype
 class MEngine {
 public:
-    MEngine();
+    MEngine(int argc, char** argv);
 
     Renderer* renderer;
 
@@ -28,6 +28,7 @@ public:
     MGame* game; // The engine will terminate if it can't find a game
 
     bool alive = true; // Change this to false at any time to abort the update loop and quit abruptly
+    bool hideUI = false;
 
     // Calling this hands off control from the main file to the engine instance until the engine is no longer running
 

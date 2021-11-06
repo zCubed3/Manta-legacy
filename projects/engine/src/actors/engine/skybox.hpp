@@ -9,12 +9,15 @@ class Cubemap;
 
 class ASkybox : public AActor {
 public:
-    ACamera *pCamera;
-    Cubemap *pCubemap;
 
-    virtual void Update(MEngine *engine) override;
+    ACamera *pCamera = nullptr;
+    Cubemap *pCubemap = nullptr;
 
-    virtual void Draw(Renderer *renderer, Resources *resources) override;
+    void Start(MEngine *engine) override;
+
+    void Update(MEngine *engine) override;
+
+    void Draw(MEngine *engine) override;
 };
 
 

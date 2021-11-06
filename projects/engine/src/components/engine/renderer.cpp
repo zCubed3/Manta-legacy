@@ -5,25 +5,25 @@
 #include <assets/resources.hpp>
 #include <rendering/renderer.hpp>
 
-void CRenderer::Update() {}
+void CRenderer::Update(MEngine* engine) {}
 
-void CRenderer::Draw(Renderer *renderer, Resources *resources) {
+void CRenderer::Draw(MEngine* engine) {
     for (auto &model: models) {
         if (!model.first)
             return;
 
-        if (!*model.first) {
+        if (!model.first) {
             printf("Model is a nullptr!\n");
             continue;
         }
 
-        (*model.first)->Draw(renderer, resources, owner, *model.second);
+        model.first->Draw(engine, owner, model.second);
     }
 }
 
 // Just so we don't have to do std::pair constantly
-void CRenderer::AddModel(Model **pModel, Material **pMaterial) {
-    models.emplace_back(std::pair<Model **, Material **>(pModel, pMaterial));
+void CRenderer::AddModel(Model *pModel, Material *pMaterial) {
+    models.emplace_back(std::pair<Model *, Material *>(pModel, pMaterial));
 }
 
 void CRenderer::DrawImGuiWindowSub(World *world, Resources *resources, int index) {
@@ -33,7 +33,7 @@ void CRenderer::DrawImGuiWindowSub(World *world, Resources *resources, int index
         ImGui::PushID("entity_editor_component_renderer_model_add_button");
         ImGui::PushID(index);
         if (ImGui::Button("+")) {
-            AddModel(nullptr, &Material::errorMaterial);
+            AddModel(nullptr, Material::errorMaterial);
         }
         ImGui::PopID();
         ImGui::PopID();
@@ -68,10 +68,7 @@ void CRenderer::DrawImGuiWindowSub(World *world, Resources *resources, int index
                 if (ImGui::TreeNode(buffer)) {
                     bool isEmpty = model.first == nullptr;
 
-                    if (!isEmpty)
-                        isEmpty = *model.first == nullptr;
-
-                    auto name = (isEmpty ? "None" : (*model.first)->name.c_str());
+                    auto name = (isEmpty ? "None" : model.first->name.c_str());
                     ImGui::Text("Model:");
 
                     ImGui::PushID("entity_editor_component_renderer_model_slot_combo");
@@ -84,7 +81,7 @@ void CRenderer::DrawImGuiWindowSub(World *world, Resources *resources, int index
                             ImGui::PushID(unique);
 
                             if (ImGui::Selectable(loadedModel.second->name.c_str(), false))
-                                model.first = &loadedModel.second;
+                                model.first = loadedModel.second;
 
                             ImGui::PopID();
                             ImGui::PopID();
@@ -100,7 +97,7 @@ void CRenderer::DrawImGuiWindowSub(World *world, Resources *resources, int index
 
                     ImGui::PushID("entity_editor_component_renderer_model_slot_combo_material");
                     ImGui::PushID(index);
-                    if (ImGui::BeginCombo("##model_slot_model", (*model.second)->name.c_str())) {
+                    if (ImGui::BeginCombo("##model_slot_model", model.second->name.c_str())) {
                         int unique = 0;
                         for (auto &loadedMaterial: resources->materialLoader.materials) {
                             ImGui::PushID("entity_editor_component_renderer_model_slot_combo_entry");
@@ -108,7 +105,7 @@ void CRenderer::DrawImGuiWindowSub(World *world, Resources *resources, int index
                             ImGui::PushID(unique);
 
                             if (ImGui::Selectable(loadedMaterial.first.c_str(), false))
-                                model.second = &loadedMaterial.second;
+                                model.second = loadedMaterial.second;
 
                             ImGui::PopID();
                             ImGui::PopID();

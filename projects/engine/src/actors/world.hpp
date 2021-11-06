@@ -22,7 +22,7 @@ class WorldData {
 public:
     glm::vec3 ambientColor = glm::vec3(0.05f, 0.05f, 0.05f);
 
-    int lightCount;
+    int lightCount = 0;
     glm::vec3 lightPositions[MAX_LIGHTS];
     glm::vec3 lightDirections[MAX_LIGHTS];
     glm::vec3 lightColors[MAX_LIGHTS];
@@ -46,20 +46,19 @@ public:
 
     WorldData data;
     Console *console;
-    Resources *resources;
 
-    Renderer *renderer;
+    ACamera *pCamera = nullptr;
+    ASkybox *pSkybox = nullptr;
 
-    ACamera *pCamera;
-    ASkybox *pSkybox;
-
-    World();
+    void Initialize(MEngine *engine);
 
     void CreateConObjects(Console *console);
 
+    void AddActor(MEngine *engine, AActor* actor);
+
     void Update(MEngine *engine);
 
-    void Draw(Renderer *renderer);
+    void Draw(MEngine* engine);
 
     float timeTotal = 0.0f;
     float timeLast = 0.0f;

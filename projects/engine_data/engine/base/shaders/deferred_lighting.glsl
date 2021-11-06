@@ -116,6 +116,10 @@ float fresnel(vec3 vert_pos, vec3 normal) {
    return max(0.0, dot(normalize(camera_direction), normalize(normal)));
 }
 
+vec3 FresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness) {
+    return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(max(1.0 - cosTheta, 0.0), 5.0);
+}
+
 void main() {
    vec3 fragPos = texture2D(MANTA_GBUFFER_POS, uv).rgb;
    vec3 fragNorm = texture2D(MANTA_GBUFFER_NORMAL, uv).rgb;
@@ -138,6 +142,9 @@ void main() {
 
    vec3 albedo = fragColor;
 
+   vec3 F0 = vec3(0.04);
+   F0 = mix(F0, albedo.xyz, metallic);
+
    for (int l = 0; l < MANTA_LIGHT_COUNT; l++) {
       float atten = 1;
       if (MANTA_LIGHT_TYPES[l] == 1) // Point lights
@@ -153,8 +160,6 @@ void main() {
 
       vec3 halfway = normalize(view + light);
 
-      vec3 F0 = vec3(0.04);
-      F0 = mix(F0, albedo.xyz, metallic);
       vec3 F = FresnelSchlick(max(dot(halfway, view), 0.0), F0);
 
       float NDF = DistributionGGX(normal, halfway, roughness);
@@ -164,25 +169,33 @@ void main() {
       float denominator = 4.0 * max(dot(normal, view), 0.0) * max(dot(normal, light), 0.0);
       vec3 specular = numerator / max(denominator, 0.001);
 
-      vec3 environment = textureLod(MANTA_CUBEMAP_ENVIRONMENT, reflect(-view, normalize(fragNorm)), roughness * 4).xyz;
-
       vec3 radiance = MANTA_LIGHT_COLORS[l] * atten;
-
-      vec2 brdf = texture(MANTA_TEX_BRDF_LUT, vec2(max(dot(normal, view), 0.0), roughness)).rg;
-      //vec3 specular = environment * (F * brdf.x + brdf.y);
 
       vec3 kS = F;
       vec3 kD = vec3(1.0) - kS;
 
       kD *= 1.0 - metallic;
 
-      environment *= F;
-
       float NdotL = max(dot(normal, light), 0.0);
-      Lo += ((kD * albedo.xyz / PI + specular) * radiance * NdotL) + environment;
+      Lo += ((kD * albedo.xyz / PI + specular) * radiance * NdotL);
    }
 
-   vec3 ambient = MANTA_AMBIENT_COLOR * fragColor;
+   vec3 F = FresnelSchlickRoughness(max(dot(normal, view), 0.0), F0, roughness);
+    
+   vec3 kS = F;
+   vec3 kD = 1.0 - kS;
+   kD *= 1.0 - metallic;	
+
+   vec3 diffuse = MANTA_AMBIENT_COLOR * albedo;
+
+   vec3 R = reflect(-view, normal);
+   const float MAX_ROUGH = 4;
+
+   vec3 prefilter = textureLod(MANTA_CUBEMAP_ENVIRONMENT, R, roughness * MAX_ROUGH).xyz;
+   vec2 brdf = texture(MANTA_TEX_BRDF_LUT, vec2(max(dot(normal, view), 0.0), roughness)).rg;
+   vec3 specular = prefilter * (F * brdf.x + brdf.y);
+
+   vec3 ambient = (kD * diffuse + specular);
    color = (ambient + Lo) + fragEmiss;
 
    //color = texture(MANTA_CUBEMAP_ENVIRONMENT, fragNorm).xyz;

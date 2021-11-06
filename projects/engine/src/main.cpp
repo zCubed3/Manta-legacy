@@ -44,15 +44,14 @@ int main(int argc, char **argv) {
 
     // Here's the concept behind MEngine
     // Create it and call EngineLoop(), then forget about it!
-    MEngine engine;
+    MEngine engine(argc, argv);
     engine.EngineLoop();
+
+    return 0;
 
     Console console;
     Resources resources;
     World world;
-
-    world.resources = &resources;
-    resources.world = &world; // Circular, I know
 
     CreateCommonConObjects(&console);
     world.CreateConObjects(&console);
@@ -65,23 +64,18 @@ int main(int argc, char **argv) {
         exit(0);
     }
 
-    renderer->resources = &resources;
     renderer->CreateConObjects(&console);
 
-    resources.renderer = renderer;
+    //resources.renderer = renderer;
 
     console.ParseExecFile("./autoexec"); // Autoexec is the default autoexec path
     console.ParseCommandLine(argc, argv);
 
     console.CVarGetData("gamename", "Test");
 
-    renderer->world = &world;
-    renderer->Initialize();
     renderer->camera = world.pCamera;
 
-    world.renderer = renderer;
-
-    resources.Prewarm();
+    //resources.LoadBaseContent();
 
     // Skybox needs to be set to something
     world.pSkybox->pCubemap = resources.cubemapLoader.cubemaps["engine#default_cubemap"];
@@ -194,17 +188,17 @@ int main(int argc, char **argv) {
         //spinner.Spin();
 
         // Render GBuffers
-        renderer->BeginRender(Renderer::RenderType::GBuffer);
+        //renderer->BeginRender(Renderer::RenderType::GBuffer);
 
-        world.Draw(renderer);
+        //world.Draw();
 
         if (renderer->EndRender() != Renderer::Status::Running) {
             break;
         }
 
         // Then render the default scene
-        renderer->BeginRender(Renderer::RenderType::Default);
-        renderer->DrawLightingQuad();
+        //renderer->BeginRender(Renderer::RenderType::Default);
+        //renderer->DrawLightingQuad(this);
 
         if (renderer->EndRender() != Renderer::Status::Running) {
             break;
@@ -224,7 +218,7 @@ int main(int argc, char **argv) {
 
             world.DrawImGuiWindow(&resources);
             renderer->DrawImGuiWindow();
-            resources.DrawImGuiWindow();
+            //resources.DrawImGuiWindow();
             console.DrawImGuiWindow();
 
             renderer->EndImGui();

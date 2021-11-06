@@ -32,6 +32,8 @@ typedef struct ClearColor_T {
 class Material;
 class Cubemap;
 
+class MEngine;
+
 class Renderer {
 public:
     virtual const char *get_APIName() { return "Unknown API"; };
@@ -62,9 +64,9 @@ public:
 
     // Actual renderer functionality
 public:
-    virtual void Initialize() = 0;
+    virtual void Initialize(MEngine* engine) = 0;
 
-    virtual void BeginRender(RenderType renderType) = 0;
+    virtual void BeginRender(MEngine* engine, RenderType renderType) = 0;
 
     virtual Status EndRender() = 0;
 
@@ -85,12 +87,9 @@ public:
             console->CreateCVar("width", "1024");
             console->CreateCVar("height", "768");
             console->CreateCVar("fullscreen", "false");
-
-            this->console = console;
         }
     };
 
-    Console *console = nullptr; // Allows the renderer to read from a console
     ClearColor clearColor;
 
     // Initializes GPU assets
@@ -108,16 +107,11 @@ public:
 
     virtual void EndImGui() = 0;
 
-    World *world;
-    Resources *resources;
-
     float windowWidth = 100;
     float windowHeight = 100;
     bool vsync = true;
 
     ACamera *camera;
-
-    std::vector<Model *> modelQueue;
 
     GLFWwindow *window;
 
@@ -128,7 +122,7 @@ public:
     Material *pLightingMaterial;
     Model *cameraQuad;
 
-    virtual void DrawLightingQuad() = 0;
+    virtual void DrawLightingQuad(MEngine* engine) = 0;
 
     virtual void SetCullingMode(CullMode mode) = 0;
 

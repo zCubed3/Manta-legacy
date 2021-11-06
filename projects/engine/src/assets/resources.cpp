@@ -17,33 +17,35 @@
 
 #include <iostream>
 
+#include <core/engine.hpp>
+
 using namespace std::filesystem;
 
 Resources::Resources() {
     FindDataPaths();
 }
 
-void Resources::Prewarm() {
+void Resources::LoadBaseContent(MEngine* engine) {
     std::cout << "Prewarming engine content...\n";
 
     // Base models
-    LoadModel("engine/base/models/cube.obj", "engine#cube");
-    LoadModel("engine/base/models/quad.obj", "engine#quad");
-    LoadModel("engine/base/models/plane.obj", "engine#plane");
-    LoadModel("engine/base/models/sphere.obj", "engine#sphere");
+    LoadModel(engine, "engine/base/models/cube.obj", "engine#cube");
+    LoadModel(engine, "engine/base/models/quad.obj", "engine#quad");
+    LoadModel(engine, "engine/base/models/plane.obj", "engine#plane");
+    LoadModel(engine, "engine/base/models/sphere.obj", "engine#sphere");
 
     // Base textures
-    LoadTexture("engine/base/textures/white.png", "engine#white");
-    LoadTexture("engine/base/textures/black.png", "engine#black");
-    LoadTexture("engine/base/textures/brdf_lut.png", "engine#brdf_lut");
+    LoadTexture(engine, "engine/base/textures/white.png", "engine#white");
+    LoadTexture(engine, "engine/base/textures/black.png", "engine#black");
+    LoadTexture(engine, "engine/base/textures/brdf_lut.png", "engine#brdf_lut");
 
     // Base cubemaps
-    CreateCubemap("engine#default_cubemap");
+    CreateCubemap(engine, "engine#default_cubemap");
 
     // Materials
-    LoadMaterial("engine#standard", "engine/base/shaders/standard.glsl", "engine#shader#standard", true);
-    LoadMaterial("engine#skybox", "engine/base/shaders/skybox.glsl", "engine#shader#skybox", false);
-    LoadMaterial("engine#deferred_lighting", "engine/base/shaders/deferred_lighting.glsl", "engine#shader#deferred_lighting", false);
+    LoadMaterial(engine, "engine#standard", "engine/base/shaders/standard.glsl", "engine#shader#standard", true);
+    LoadMaterial(engine, "engine#skybox", "engine/base/shaders/skybox.glsl", "engine#shader#skybox", false);
+    LoadMaterial(engine, "engine#deferred_lighting", "engine/base/shaders/deferred_lighting.glsl", "engine#shader#deferred_lighting", false);
 }
 
 void IterateThroughPath(ResourcesPath &path) {
@@ -82,43 +84,43 @@ void Resources::FindDataPaths() {
     dataPaths.emplace_back(surfacePath);
 }
 
-Model *Resources::LoadModel(std::string path, std::string id) {
+Model *Resources::LoadModel(MEngine* engine, std::string path, std::string id) {
     Model *model = modelLoader.LoadModel(path, id);
 
     if (model) {
-        renderer->CreateVertexBuffer(model);
+        engine->renderer->CreateVertexBuffer(model);
     }
 
     return model;
 }
 
-Shader *Resources::LoadShader(std::string path, std::string id) {
+Shader *Resources::LoadShader(MEngine* engine, std::string path, std::string id) {
     Shader *shader = shaderLoader.LoadShader(path, id);
 
     if (shader)
-        renderer->CreateShaderProgram(shader);
+        engine->renderer->CreateShaderProgram(shader);
 
     return shader;
 }
 
-Texture *Resources::LoadTexture(std::string path, std::string id) {
+Texture *Resources::LoadTexture(MEngine* engine, std::string path, std::string id) {
     Texture *texture = textureLoader.LoadFromFile(path, id);
 
     if (texture)
-        renderer->CreateTextureBuffer(texture);
+        engine->renderer->CreateTextureBuffer(texture);
 
     return texture;
 }
 
 // Returns a cubemap auto populated with engine#black
-Cubemap *Resources::CreateCubemap(std::string id) {
+Cubemap *Resources::CreateCubemap(MEngine* engine, std::string id) {
     auto black = textureLoader.loadedTextures["engine#black"];
 
     if (black) {
         auto cubemap = new Cubemap(black, black, black, black, black, black);
 
         if (cubemap)
-            renderer->CreateCubemapBuffer(cubemap);
+            engine->renderer->CreateCubemapBuffer(cubemap);
 
         cubemapLoader.cubemaps.emplace(id, cubemap);
         return cubemap;
@@ -127,14 +129,14 @@ Cubemap *Resources::CreateCubemap(std::string id) {
     return nullptr;
 }
 
-Cubemap *Resources::LoadCubemap(std::string path, std::string id) {
+Cubemap *Resources::LoadCubemap(MEngine* engine, std::string path, std::string id) {
     Texture *base = textureLoader.LoadFromFile(path);
 
     if (base) {
         auto cubemap = new Cubemap(base, base, base, base, base, base);
 
         if (cubemap)
-            renderer->CreateCubemapBuffer(cubemap);
+            engine->renderer->CreateCubemapBuffer(cubemap);
 
         return cubemap;
     }
@@ -142,29 +144,39 @@ Cubemap *Resources::LoadCubemap(std::string path, std::string id) {
     return nullptr;
 }
 
-Material *Resources::LoadMaterial(std::string name, std::string path, std::string id, bool usingDefaults) {
+Material *Resources::LoadMaterial(MEngine* engine, std::string name, std::string path, std::string id, bool usingDefaults) {
     // First we load the shader for the given material
-    auto shader = LoadShader(path, id);
+    auto shader = LoadShader(engine, path, id);
 
     if (shader) {
-        return materialLoader.CreateMaterial(name, shader, true);
+        return materialLoader.CreateMaterial(name, shader, usingDefaults);
     }
 
     return nullptr;
 }
 
-void Resources::TryLoadFromExtension(std::string path, std::string extension) {
-    if (extension == ".obj" || extension == ".mmdl")
-        LoadModel(path);
+Material *Resources::CreateMaterial(MEngine* engine, std::string name, std::string shader_id, bool usingDefaults) {
+    auto shader = shaderLoader.shaders[shader_id];
 
-    if (extension == ".glsl")
-        LoadShader(path);
+    if (shader) {
+        return materialLoader.CreateMaterial(name, shader, usingDefaults);
+    }
 
-    if (extension == ".jpg" || extension == ".png" || extension == ".bmp")
-        LoadTexture(path);
+    return nullptr;
 }
 
-void DrawImGuiPaths(Resources *resources, ResourcesPath path) {
+void Resources::TryLoadFromExtension(MEngine* engine, std::string path, std::string extension) {
+    if (extension == ".obj" || extension == ".mmdl")
+        LoadModel(engine, path);
+
+    if (extension == ".glsl")
+        LoadShader(engine, path);
+
+    if (extension == ".jpg" || extension == ".png" || extension == ".bmp")
+        LoadTexture(engine, path);
+}
+
+void DrawImGuiPaths(MEngine* engine, ResourcesPath path) {
     std::string name = "UNKNOWN_FILE";
 
     if (path.path.string() == "./")
@@ -175,7 +187,7 @@ void DrawImGuiPaths(Resources *resources, ResourcesPath path) {
     ImGui::PushID(path.path.c_str());
     if (ImGui::TreeNode(name.c_str())) {
         for (auto &subPath: path.childPaths) {
-            DrawImGuiPaths(resources, subPath);
+            DrawImGuiPaths(engine, subPath);
         }
 
         for (auto &file: path.files) {
@@ -185,7 +197,7 @@ void DrawImGuiPaths(Resources *resources, ResourcesPath path) {
             ImGui::PushID(path.path.c_str());
             if (ImGui::Button(file.filename().c_str())) {
                 //printf("Path: %s\n", file.c_str());
-                resources->TryLoadFromExtension(file.c_str(), extension.c_str());
+                engine->resources.TryLoadFromExtension(engine, file.c_str(), extension.c_str());
             }
             ImGui::PopID();
             ImGui::PopID();
@@ -196,7 +208,7 @@ void DrawImGuiPaths(Resources *resources, ResourcesPath path) {
     ImGui::PopID();
 }
 
-void Resources::DrawImGuiWindow() {
+void Resources::DrawImGuiWindow(MEngine* engine) {
     if (!showWindow)
         return;
 
@@ -205,11 +217,11 @@ void Resources::DrawImGuiWindow() {
     ImGui::InputText("Path", &inputBuffer);
 
     if (ImGui::Button("Load Model##resources_window_load_model")) {
-        LoadModel(inputBuffer);
+        LoadModel(engine, inputBuffer);
     }
 
     if (ImGui::Button("Load Shader##resources_window_load_shader")) {
-        LoadShader(inputBuffer);
+        LoadShader(engine, inputBuffer);
     }
 
     if (ImGui::Button("Refresh explorer##resources_reload_explorer")) {
@@ -218,13 +230,13 @@ void Resources::DrawImGuiWindow() {
 
     if (ImGui::TreeNode("Explorer##resources_window_explorer")) {
         for (auto &path: dataPaths)
-            DrawImGuiPaths(this, path);
+            DrawImGuiPaths(engine, path);
 
         ImGui::TreePop();
     }
 
     if (ImGui::Button("Refresh engine content##resources_reload_engine_content")) {
-        Prewarm();
+        LoadBaseContent(engine);
     }
 
     if (ImGui::TreeNode("Loaded Models##resources_window_loaded_models")) {
@@ -241,11 +253,11 @@ void Resources::DrawImGuiWindow() {
                     AActor *modelEnt = new AActor();
 
                     auto renderer = new CRenderer();
-                    renderer->AddModel(&model.second, &Material::errorMaterial);
+                    renderer->AddModel(model.second, Material::errorMaterial);
                     modelEnt->AddComponent(renderer);
 
                     modelEnt->name = model.second->name;
-                    world->actors.emplace_back(modelEnt);
+                    engine->world.actors.emplace_back(modelEnt);
                 }
                 ImGui::PopID();
 
@@ -280,7 +292,7 @@ void Resources::DrawImGuiWindow() {
 
     if (ImGui::TreeNode("Materials##resources_window_materials")) {
         for (auto &material: materialLoader.materials) {
-            if (material.second->DrawImGui(world, this))
+            if (material.second->DrawImGui(&engine->world, this))
                 break;
         }
 

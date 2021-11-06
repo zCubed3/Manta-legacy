@@ -15,9 +15,9 @@ class GLRenderer : public Renderer {
 public:
     virtual const char *get_APIName() override { return "OpenGL 4.6"; };
 
-    void Initialize() override;
+    void Initialize(MEngine* engine) override;
 
-    void BeginRender(RenderType renderType) override;
+    void BeginRender(MEngine* engine, RenderType renderType) override;
 
     Status EndRender() override;
 
@@ -47,9 +47,11 @@ public:
 
     uint shadowmapFBO, shadowmapID;
 
-    void CreateGBuffers();
+    bool gbufferDirty = false;
 
-    void DrawLightingQuad() override;
+    void CreateGBuffers(MEngine* engine);
+
+    void DrawLightingQuad(MEngine* engine) override;
 
     void SetCullingMode(CullMode mode) override;
 

@@ -42,9 +42,11 @@ public:
     bool isVisible = true;
     bool isProtected = false; // Prevents deletion of this, useful for cameras and stuff
 
+    virtual void Start(MEngine *engine);
+
     virtual void Update(MEngine *engine);
 
-    virtual void Draw(Renderer *renderer, Resources *resources);
+    virtual void Draw(MEngine *engine);
 
     // This is usually ran inside of a tree
     void DrawImGui(World *world, Resources *resources, int index);

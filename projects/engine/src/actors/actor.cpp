@@ -16,6 +16,11 @@
 
 #include <core/engine.hpp>
 
+// Does nothing normally
+void AActor::Start(MEngine *engine) {
+
+}
+
 // Normally actors just update their matrices
 void AActor::Update(MEngine *engine) {
     if (!isEnabled)
@@ -30,13 +35,13 @@ void AActor::Update(MEngine *engine) {
     mModel_it = glm::transpose(glm::inverse(mModel));
 }
 
-void AActor::Draw(Renderer *renderer, Resources *resources) {
+void AActor::Draw(MEngine *engine) {
     if (!isVisible)
         return;
 
     for (auto &component: components) {
         if (component->isVisible)
-            component->Draw(renderer, resources);
+            component->Draw(engine);
     }
 }
 

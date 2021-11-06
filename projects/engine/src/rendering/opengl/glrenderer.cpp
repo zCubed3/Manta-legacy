@@ -23,6 +23,8 @@
 #include <assets/resources.hpp>
 #include <assets/material.hpp>
 
+#include <core/engine.hpp>
+
 //
 // Callbacks
 //
@@ -40,33 +42,34 @@ void OnFramebufferResize(GLFWwindow *window, int width, int height) {
     if (renderer) {
         renderer->windowWidth = width;
         renderer->windowHeight = height;
-        renderer->CreateGBuffers(); // We need to recreate gbuffers upon resizing the window
+        renderer->gbufferDirty = true; // We queue up the renderer to recreate gbuffers upon resizing the window
     }
 }
 
 //
 // Renderer functionality
 //
-
 // Shadowmaps based on https://learnopengl.com/Advanced-Lighting/Shadows/Shadow-Mapping
-void GLRenderer::Initialize() {
+
+void GLRenderer::Initialize(MEngine* engine) {
     glewExperimental = true; // Enables more features
 
     if (glfwInit()) {
         printf("Initialized GLFW\n");
-        glfwWindowHint(GLFW_RESIZABLE, console->CVarGetBool("r_window_resizable", false));
-        glfwWindowHint(GLFW_SAMPLES, console->CVarGetInt("r_msaa_samples", 1));
+        glfwWindowHint(GLFW_RESIZABLE, engine->console.CVarGetBool("r_window_resizable", false));
+        glfwWindowHint(GLFW_SAMPLES, engine->console.CVarGetInt("r_msaa_samples", 1));
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
 
         GLFWmonitor *monitor = nullptr;
 
-        if (console->CVarGetBool("fullscreen", false))
+        if (engine->console.CVarGetBool("fullscreen", false))
             monitor = glfwGetPrimaryMonitor();
 
-        window = glfwCreateWindow(console->CVarGetInt("width", 800), console->CVarGetInt("height", 600),
-                                  console->CVarGetData("gamename", "Manta").c_str(), monitor, nullptr);
+        window = glfwCreateWindow(engine->console.CVarGetInt("width", 800), engine->console.CVarGetInt("height", 600),
+                                  engine->console.CVarGetData("gamename", "Manta").c_str(), monitor, nullptr);
+
         glfwMakeContextCurrent(window);
 
         // Supply the renderer some info
@@ -96,21 +99,24 @@ void GLRenderer::Initialize() {
         }
 
         // Internal engine materials and shaders
-        auto errorShader = resources->shaderLoader.LoadCode("engine#error", gl3ErrorShaderCode);
+        auto errorShader = engine->resources.shaderLoader.LoadCode("engine#error", gl3ErrorShaderCode);
         CreateShaderProgram(errorShader);
-        Material::errorMaterial = resources->materialLoader.CreateMaterial("engine#error", errorShader,
+        Material::errorMaterial = engine->resources.materialLoader.CreateMaterial("engine#error", errorShader,
                                                                            false); // We disable defaults since this isn't a normal material
 
         // GBuffer Framebuffer
         glGenFramebuffers(1, &gbufferFBO);
-        CreateGBuffers();
+        CreateGBuffers(engine);
     } else {
         printf("Failed to initialize GLFW\n");
     }
 }
 
-void GLRenderer::BeginRender(RenderType renderType) {
+void GLRenderer::BeginRender(MEngine* engine, RenderType renderType) {
     if (renderType == RenderType::GBuffer) {
+        if (gbufferDirty)
+            CreateGBuffers(engine);
+
         glBindFramebuffer(GL_FRAMEBUFFER, gbufferFBO);
 
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, gbufferPositionID, 0);
@@ -267,34 +273,36 @@ void GLRenderer::DrawImGuiWindow() {
     ImGui::End();
 }
 
-void GLRenderer::CreateGBuffers() {
+void GLRenderer::CreateGBuffers(MEngine* engine) {
+    gbufferDirty = false;
+
     std::vector<Texture *> gbuffers{gbufferPositionTex, gbufferNormalTex, gbufferAlbedoTex, gbufferMRSTex,
                                     gbufferEmissionTex};
 
     if (!gbufferInited) {
-        gbufferPositionTex = resources->textureLoader.CreateTexture("engine#gbuffer#position", windowWidth,
+        gbufferPositionTex = engine->resources.textureLoader.CreateTexture("engine#gbuffer#position", windowWidth,
                                                                     windowHeight,
                                                                     Texture::Format::Internal,
                                                                     Texture::Filtering::Point);
 
         gbufferPositionTex->dataFormat = Texture::DataFormat::RGBA_16F;
 
-        gbufferNormalTex = resources->textureLoader.CreateTexture("engine#gbuffer#normal", windowWidth, windowHeight,
+        gbufferNormalTex = engine->resources.textureLoader.CreateTexture("engine#gbuffer#normal", windowWidth, windowHeight,
                                                                   Texture::Format::Internal, Texture::Filtering::Point);
 
         gbufferNormalTex->dataFormat = Texture::DataFormat::RGBA_16F;
 
-        gbufferAlbedoTex = resources->textureLoader.CreateTexture("engine#gbuffer#albedo", windowWidth, windowHeight,
+        gbufferAlbedoTex = engine->resources.textureLoader.CreateTexture("engine#gbuffer#albedo", windowWidth, windowHeight,
                                                                   Texture::Format::Internal, Texture::Filtering::Point);
 
-        gbufferMRSTex = resources->textureLoader.CreateTexture("engine#gbuffer#mrs", windowWidth,
+        gbufferMRSTex = engine->resources.textureLoader.CreateTexture("engine#gbuffer#mrs", windowWidth,
                                                                windowHeight,
                                                                Texture::Format::Internal,
                                                                Texture::Filtering::Point);
 
         gbufferMRSTex->dataFormat = Texture::DataFormat::RGBA_16F;
 
-        gbufferEmissionTex = resources->textureLoader.CreateTexture("engine#gbuffer#emission", windowWidth,
+        gbufferEmissionTex = engine->resources.textureLoader.CreateTexture("engine#gbuffer#emission", windowWidth,
                                                                     windowHeight,
                                                                     Texture::Format::Internal,
                                                                     Texture::Filtering::Point);
@@ -323,7 +331,7 @@ void GLRenderer::CreateGBuffers() {
     gbufferEmissionID = gbufferEmissionTex->texBuffer->handle;
 }
 
-void GLRenderer::DrawLightingQuad() {
+void GLRenderer::DrawLightingQuad(MEngine* engine) {
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, gbufferPositionID);
 
@@ -340,11 +348,11 @@ void GLRenderer::DrawLightingQuad() {
     glBindTexture(GL_TEXTURE_2D, gbufferEmissionID);
 
     glActiveTexture(GL_TEXTURE6);
-    glBindTexture(GL_TEXTURE_2D, resources->textureLoader.loadedTextures["engine#brdf_lut"]->texBuffer->handle);
+    glBindTexture(GL_TEXTURE_2D, engine->resources.textureLoader.loadedTextures["engine#brdf_lut"]->texBuffer->handle);
 
     SetCullingMode(CullMode::None);
-    auto lighting = resources->materialLoader.materials["engine#deferred_lighting"];
-    resources->modelLoader.loadedModels["engine#quad"]->Draw(this, resources, nullptr, lighting);
+    auto lighting = engine->resources.materialLoader.materials["engine#deferred_lighting"];
+    engine->resources.modelLoader.loadedModels["engine#quad"]->Draw(engine, nullptr, lighting);
 }
 
 void GLRenderer::SetCullingMode(CullMode mode) {

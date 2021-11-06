@@ -12,6 +12,12 @@
 
 #include <GL/glew.h>
 
+#include <core/engine.hpp>
+
+void ASkybox::Start(MEngine *engine) {
+    pCubemap = engine->resources.cubemapLoader.cubemaps["engine#default_cubemap"];
+}
+
 void ASkybox::Update(MEngine *engine) {
     if (pCamera != nullptr) {
         position = pCamera->position;
@@ -20,19 +26,19 @@ void ASkybox::Update(MEngine *engine) {
     AActor::Update(engine);
 }
 
-void ASkybox::Draw(Renderer *renderer, Resources *resources) {
+void ASkybox::Draw(MEngine *engine) {
     // We need to change two things within the renderer for the skybox to work
     // Disable culling and depth testing
-    renderer->SetCullingMode(Renderer::CullMode::None);
-    renderer->SetDepthTestMode(Renderer::DepthMode::None);
+    engine->renderer->SetCullingMode(Renderer::CullMode::None);
+    engine->renderer->SetDepthTestMode(Renderer::DepthMode::None);
 
     glActiveTexture(GL_TEXTURE5);
     glBindTexture(GL_TEXTURE_CUBE_MAP, pCubemap->buffer->handle);
 
-    resources->modelLoader.loadedModels["engine#cube"]->Draw(renderer, resources, this,
-                                                             resources->materialLoader.materials["engine#skybox"]);
+    engine->resources.modelLoader.loadedModels["engine#cube"]->Draw(engine, this,
+                                                             engine->resources.materialLoader.materials["engine#skybox"]);
 
     // Restore old rendering
-    renderer->SetCullingMode(Renderer::CullMode::Back);
-    renderer->SetDepthTestMode(Renderer::DepthMode::Less);
+    engine->renderer->SetCullingMode(Renderer::CullMode::Back);
+    engine->renderer->SetDepthTestMode(Renderer::DepthMode::Less);
 }

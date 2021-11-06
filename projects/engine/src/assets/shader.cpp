@@ -11,7 +11,7 @@
 #include <utility>
 #include "material.hpp"
 
-ShaderProgram::~ShaderProgram() {} // Silence the compiler
+ShaderProgram::~ShaderProgram() = default; // Silence the compiler
 
 void Shader::Bind() {
     if (program)
