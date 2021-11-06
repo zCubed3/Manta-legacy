@@ -398,7 +398,8 @@ void GLRenderer::SetDepthTestMode(DepthMode mode) {
 // Built-in shaders
 //
 
-std::string gl3ErrorShaderCode = R"(
+std::string gl3ErrorShaderCode = R"(#version 330 core
+
 #ifdef VERTEX
 layout(location = 0) in vec3 _vertex;
 layout(location = 1) in vec3 _normal;

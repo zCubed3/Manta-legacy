@@ -15,12 +15,12 @@ void MDemoGame::Start(MEngine *engine) {
     glfwGetCursorPos(engine->renderer->window, &mouseX, &mouseY);
 
 #ifdef PROBE_TESTER
-#define PROBE_COUNT_X 20
-#define PROBE_COUNT_Y 20
+#define PROBE_COUNT_X 10
+#define PROBE_COUNT_Y 10
 #define PROBE_DISTANCE 0.275f
 #define PROBE_SIZE 0.125f
-//#define PROBE_RGB 1.0f, 0.0f, 1.0f
-#define PROBE_RGB 1.0f, 1.0f, 1.0f
+#define PROBE_RGB 1.0f, 0.5f, 0.0f
+//#define PROBE_RGB 1.0f, 1.0f, 1.0f
 //#define PROBE_ORBIT_LIGHTS
 
     for (int x = 0; x < PROBE_COUNT_X; x++) {

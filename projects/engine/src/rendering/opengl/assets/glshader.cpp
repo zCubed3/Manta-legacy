@@ -62,11 +62,19 @@ bool GLShaderProgram::Compile(Shader *shader) {
     uint vShader = glCreateShader(GL_VERTEX_SHADER);
     uint fShader = glCreateShader(GL_FRAGMENT_SHADER);
 
-    const char *vSources[2] = {"#version 330\n#define VERTEX\n", shader->code.c_str()};
-    glShaderSource(vShader, 2, vSources, nullptr);
+    // TODO Make this better?
+    // Shitty checking but we remove the first line and place it into another string
+    auto firstLine = shader->code.find_first_of('\n');
+    std::string version = shader->code.substr(0, firstLine) + "\n";
 
-    const char *fSources[2] = {"#version 330\n#define FRAGMENT\n", shader->code.c_str()};
-    glShaderSource(fShader, 2, fSources, nullptr);
+    // Then trim it from the actual code
+    shader->code = shader->code.substr(firstLine);
+
+    const char *vSources[3] = {version.c_str(), "#define VERTEX\n", shader->code.c_str()};
+    glShaderSource(vShader, 3, vSources, nullptr);
+
+    const char *fSources[3] = {version.c_str(), "#define FRAGMENT\n", shader->code.c_str()};
+    glShaderSource(fShader, 3, fSources, nullptr);
 
     bool vValid = false;
     glCompileShader(vShader);
