@@ -27,6 +27,21 @@ if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
    add_compile_definitions("_DEBUG" "DEBUG")
 endif()
 
+# Here's a helper function
+macro(get_sources SRC_DIRS SRC_EXPRESSIONS OUT_VAR)
+   foreach(SOURCE_DIR IN LISTS SOURCE_DIRS)
+      message("Looking for sources in '${SOURCE_DIR}'")
+      foreach (PATTERN IN LISTS SOURCE_EXTENSIONS)
+         file(GLOB_RECURSE TEMP_GLOB_SOURCES "${SOURCE_DIR}" ${PATTERN})
+         list(APPEND ${OUT_VAR} ${TEMP_GLOB_SOURCES})
+      endforeach()
+   endforeach()
+
+   foreach (ITEM IN LISTS ${OUT_VAR})
+      message("Found ${ITEM}")
+   endforeach()
+endmacro()
+
 # Builds the "engine", which is just the loader that brings all the modules together
 add_subdirectory(${ENGINE_DIR})
 

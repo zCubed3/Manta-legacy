@@ -1,42 +1,4 @@
 set(SOURCES
-        "src/main.cpp"
-
-        "src/core/engine.cpp"
-
-        "src/core/ui/stats_window.cpp"
-
-        "src/game/demo/demo.cpp"
-
-        "src/console/console.cpp"
-        "src/console/common_console.cpp"
-
-        "src/assets/manta_packer.cpp"
-        "src/assets/texture.cpp"
-        "src/assets/model.cpp"
-        "src/assets/shader.cpp"
-        "src/assets/resources.cpp"
-        "src/assets/material.cpp"
-        "src/assets/cubemap.cpp"
-
-        "src/assets/material_values/material_color.cpp"
-        "src/assets/material_values/material_float.cpp"
-
-        "src/actors/actor.cpp"
-        "src/actors/world.cpp"
-
-        "src/actors/engine/camera.cpp"
-        "src/actors/engine/light.cpp"
-        "src/actors/engine/skybox.cpp"
-
-        "src/components/component.cpp"
-        "src/components/engine/renderer.cpp"
-
-        "src/rendering/opengl/glrenderer.cpp"
-        "src/rendering/opengl/assets/glmodel.cpp"
-        "src/rendering/opengl/assets/glshader.cpp"
-        "src/rendering/opengl/assets/gltexture.cpp"
-        "src/rendering/opengl/assets/glcubemap.cpp"
-
         "${DEPENDS_DIR}/imgui/imgui.cpp"
         "${DEPENDS_DIR}/imgui/imgui_demo.cpp"
         "${DEPENDS_DIR}/imgui/imgui_internal.h"
@@ -46,7 +8,7 @@ set(SOURCES
         "${DEPENDS_DIR}/imgui/backends/imgui_impl_glfw.cpp"
         "${DEPENDS_DIR}/imgui/backends/imgui_impl_opengl3.cpp"
         "${DEPENDS_DIR}/imgui/misc/cpp/imgui_stdlib.cpp"
-        )
+)
 
 set(INCLUDE_DIRS
         "${DEPENDS_DIR}"
@@ -67,7 +29,17 @@ else ()
     list(APPEND INCLUDE_DIRS)
 endif ()
 
-add_executable(MantaEngine ${SOURCES})
+set(SOURCE_DIRS
+        "${CMAKE_CURRENT_SOURCE_DIR}/src"
+)
+
+set(SOURCE_EXTENSIONS
+        "*.cpp"
+)
+
+get_sources(${SOURCE_DIRS} ${SOURCE_EXTENSIONS} GLOB_SOURCES)
+
+add_executable(MantaEngine ${GLOB_SOURCES} ${SOURCES})
 target_include_directories(MantaEngine PUBLIC ${INCLUDE_DIRS})
 target_link_libraries(MantaEngine PUBLIC ${LIBRARIES})
 
