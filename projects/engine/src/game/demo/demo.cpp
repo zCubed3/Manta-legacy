@@ -25,7 +25,7 @@ void MDemoGame::Start(MEngine *engine) {
 
     for (int x = 0; x < PROBE_COUNT_X; x++) {
         for (int y = 0; y < PROBE_COUNT_Y; y++) {
-            AActor* actor = new AActor();
+            AActor *actor = new AActor();
 
             float actual_x = x - (PROBE_COUNT_X / 2);
             float actual_y = y - (PROBE_COUNT_Y / 2);
@@ -35,17 +35,17 @@ void MDemoGame::Start(MEngine *engine) {
 
             actor->name = "TestActor";
 
-            CRenderer* renderer = new CRenderer();
+            CRenderer *renderer = new CRenderer();
             actor->AddComponent(renderer);
 
             char testMatName[24];
             sprintf(testMatName, "TestMat_%i_%i", x, y);
 
-            auto* mat = engine->resources.CreateMaterial(engine, std::string(testMatName), "engine#shader#standard");
+            auto *mat = engine->resources.CreateMaterial(engine, std::string(testMatName), "engine#shader#standard");
 
-            ((MaterialFloat*)mat->values[0])->value = x / (float)PROBE_COUNT_X;
-            ((MaterialFloat*)mat->values[1])->value = y / (float)PROBE_COUNT_Y;
-            ((MaterialColor*)mat->values[2])->color = glm::vec4(PROBE_RGB, 1.0);
+            ((MaterialFloat *) mat->values[0])->value = x / (float) PROBE_COUNT_X;
+            ((MaterialFloat *) mat->values[1])->value = y / (float) PROBE_COUNT_Y;
+            ((MaterialColor *) mat->values[2])->color = glm::vec4(PROBE_RGB, 1.0);
 
             renderer->AddModel(engine->resources.modelLoader.loadedModels["engine#sphere"], mat);
 
@@ -68,7 +68,7 @@ void MDemoGame::Start(MEngine *engine) {
 
     rLight->type = gLight->type = bLight->type = ALight::LightType::Point;
 #else
-    ALight* light = new ALight();
+    ALight *light = new ALight();
     engine->world.AddActor(engine, light);
 #endif
 #endif
@@ -79,9 +79,9 @@ void MDemoGame::Update(MEngine *engine) {
     glfwGetCursorPos(engine->renderer->window, &nowMouseX, &nowMouseY);
 
     //if (lockCursor) {
-    ACamera* camera = engine->world.pCamera;
-    Renderer* renderer = engine->renderer;
-    World* world = &engine->world;
+    ACamera *camera = engine->world.pCamera;
+    Renderer *renderer = engine->renderer;
+    World *world = &engine->world;
 
     if (lockCursor) {
         camera->euler += glm::vec3(nowMouseY - mouseY, mouseX - nowMouseX, 0) * 0.1f;

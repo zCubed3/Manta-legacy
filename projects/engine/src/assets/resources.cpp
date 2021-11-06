@@ -25,7 +25,7 @@ Resources::Resources() {
     FindDataPaths();
 }
 
-void Resources::LoadBaseContent(MEngine* engine) {
+void Resources::LoadBaseContent(MEngine *engine) {
     std::cout << "Prewarming engine content...\n";
 
     // Base models
@@ -45,7 +45,8 @@ void Resources::LoadBaseContent(MEngine* engine) {
     // Materials
     LoadMaterial(engine, "engine#standard", "engine/base/shaders/standard.glsl", "engine#shader#standard", true);
     LoadMaterial(engine, "engine#skybox", "engine/base/shaders/skybox.glsl", "engine#shader#skybox", false);
-    LoadMaterial(engine, "engine#deferred_lighting", "engine/base/shaders/deferred_lighting.glsl", "engine#shader#deferred_lighting", false);
+    LoadMaterial(engine, "engine#deferred_lighting", "engine/base/shaders/deferred_lighting.glsl",
+                 "engine#shader#deferred_lighting", false);
 }
 
 void IterateThroughPath(ResourcesPath &path) {
@@ -84,7 +85,7 @@ void Resources::FindDataPaths() {
     dataPaths.emplace_back(surfacePath);
 }
 
-Model *Resources::LoadModel(MEngine* engine, std::string path, std::string id) {
+Model *Resources::LoadModel(MEngine *engine, std::string path, std::string id) {
     Model *model = modelLoader.LoadModel(path, id);
 
     if (model) {
@@ -94,7 +95,7 @@ Model *Resources::LoadModel(MEngine* engine, std::string path, std::string id) {
     return model;
 }
 
-Shader *Resources::LoadShader(MEngine* engine, std::string path, std::string id) {
+Shader *Resources::LoadShader(MEngine *engine, std::string path, std::string id) {
     Shader *shader = shaderLoader.LoadShader(path, id);
 
     if (shader)
@@ -103,7 +104,7 @@ Shader *Resources::LoadShader(MEngine* engine, std::string path, std::string id)
     return shader;
 }
 
-Texture *Resources::LoadTexture(MEngine* engine, std::string path, std::string id) {
+Texture *Resources::LoadTexture(MEngine *engine, std::string path, std::string id) {
     Texture *texture = textureLoader.LoadFromFile(path, id);
 
     if (texture)
@@ -113,7 +114,7 @@ Texture *Resources::LoadTexture(MEngine* engine, std::string path, std::string i
 }
 
 // Returns a cubemap auto populated with engine#black
-Cubemap *Resources::CreateCubemap(MEngine* engine, std::string id) {
+Cubemap *Resources::CreateCubemap(MEngine *engine, std::string id) {
     auto black = textureLoader.loadedTextures["engine#black"];
 
     if (black) {
@@ -129,7 +130,7 @@ Cubemap *Resources::CreateCubemap(MEngine* engine, std::string id) {
     return nullptr;
 }
 
-Cubemap *Resources::LoadCubemap(MEngine* engine, std::string path, std::string id) {
+Cubemap *Resources::LoadCubemap(MEngine *engine, std::string path, std::string id) {
     Texture *base = textureLoader.LoadFromFile(path);
 
     if (base) {
@@ -144,7 +145,8 @@ Cubemap *Resources::LoadCubemap(MEngine* engine, std::string path, std::string i
     return nullptr;
 }
 
-Material *Resources::LoadMaterial(MEngine* engine, std::string name, std::string path, std::string id, bool usingDefaults) {
+Material *
+Resources::LoadMaterial(MEngine *engine, std::string name, std::string path, std::string id, bool usingDefaults) {
     // First we load the shader for the given material
     auto shader = LoadShader(engine, path, id);
 
@@ -155,7 +157,7 @@ Material *Resources::LoadMaterial(MEngine* engine, std::string name, std::string
     return nullptr;
 }
 
-Material *Resources::CreateMaterial(MEngine* engine, std::string name, std::string shader_id, bool usingDefaults) {
+Material *Resources::CreateMaterial(MEngine *engine, std::string name, std::string shader_id, bool usingDefaults) {
     auto shader = shaderLoader.shaders[shader_id];
 
     if (shader) {
@@ -165,7 +167,7 @@ Material *Resources::CreateMaterial(MEngine* engine, std::string name, std::stri
     return nullptr;
 }
 
-void Resources::TryLoadFromExtension(MEngine* engine, std::string path, std::string extension) {
+void Resources::TryLoadFromExtension(MEngine *engine, std::string path, std::string extension) {
     if (extension == ".obj" || extension == ".mmdl")
         LoadModel(engine, path);
 
@@ -176,7 +178,7 @@ void Resources::TryLoadFromExtension(MEngine* engine, std::string path, std::str
         LoadTexture(engine, path);
 }
 
-void DrawImGuiPaths(MEngine* engine, ResourcesPath path) {
+void DrawImGuiPaths(MEngine *engine, ResourcesPath path) {
     std::string name = "UNKNOWN_FILE";
 
     if (path.path.string() == "./")
@@ -208,9 +210,9 @@ void DrawImGuiPaths(MEngine* engine, ResourcesPath path) {
     ImGui::PopID();
 }
 
-void DrawCubemapEditorSide(Resources* resources, Renderer* renderer, int side, std::string name, Cubemap* cubemap) {
-    const char* side_name = "TODO";
-    Texture** texture = nullptr;
+void DrawCubemapEditorSide(Resources *resources, Renderer *renderer, int side, std::string name, Cubemap *cubemap) {
+    const char *side_name = "TODO";
+    Texture **texture = nullptr;
 
     switch (side) {
         case 0:
@@ -249,7 +251,7 @@ void DrawCubemapEditorSide(Resources* resources, Renderer* renderer, int side, s
     if (!texture)
         return;
 
-    ImGui::Image((void *)(intptr_t)(*texture)->texBuffer->handle, ImVec2(100, 100));
+    ImGui::Image((void *) (intptr_t) (*texture)->texBuffer->handle, ImVec2(100, 100));
 
     ImGui::PushID(side);
     ImGui::PushID(name.c_str());
@@ -281,7 +283,7 @@ void DrawCubemapEditorSide(Resources* resources, Renderer* renderer, int side, s
     ImGui::PopID();
 }
 
-void DrawCubemapEditor(Resources* resources, Renderer* renderer, std::string name, Cubemap* cubemap) {
+void DrawCubemapEditor(Resources *resources, Renderer *renderer, std::string name, Cubemap *cubemap) {
     ImGui::PushID("cubemap_editor");
     if (ImGui::TreeNode(name.c_str())) {
         for (int i = 0; i < 6; i++) {
@@ -293,7 +295,7 @@ void DrawCubemapEditor(Resources* resources, Renderer* renderer, std::string nam
     ImGui::PopID();
 }
 
-void Resources::DrawImGuiWindow(MEngine* engine) {
+void Resources::DrawImGuiWindow(MEngine *engine) {
     if (!showWindow)
         return;
 

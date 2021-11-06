@@ -3,6 +3,8 @@ set(SOURCES
 
         "src/core/engine.cpp"
 
+        "src/core/ui/stats_window.cpp"
+
         "src/game/demo/demo.cpp"
 
         "src/console/console.cpp"

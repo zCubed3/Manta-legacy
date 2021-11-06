@@ -26,7 +26,7 @@ public:
 
 class CubemapLoader {
 public:
-    std::unordered_map<std::string, Cubemap*> cubemaps;
+    std::unordered_map<std::string, Cubemap *> cubemaps;
 };
 
 #endif

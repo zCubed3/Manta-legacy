@@ -7,9 +7,9 @@ class Texture;
 
 class ALight : public AActor {
 public:
-    ALight();
+    void Start(MEngine *engine) override;
 
-    void CreateShadowmap();
+    void CreateShadowmap(MEngine *engine);
 
     glm::vec3 color = glm::vec3(1, 1, 1);
     float range = 10.0f;
@@ -29,12 +29,16 @@ public:
     int shadowmapWidth = 256;
     int shadowmapHeight = 256;
 
+    int unique_id; // Used for id'ing this light
+
     LightType type = LightType::Sun;
 
     Texture *shadowmap;
 
     glm::mat4 mLightMatrix; // Lights are practically cameras
     virtual void Update(MEngine *engine) override;
+
+    virtual void CustomRender(MEngine *engine) override;
 
     virtual void DrawImGuiSub(World *world, int index) override;
 };

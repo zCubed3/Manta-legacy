@@ -10,7 +10,7 @@
 
 #include <imgui/imgui.h>
 
-MEngine::MEngine(int argc, char** argv) {
+MEngine::MEngine(int argc, char **argv) {
     CreateCommonConObjects(&console);
     world.CreateConObjects(&console);
 
@@ -58,6 +58,9 @@ void MEngine::EngineLoop() {
             break;
         }
 
+        // Custom rendering goes on in between the lighting and gbuffer
+        world.CustomRender(this);
+
         // Render the lighting pass
         renderer->BeginRender(this, Renderer::RenderType::Default);
         renderer->DrawLightingQuad(this);
@@ -76,6 +79,7 @@ void MEngine::EngineLoop() {
             ImGui::Checkbox("World", &world.showWindow);
             ImGui::Checkbox("Resources", &resources.showWindow);
             ImGui::Checkbox("Console", &console.showWindow);
+            ImGui::Checkbox("Stats", &statsWindow.open);
 
             ImGui::End();
 
@@ -83,6 +87,7 @@ void MEngine::EngineLoop() {
             renderer->DrawImGuiWindow();
             resources.DrawImGuiWindow(this);
             console.DrawImGuiWindow();
+            statsWindow.DrawGUI(this);
         }
 
         renderer->EndImGui();

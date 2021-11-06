@@ -15,9 +15,9 @@ class GLRenderer : public Renderer {
 public:
     virtual const char *get_APIName() override { return "OpenGL 4.6"; };
 
-    void Initialize(MEngine* engine) override;
+    void Initialize(MEngine *engine) override;
 
-    void BeginRender(MEngine* engine, RenderType renderType) override;
+    void BeginRender(MEngine *engine, RenderType renderType) override;
 
     Status EndRender() override;
 
@@ -28,6 +28,7 @@ public:
     void CreateShaderProgram(Shader *shader) override;
 
     void CreateTextureBuffer(Texture *texture) override;
+
     void CreateCubemapBuffer(Cubemap *cubemap) override;
 
     virtual void CreateConObjects(Console *console) override;
@@ -49,9 +50,9 @@ public:
 
     bool gbufferDirty = false;
 
-    void CreateGBuffers(MEngine* engine);
+    void CreateGBuffers(MEngine *engine);
 
-    void DrawLightingQuad(MEngine* engine) override;
+    void DrawLightingQuad(MEngine *engine) override;
 
     void SetCullingMode(CullMode mode) override;
 

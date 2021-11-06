@@ -14,7 +14,7 @@
 
 #include <assets/resources.hpp>
 
-void Model::Draw(MEngine* engine, AActor *entity, Material *material) {
+void Model::Draw(MEngine *engine, AActor *entity, Material *material) {
     //Shader *usedShader = shader;
 
     //if (!usedShader) { // If we're missing a Shader, default to the error shader

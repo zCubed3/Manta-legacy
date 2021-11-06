@@ -36,7 +36,7 @@ void ASkybox::Draw(MEngine *engine) {
     glBindTexture(GL_TEXTURE_CUBE_MAP, pCubemap->buffer->handle);
 
     engine->resources.modelLoader.loadedModels["engine#cube"]->Draw(engine, this,
-                                                             engine->resources.materialLoader.materials["engine#skybox"]);
+                                                                    engine->resources.materialLoader.materials["engine#skybox"]);
 
     // Restore old rendering
     engine->renderer->SetCullingMode(Renderer::CullMode::Back);

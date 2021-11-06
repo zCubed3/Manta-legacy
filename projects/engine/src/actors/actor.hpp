@@ -48,6 +48,8 @@ public:
 
     virtual void Draw(MEngine *engine);
 
+    virtual void CustomRender(MEngine *engine); // Used by lights but can be used by other things!
+
     // This is usually ran inside of a tree
     void DrawImGui(World *world, Resources *resources, int index);
 

@@ -30,6 +30,7 @@ typedef struct ClearColor_T {
 } ClearColor;
 
 class Material;
+
 class Cubemap;
 
 class MEngine;
@@ -64,9 +65,9 @@ public:
 
     // Actual renderer functionality
 public:
-    virtual void Initialize(MEngine* engine) = 0;
+    virtual void Initialize(MEngine *engine) = 0;
 
-    virtual void BeginRender(MEngine* engine, RenderType renderType) = 0;
+    virtual void BeginRender(MEngine *engine, RenderType renderType) = 0;
 
     virtual Status EndRender() = 0;
 
@@ -98,6 +99,7 @@ public:
     virtual void CreateShaderProgram(Shader *shader) = 0;
 
     virtual void CreateTextureBuffer(Texture *texture) = 0;
+
     virtual void CreateCubemapBuffer(Cubemap *cubemap) = 0;
 
     // ImGui
@@ -122,7 +124,7 @@ public:
     Material *pLightingMaterial;
     Model *cameraQuad;
 
-    virtual void DrawLightingQuad(MEngine* engine) = 0;
+    virtual void DrawLightingQuad(MEngine *engine) = 0;
 
     virtual void SetCullingMode(CullMode mode) = 0;
 

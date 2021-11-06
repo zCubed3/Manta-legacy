@@ -9,26 +9,35 @@
 
 #include <actors/world.hpp>
 
+#include "ui/stats_window.hpp"
+
 class MGame;
+
+class StatsWindow;
 
 // The engine can only exist once!
 // This is a way to move a bunch of nonsense code out of main.cpp into a more unified place
 // Prefixed with M, M for Master (or Manta), which denotes this is a core datatype
 class MEngine {
 public:
-    MEngine(int argc, char** argv);
+    MEngine(int argc, char **argv);
 
-    Renderer* renderer;
+    Renderer *renderer;
 
     Console console; // We always have a console :)
     Resources resources; // and resources so we can load engine content
 
     World world; // Can't have a game world without something to represent it
 
-    MGame* game; // The engine will terminate if it can't find a game
+    MGame *game; // The engine will terminate if it can't find a game
 
     bool alive = true; // Change this to false at any time to abort the update loop and quit abruptly
     bool hideUI = false;
+
+    //
+    // UI menus
+    //
+    StatsWindow statsWindow;
 
     // Calling this hands off control from the main file to the engine instance until the engine is no longer running
 

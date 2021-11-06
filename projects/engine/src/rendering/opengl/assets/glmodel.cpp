@@ -49,7 +49,7 @@ void GLVertexBuffer::Populate(Model *model) {
     glBindVertexArray(0);
 }
 
-void GLVertexBuffer::Draw(MEngine* engine, AActor *pActor, Material *material) {
+void GLVertexBuffer::Draw(MEngine *engine, AActor *pActor, Material *material) {
     if (material) {
         material->Bind();
     } else {

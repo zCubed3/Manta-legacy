@@ -9,12 +9,31 @@
 
 #include <assets/texture.hpp>
 
-ALight::ALight() {
-    CreateShadowmap();
+#include <core/engine.hpp>
+
+#include <GL/glew.h>
+
+void ALight::Start(MEngine *engine) {
+    // Every light is given a random number, this hopefully won't ever collide
+    unique_id = rand();
+    CreateShadowmap(engine);
 }
 
-void ALight::CreateShadowmap() {
+void ALight::CreateShadowmap(MEngine *engine) {
+    if (shadowmap == nullptr) {
+        char shadowmap_id[128];
 
+        sprintf(shadowmap_id, "SHADOWMAP_%i");
+        shadowmap = engine->resources.textureLoader.CreateTexture(std::string(shadowmap_id), shadowmapWidth,
+                                                                  shadowmapHeight, Texture::Format::Float,
+                                                                  Texture::Filtering::Point);
+        shadowmap->isDepthMap = true;
+    }
+
+    shadowmap->width = shadowmapWidth;
+    shadowmap->height = shadowmapHeight;
+
+    engine->renderer->CreateTextureBuffer(shadowmap);
 }
 
 void ALight::Update(MEngine *engine) {
@@ -23,6 +42,23 @@ void ALight::Update(MEngine *engine) {
     glm::mat4 view = glm::lookAt(position, position + glm::rotate(rotation, glm::vec3(0, 0, 1)), glm::vec3(0, 1, 0));
     glm::mat4 projection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.001f, 10.0f);
     mLightMatrix = projection * view;
+}
+
+// TODO: Not rely on OpenGL entirely?
+void ALight::CustomRender(MEngine *engine) {
+    Renderer *renderer = engine->renderer;
+
+    auto *oldCamera = engine->world.pCamera;
+    //engine->world.pCamera = lightCamera;
+
+    renderer->BeginRender(engine, Renderer::RenderType::Shadowmap);
+
+    glActiveTexture(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, shadowmap->texBuffer->handle);
+
+    engine->world.Draw(engine);
+
+    renderer->EndRender();
 }
 
 void ALight::DrawImGuiSub(World *world, int index) {

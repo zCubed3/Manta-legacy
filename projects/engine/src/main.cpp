@@ -223,8 +223,7 @@ int main(int argc, char **argv) {
 
             renderer->EndImGui();
 
-            if (imguiIO.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-            {
+            if (imguiIO.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
                 ImGui::UpdatePlatformWindows();
                 ImGui::RenderPlatformWindowsDefault();
             }

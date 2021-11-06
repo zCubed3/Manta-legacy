@@ -36,6 +36,7 @@ public:
 };
 
 class ACamera;
+
 class ASkybox;
 
 class MEngine;
@@ -54,11 +55,13 @@ public:
 
     void CreateConObjects(Console *console);
 
-    void AddActor(MEngine *engine, AActor* actor);
+    void AddActor(MEngine *engine, AActor *actor);
 
     void Update(MEngine *engine);
 
-    void Draw(MEngine* engine);
+    void Draw(MEngine *engine);
+
+    void CustomRender(MEngine *engine);
 
     float timeTotal = 0.0f;
     float timeLast = 0.0f;

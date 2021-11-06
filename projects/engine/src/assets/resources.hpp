@@ -27,7 +27,7 @@ class Resources {
 public:
     Resources();
 
-    void LoadBaseContent(MEngine* engine); // Loads default content
+    void LoadBaseContent(MEngine *engine); // Loads default content
 
     void FindDataPaths();
 
@@ -39,23 +39,26 @@ public:
     MaterialLoader materialLoader;
     CubemapLoader cubemapLoader;
 
-    Model *LoadModel(MEngine* engine, std::string path, std::string id = "");
+    Model *LoadModel(MEngine *engine, std::string path, std::string id = "");
 
-    Shader *LoadShader(MEngine* engine, std::string path, std::string id = "");
+    Shader *LoadShader(MEngine *engine, std::string path, std::string id = "");
 
-    Texture *LoadTexture(MEngine* engine, std::string path, std::string id = "");
+    Texture *LoadTexture(MEngine *engine, std::string path, std::string id = "");
 
-    Cubemap *CreateCubemap(MEngine* engine, std::string id);
-    Cubemap *LoadCubemap(MEngine* engine, std::string path, std::string id = "");
+    Cubemap *CreateCubemap(MEngine *engine, std::string id);
 
-    Material *LoadMaterial(MEngine* engine, std::string name, std::string path, std::string id = "", bool usingDefaults = true);
-    Material *CreateMaterial(MEngine* engine, std::string name, std::string shader_id, bool usingDefaults = true);
+    Cubemap *LoadCubemap(MEngine *engine, std::string path, std::string id = "");
+
+    Material *
+    LoadMaterial(MEngine *engine, std::string name, std::string path, std::string id = "", bool usingDefaults = true);
+
+    Material *CreateMaterial(MEngine *engine, std::string name, std::string shader_id, bool usingDefaults = true);
 
     bool showWindow = false;
 
-    void DrawImGuiWindow(MEngine* engine);
+    void DrawImGuiWindow(MEngine *engine);
 
-    void TryLoadFromExtension(MEngine* engine, std::string path, std::string extension);
+    void TryLoadFromExtension(MEngine *engine, std::string path, std::string extension);
 
     std::string inputBuffer;
 };

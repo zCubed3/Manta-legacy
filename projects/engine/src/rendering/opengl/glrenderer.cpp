@@ -51,7 +51,7 @@ void OnFramebufferResize(GLFWwindow *window, int width, int height) {
 //
 // Shadowmaps based on https://learnopengl.com/Advanced-Lighting/Shadows/Shadow-Mapping
 
-void GLRenderer::Initialize(MEngine* engine) {
+void GLRenderer::Initialize(MEngine *engine) {
     glewExperimental = true; // Enables more features
 
     if (glfwInit()) {
@@ -102,7 +102,7 @@ void GLRenderer::Initialize(MEngine* engine) {
         auto errorShader = engine->resources.shaderLoader.LoadCode("engine#error", gl3ErrorShaderCode);
         CreateShaderProgram(errorShader);
         Material::errorMaterial = engine->resources.materialLoader.CreateMaterial("engine#error", errorShader,
-                                                                           false); // We disable defaults since this isn't a normal material
+                                                                                  false); // We disable defaults since this isn't a normal material
 
         // GBuffer Framebuffer
         glGenFramebuffers(1, &gbufferFBO);
@@ -112,7 +112,7 @@ void GLRenderer::Initialize(MEngine* engine) {
     }
 }
 
-void GLRenderer::BeginRender(MEngine* engine, RenderType renderType) {
+void GLRenderer::BeginRender(MEngine *engine, RenderType renderType) {
     if (renderType == RenderType::GBuffer) {
         if (gbufferDirty)
             CreateGBuffers(engine);
@@ -137,14 +137,13 @@ void GLRenderer::BeginRender(MEngine* engine, RenderType renderType) {
 
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, shadowmapID, 0);
 
-        glDrawBuffer(GL_NONE);
-        glReadBuffer(GL_NONE);
+        glDrawBuffer(GL_DEPTH_ATTACHMENT);
     }
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glfwSwapInterval(vsync);
+    glfwSwapInterval(0);
 }
 
 Renderer::Status GLRenderer::EndRender() {
@@ -273,7 +272,7 @@ void GLRenderer::DrawImGuiWindow() {
     ImGui::End();
 }
 
-void GLRenderer::CreateGBuffers(MEngine* engine) {
+void GLRenderer::CreateGBuffers(MEngine *engine) {
     gbufferDirty = false;
 
     std::vector<Texture *> gbuffers{gbufferPositionTex, gbufferNormalTex, gbufferAlbedoTex, gbufferMRSTex,
@@ -281,31 +280,35 @@ void GLRenderer::CreateGBuffers(MEngine* engine) {
 
     if (!gbufferInited) {
         gbufferPositionTex = engine->resources.textureLoader.CreateTexture("engine#gbuffer#position", windowWidth,
-                                                                    windowHeight,
-                                                                    Texture::Format::Internal,
-                                                                    Texture::Filtering::Point);
+                                                                           windowHeight,
+                                                                           Texture::Format::Internal,
+                                                                           Texture::Filtering::Point);
 
         gbufferPositionTex->dataFormat = Texture::DataFormat::RGBA_16F;
 
-        gbufferNormalTex = engine->resources.textureLoader.CreateTexture("engine#gbuffer#normal", windowWidth, windowHeight,
-                                                                  Texture::Format::Internal, Texture::Filtering::Point);
+        gbufferNormalTex = engine->resources.textureLoader.CreateTexture("engine#gbuffer#normal", windowWidth,
+                                                                         windowHeight,
+                                                                         Texture::Format::Internal,
+                                                                         Texture::Filtering::Point);
 
         gbufferNormalTex->dataFormat = Texture::DataFormat::RGBA_16F;
 
-        gbufferAlbedoTex = engine->resources.textureLoader.CreateTexture("engine#gbuffer#albedo", windowWidth, windowHeight,
-                                                                  Texture::Format::Internal, Texture::Filtering::Point);
+        gbufferAlbedoTex = engine->resources.textureLoader.CreateTexture("engine#gbuffer#albedo", windowWidth,
+                                                                         windowHeight,
+                                                                         Texture::Format::Internal,
+                                                                         Texture::Filtering::Point);
 
         gbufferMRSTex = engine->resources.textureLoader.CreateTexture("engine#gbuffer#mrs", windowWidth,
-                                                               windowHeight,
-                                                               Texture::Format::Internal,
-                                                               Texture::Filtering::Point);
+                                                                      windowHeight,
+                                                                      Texture::Format::Internal,
+                                                                      Texture::Filtering::Point);
 
         gbufferMRSTex->dataFormat = Texture::DataFormat::RGBA_16F;
 
         gbufferEmissionTex = engine->resources.textureLoader.CreateTexture("engine#gbuffer#emission", windowWidth,
-                                                                    windowHeight,
-                                                                    Texture::Format::Internal,
-                                                                    Texture::Filtering::Point);
+                                                                           windowHeight,
+                                                                           Texture::Format::Internal,
+                                                                           Texture::Filtering::Point);
 
         glGenRenderbuffers(1, &gbufferDepthRBO);
 
@@ -331,7 +334,7 @@ void GLRenderer::CreateGBuffers(MEngine* engine) {
     gbufferEmissionID = gbufferEmissionTex->texBuffer->handle;
 }
 
-void GLRenderer::DrawLightingQuad(MEngine* engine) {
+void GLRenderer::DrawLightingQuad(MEngine *engine) {
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, gbufferPositionID);
 

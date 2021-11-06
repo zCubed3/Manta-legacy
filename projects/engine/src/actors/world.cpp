@@ -102,7 +102,7 @@ void World::Update(MEngine *engine) {
     data.lightCount = l;
 }
 
-void World::Draw(MEngine* engine) {
+void World::Draw(MEngine *engine) {
     timeTotal = (float) glfwGetTime();
     timeDelta = timeTotal - timeLast;
     timeLast = timeTotal;
@@ -112,6 +112,15 @@ void World::Draw(MEngine* engine) {
             continue;
 
         actors[e]->Draw(engine);
+    }
+}
+
+void World::CustomRender(MEngine *engine) {
+    for (int e = 0; e < actors.size(); e++) {
+        if (actors[e] == nullptr)
+            continue;
+
+        actors[e]->CustomRender(engine);
     }
 }
 

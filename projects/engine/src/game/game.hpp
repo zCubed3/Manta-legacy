@@ -15,10 +15,11 @@ class MEngine;
 
 class MGame {
 public:
-    virtual void Start(MEngine* engine) = 0;
+    virtual void Start(MEngine *engine) = 0;
 
-    virtual void Update(MEngine* engine) = 0;
-    virtual void Draw(MEngine* engine) = 0;
+    virtual void Update(MEngine *engine) = 0;
+
+    virtual void Draw(MEngine *engine) = 0;
 };
 
 

@@ -14,9 +14,9 @@ class CRenderer : public CComponent {
 public:
     std::vector<std::pair<Model *, Material *>> models;
 
-    void Update(MEngine* engine) override;
+    void Update(MEngine *engine) override;
 
-    void Draw(MEngine* engine) override;
+    void Draw(MEngine *engine) override;
 
     void AddModel(Model *pModel, Material *pMaterial);
 

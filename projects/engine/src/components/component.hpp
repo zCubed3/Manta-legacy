@@ -19,9 +19,9 @@ public:
 
     bool isVisible = true, isEnabled = true;
 
-    virtual void Update(MEngine* engine) = 0;
+    virtual void Update(MEngine *engine) = 0;
 
-    virtual void Draw(MEngine* engine) = 0;
+    virtual void Draw(MEngine *engine) = 0;
 
     virtual void DrawImGuiWindowSub(World *world, Resources *resources, int index) = 0;
 };

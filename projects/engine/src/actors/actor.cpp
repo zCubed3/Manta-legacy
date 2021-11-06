@@ -21,6 +21,11 @@ void AActor::Start(MEngine *engine) {
 
 }
 
+// Does nothing normally (mainly for lights)
+void AActor::CustomRender(MEngine *engine) {
+
+}
+
 // Normally actors just update their matrices
 void AActor::Update(MEngine *engine) {
     if (!isEnabled)

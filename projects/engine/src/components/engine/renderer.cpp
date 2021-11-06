@@ -5,9 +5,9 @@
 #include <assets/resources.hpp>
 #include <rendering/renderer.hpp>
 
-void CRenderer::Update(MEngine* engine) {}
+void CRenderer::Update(MEngine *engine) {}
 
-void CRenderer::Draw(MEngine* engine) {
+void CRenderer::Draw(MEngine *engine) {
     for (auto &model: models) {
         if (!model.first)
             return;
