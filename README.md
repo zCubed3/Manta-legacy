@@ -1,4 +1,4 @@
-# Manta MEngine [![forthebadge](https://forthebadge.com/images/badges/0-percent-optimized.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/built-with-resentment.svg)](https://forthebadge.com)
+# Manta Engine [![forthebadge](https://forthebadge.com/images/badges/0-percent-optimized.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/built-with-resentment.svg)](https://forthebadge.com)
 
 
 The Manta engine is a one man project to build a basic game engine capable of making basic games with. It is in no way meant to compete with Unreal, Unity, Godot, and any other game engine developed by professionals. This project may be abandoned in the future depending on my motivation.
