@@ -189,7 +189,7 @@ void main() {
    vec3 diffuse = MANTA_AMBIENT_COLOR * albedo;
 
    vec3 R = reflect(-view, normal);
-   const float MAX_ROUGH = 4;
+   const float MAX_ROUGH = 128;
 
    vec3 prefilter = textureLod(MANTA_CUBEMAP_ENVIRONMENT, R, roughness * MAX_ROUGH).xyz;
    vec2 brdf = texture(MANTA_TEX_BRDF_LUT, vec2(max(dot(normal, view), 0.0), roughness)).rg;

@@ -208,6 +208,91 @@ void DrawImGuiPaths(MEngine* engine, ResourcesPath path) {
     ImGui::PopID();
 }
 
+void DrawCubemapEditorSide(Resources* resources, Renderer* renderer, int side, std::string name, Cubemap* cubemap) {
+    const char* side_name = "TODO";
+    Texture** texture = nullptr;
+
+    switch (side) {
+        case 0:
+            side_name = "Top";
+            texture = &cubemap->top;
+            break;
+
+        case 1:
+            side_name = "Bottom";
+            texture = &cubemap->bottom;
+            break;
+
+        case 2:
+            side_name = "Left";
+            texture = &cubemap->left;
+            break;
+
+        case 3:
+            side_name = "Right";
+            texture = &cubemap->right;
+            break;
+
+        case 4:
+            side_name = "Front";
+            texture = &cubemap->forward;
+            break;
+
+        case 5:
+            side_name = "Back";
+            texture = &cubemap->back;
+            break;
+    }
+
+    ImGui::Text("%s", side_name);
+
+    if (!texture)
+        return;
+
+    ImGui::Image((void *)(intptr_t)(*texture)->texBuffer->handle, ImVec2(100, 100));
+
+    ImGui::PushID(side);
+    ImGui::PushID(name.c_str());
+
+    if (ImGui::BeginCombo("##cubemap_editor_side", (*texture)->name.c_str())) {
+        int unique = 0;
+        for (auto &loadedTexture: resources->textureLoader.loadedTextures) {
+            ImGui::PushID("cubemap_editor_side_tex_selection");
+            ImGui::PushID(name.c_str());
+            ImGui::PushID(unique);
+
+            if (ImGui::Selectable(loadedTexture.second->name.c_str(), false)) {
+                (*texture) = loadedTexture.second;
+
+                renderer->CreateCubemapBuffer(cubemap);
+            }
+
+            ImGui::PopID();
+            ImGui::PopID();
+            ImGui::PopID();
+
+            unique++;
+        }
+
+        ImGui::EndCombo();
+    }
+
+    ImGui::PopID();
+    ImGui::PopID();
+}
+
+void DrawCubemapEditor(Resources* resources, Renderer* renderer, std::string name, Cubemap* cubemap) {
+    ImGui::PushID("cubemap_editor");
+    if (ImGui::TreeNode(name.c_str())) {
+        for (int i = 0; i < 6; i++) {
+            DrawCubemapEditorSide(resources, renderer, i, name, cubemap);
+        }
+
+        ImGui::TreePop();
+    }
+    ImGui::PopID();
+}
+
 void Resources::DrawImGuiWindow(MEngine* engine) {
     if (!showWindow)
         return;
@@ -303,6 +388,13 @@ void Resources::DrawImGuiWindow(MEngine* engine) {
         for (auto &texture: textureLoader.loadedTextures) {
             ImGui::Text("%s", texture.second->name.c_str());
             ImGui::Image((void *) (intptr_t) texture.second->texBuffer->handle, ImVec2(100, 100));
+        }
+        ImGui::TreePop();
+    }
+
+    if (ImGui::TreeNode("Loaded Cubemaps##resources_window_loaded_cubemaps")) {
+        for (auto &cubemap: cubemapLoader.cubemaps) {
+            DrawCubemapEditor(this, engine->renderer, cubemap.first, cubemap.second);
         }
         ImGui::TreePop();
     }

@@ -42,7 +42,7 @@ uniform float MANTA_SCALAR_ROUGHNESS;
 
 void main() {
    out_position = vec4(vert_position, 1);
-   out_normal = vec4(normal, 1);
+   out_normal = vec4(normalize(normal), 1);
    out_color = MANTA_COLOR_ALBEDO;
    out_mrs = vec4(MANTA_SCALAR_METALLIC, MANTA_SCALAR_ROUGHNESS, 0, 1);
    out_emission = vec4(0, 0, 0, 1);

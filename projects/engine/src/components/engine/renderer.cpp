@@ -140,25 +140,4 @@ void CRenderer::DrawImGuiWindowSub(World *world, Resources *resources, int index
     }
     ImGui::PopID();
     ImGui::PopID();
-
-    // TODO: Recreate this behaviour with CMesh
-    //if (ImGui::BeginCombo("Shader", shaderName)) {
-    //    for (auto &shader: shaderLoader.shaders) {
-    //        if (!shader.second)
-    //            continue;
-//
-    //        bool isSelected = false;
-//
-    //        if (model.second->shader)
-    //            isSelected = model.second->shader == shader.second;
-//
-    //        if (ImGui::Selectable(shader.first.c_str(), isSelected))
-    //            model.second->shader = shader.second;
-//
-    //        if (isSelected)
-    //            ImGui::SetItemDefaultFocus();
-    //    }
-//
-    //    ImGui::EndCombo();
-    //}
 }
