@@ -124,6 +124,7 @@ void World::CustomRender(MEngine *engine) {
     }
 }
 
+// TODO: Fix the lack of initialization on actors
 void World::DrawImGuiWindow(Resources *resources) {
     if (!showWindow)
         return;

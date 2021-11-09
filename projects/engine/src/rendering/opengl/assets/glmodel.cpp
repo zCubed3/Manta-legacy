@@ -66,7 +66,7 @@ void GLVertexBuffer::Draw(MEngine *engine, AActor *pActor, Material *material) {
         pProgram->setInt("MANTA_GBUFFER_POS", 0);
         pProgram->setInt("MANTA_GBUFFER_NORMAL", 1);
         pProgram->setInt("MANTA_GBUFFER_ALBEDO", 2);
-        pProgram->setInt("MANTA_GBUFFER_MRS", 3);
+        pProgram->setInt("MANTA_GBUFFER_MRA", 3);
         pProgram->setInt("MANTA_GBUFFER_EMISSION", 4);
 
         pProgram->setInt("MANTA_CUBEMAP_ENVIRONMENT", 5);

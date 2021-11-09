@@ -6,6 +6,7 @@
 
 #include "material_values/material_float.hpp"
 #include "material_values/material_color.hpp"
+#include "material_values/material_texture.hpp"
 
 #include <imgui/imgui.h>
 
@@ -13,7 +14,7 @@
 
 Material *Material::errorMaterial = nullptr;
 
-Material::Material(std::string name, Shader *pShader, bool usingDefaults) {
+Material::Material(Resources* resources, std::string name, Shader *pShader, bool usingDefaults) {
     if (pShader == nullptr)
         throw std::runtime_error("Can't create a material using null shader!");
 
@@ -24,8 +25,9 @@ Material::Material(std::string name, Shader *pShader, bool usingDefaults) {
 
     if (usingDefaults) {
         RegisterValue(new MaterialFloat("MANTA_SCALAR_METALLIC", 0.0f));
-        RegisterValue(new MaterialFloat("MANTA_SCALAR_ROUGHNESS", 0.0f));
+        RegisterValue(new MaterialFloat("MANTA_SCALAR_ROUGHNESS", 0.7f));
         RegisterValue(new MaterialColor("MANTA_COLOR_ALBEDO", glm::vec4(1, 1, 1, 1)));
+        RegisterValue(new MaterialTexture("MANTA_MAP_ALBEDO", resources->textureLoader.loadedTextures["engine#white"], 9));
     }
 }
 
@@ -61,7 +63,7 @@ bool Material::DrawImGui(World *world, Resources *resources) {
         }
 
         for (auto &value: values) {
-            value->DrawProperty(world, name);
+            value->DrawProperty(resources, world, name);
         }
 
         ImGui::TreePop();
@@ -72,8 +74,8 @@ bool Material::DrawImGui(World *world, Resources *resources) {
 }
 
 // TODO: Safety
-Material *MaterialLoader::CreateMaterial(std::string name, Shader *shader, bool usingDefaults) {
-    auto mat = new Material(name, shader, usingDefaults);
+Material *MaterialLoader::CreateMaterial(Resources* resources, std::string name, Shader *shader, bool usingDefaults) {
+    auto mat = new Material(resources, name, shader, usingDefaults);
     materials.emplace(name, mat);
     return mat;
 }

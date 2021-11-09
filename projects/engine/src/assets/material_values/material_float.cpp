@@ -25,7 +25,7 @@ void MaterialFloat::BindValue(Shader *pShader) {
     program->setFloat(location, value);
 }
 
-void MaterialFloat::DrawProperty(World *world, std::string identifier) {
+void MaterialFloat::DrawProperty(Resources* resources, World *world, std::string identifier) {
     ImGui::PushID("material_property_color_");
     ImGui::PushID(identifier.c_str());
 

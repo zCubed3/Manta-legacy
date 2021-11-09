@@ -14,7 +14,7 @@ void GLTextureBuffer::Populate(Texture *texture) {
 
         int format = GL_UNSIGNED_BYTE;
 
-        if (texture->format == Texture::Format::Float)
+        if (texture->format != Texture::Format::Byte)
             format = GL_FLOAT;
 
         int dataFormat = 0;

@@ -21,7 +21,7 @@ out vec3 color;
 uniform sampler2D MANTA_GBUFFER_POS; //GBuffer Pos
 uniform sampler2D MANTA_GBUFFER_NORMAL; //GBuffer Norm
 uniform sampler2D MANTA_GBUFFER_ALBEDO; //GBuffer Albedo
-uniform sampler2D MANTA_GBUFFER_MRS; //GBuffer combined metallic, roughness, and specular maps
+uniform sampler2D MANTA_GBUFFER_MRA; //GBuffer combined metallic, roughness, and ambient occlusion maps
 uniform sampler2D MANTA_GBUFFER_EMISSION; //GBuffer Emission
 
 uniform samplerCube MANTA_CUBEMAP_ENVIRONMENT;
@@ -122,6 +122,17 @@ vec3 FresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness) {
     return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(max(1.0 - cosTheta, 0.0), 5.0);
 }
 
+vec3 GammaCorrect(vec3 col) {
+   vec3 temp = col / (col + vec3(1.0));
+   temp = pow(temp, vec3(1.0/2.2));
+
+   return temp;
+}
+
+void CorrectColor() {
+   color = GammaCorrect(color);
+}
+
 void main() {
    vec3 fragPos = texture2D(MANTA_GBUFFER_POS, uv).rgb;
    vec3 fragNorm = texture2D(MANTA_GBUFFER_NORMAL, uv).rgb;
@@ -138,9 +149,9 @@ void main() {
    vec3 view = normalize(MANTA_CAMERA_POSITION - fragPos);
    vec3 Lo = vec3(0.0);
 
-   vec3 mrs = texture2D(MANTA_GBUFFER_MRS, uv).rgb;
-   float metallic = mrs.r;
-   float roughness = mrs.g;
+   vec3 mra = texture2D(MANTA_GBUFFER_MRA, uv).rgb;
+   float metallic = min(max(0.016, mra.r), 1.0);
+   float roughness = min(max(0.016, mra.g), 1.0);
 
    vec3 albedo = fragColor;
 
@@ -200,7 +211,7 @@ void main() {
    vec3 ambient = (kD * diffuse + specular);
    color = (ambient + Lo) + fragEmiss;
 
-   //color = texture(MANTA_CUBEMAP_ENVIRONMENT, fragNorm).xyz;
+   CorrectColor();
 }
 
 #endif

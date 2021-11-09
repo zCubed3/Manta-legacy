@@ -19,9 +19,10 @@ void MDemoGame::Start(MEngine *engine) {
 #define PROBE_COUNT_Y 10
 #define PROBE_DISTANCE 0.275f
 #define PROBE_SIZE 0.125f
-#define PROBE_RGB 1.0f, 0.5f, 0.0f
-//#define PROBE_RGB 1.0f, 1.0f, 1.0f
+//#define PROBE_RGB 1.0f, 0.1f, 0.0f
+#define PROBE_RGB 1.0f, 1.0f, 1.0f
 //#define PROBE_ORBIT_LIGHTS
+#define PROBE_Z_OFFSET 0
 
     for (int x = 0; x < PROBE_COUNT_X; x++) {
         for (int y = 0; y < PROBE_COUNT_Y; y++) {
@@ -30,7 +31,7 @@ void MDemoGame::Start(MEngine *engine) {
             float actual_x = x - (PROBE_COUNT_X / 2);
             float actual_y = y - (PROBE_COUNT_Y / 2);
 
-            actor->position = glm::vec3(actual_x * PROBE_DISTANCE, actual_y * PROBE_DISTANCE, 0);
+            actor->position = glm::vec3(actual_x * PROBE_DISTANCE, actual_y * PROBE_DISTANCE, PROBE_Z_OFFSET);
             actor->scale = glm::vec3(PROBE_SIZE, PROBE_SIZE, PROBE_SIZE);
 
             actor->name = "TestActor";

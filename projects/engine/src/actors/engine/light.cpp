@@ -46,6 +46,8 @@ void ALight::Update(MEngine *engine) {
 
 // TODO: Not rely on OpenGL entirely?
 void ALight::CustomRender(MEngine *engine) {
+    return;
+
     Renderer *renderer = engine->renderer;
 
     auto *oldCamera = engine->world.pCamera;

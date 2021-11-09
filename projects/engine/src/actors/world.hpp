@@ -20,7 +20,7 @@ class Resources;
 
 class WorldData {
 public:
-    glm::vec3 ambientColor = glm::vec3(0.05f, 0.05f, 0.05f);
+    glm::vec3 ambientColor = glm::vec3(0.012f, 0.012f, 0.012f);
 
     int lightCount = 0;
     glm::vec3 lightPositions[MAX_LIGHTS];

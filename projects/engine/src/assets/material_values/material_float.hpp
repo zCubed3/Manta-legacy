@@ -13,7 +13,7 @@ public:
 
     void BindValue(Shader *pShader) override;
 
-    void DrawProperty(World *world, std::string identifier) override;
+    void DrawProperty(Resources* resources, World *world, std::string identifier) override;
 
     float value;
 };

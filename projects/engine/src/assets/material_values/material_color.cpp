@@ -26,7 +26,7 @@ void MaterialColor::BindValue(Shader *pShader) {
     program->setVec4(location, color);
 }
 
-void MaterialColor::DrawProperty(World *world, std::string identifier) {
+void MaterialColor::DrawProperty(Resources* resources, World *world, std::string identifier) {
     ImGui::PushID("material_property_color_");
     ImGui::PushID(identifier.c_str());
 

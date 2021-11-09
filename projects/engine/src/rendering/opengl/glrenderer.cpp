@@ -101,7 +101,7 @@ void GLRenderer::Initialize(MEngine *engine) {
         // Internal engine materials and shaders
         auto errorShader = engine->resources.shaderLoader.LoadCode("engine#error", gl3ErrorShaderCode);
         CreateShaderProgram(errorShader);
-        Material::errorMaterial = engine->resources.materialLoader.CreateMaterial("engine#error", errorShader,
+        Material::errorMaterial = engine->resources.materialLoader.CreateMaterial(&engine->resources, "engine#error", errorShader,
                                                                                   false); // We disable defaults since this isn't a normal material
 
         // GBuffer Framebuffer
@@ -122,7 +122,7 @@ void GLRenderer::BeginRender(MEngine *engine, RenderType renderType) {
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, gbufferPositionID, 0);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, gbufferNormalID, 0);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, gbufferAlbedoID, 0);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, gbufferMRSID, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, gbufferMRAID, 0);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT4, GL_TEXTURE_2D, gbufferEmissionID, 0);
 
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, gbufferDepthRBO);
@@ -258,8 +258,8 @@ void GLRenderer::DrawImGuiWindow() {
                      ImVec2(1, 0));
         ImGui::Spacing();
 
-        ImGui::Text("MRS:");
-        ImGui::Image((void *) (intptr_t) gbufferMRSID, ImVec2(windowWidth / 4, windowHeight / 4), ImVec2(0, 1),
+        ImGui::Text("MRA:");
+        ImGui::Image((void *) (intptr_t) gbufferMRAID, ImVec2(windowWidth / 4, windowHeight / 4), ImVec2(0, 1),
                      ImVec2(1, 0));
 
         ImGui::Text("Emissive:");
@@ -275,7 +275,7 @@ void GLRenderer::DrawImGuiWindow() {
 void GLRenderer::CreateGBuffers(MEngine *engine) {
     gbufferDirty = false;
 
-    std::vector<Texture *> gbuffers{gbufferPositionTex, gbufferNormalTex, gbufferAlbedoTex, gbufferMRSTex,
+    std::vector<Texture *> gbuffers{gbufferPositionTex, gbufferNormalTex, gbufferAlbedoTex, gbufferMRATex,
                                     gbufferEmissionTex};
 
     if (!gbufferInited) {
@@ -298,12 +298,14 @@ void GLRenderer::CreateGBuffers(MEngine *engine) {
                                                                          Texture::Format::Internal,
                                                                          Texture::Filtering::Point);
 
-        gbufferMRSTex = engine->resources.textureLoader.CreateTexture("engine#gbuffer#mrs", windowWidth,
+        gbufferAlbedoTex->dataFormat = Texture::DataFormat::RGBA_16F;
+
+        gbufferMRATex = engine->resources.textureLoader.CreateTexture("engine#gbuffer#mrs", windowWidth,
                                                                       windowHeight,
                                                                       Texture::Format::Internal,
                                                                       Texture::Filtering::Point);
 
-        gbufferMRSTex->dataFormat = Texture::DataFormat::RGBA_16F;
+        gbufferMRATex->dataFormat = Texture::DataFormat::RGBA_16F;
 
         gbufferEmissionTex = engine->resources.textureLoader.CreateTexture("engine#gbuffer#emission", windowWidth,
                                                                            windowHeight,
@@ -312,7 +314,7 @@ void GLRenderer::CreateGBuffers(MEngine *engine) {
 
         glGenRenderbuffers(1, &gbufferDepthRBO);
 
-        gbuffers = {gbufferPositionTex, gbufferNormalTex, gbufferAlbedoTex, gbufferMRSTex, gbufferEmissionTex};
+        gbuffers = {gbufferPositionTex, gbufferNormalTex, gbufferAlbedoTex, gbufferMRATex, gbufferEmissionTex};
 
         gbufferInited = true;
     } else {
@@ -330,7 +332,7 @@ void GLRenderer::CreateGBuffers(MEngine *engine) {
     gbufferPositionID = gbufferPositionTex->texBuffer->handle;
     gbufferNormalID = gbufferNormalTex->texBuffer->handle;
     gbufferAlbedoID = gbufferAlbedoTex->texBuffer->handle;
-    gbufferMRSID = gbufferMRSTex->texBuffer->handle;
+    gbufferMRAID = gbufferMRATex->texBuffer->handle;
     gbufferEmissionID = gbufferEmissionTex->texBuffer->handle;
 }
 
@@ -345,7 +347,7 @@ void GLRenderer::DrawLightingQuad(MEngine *engine) {
     glBindTexture(GL_TEXTURE_2D, gbufferAlbedoID);
 
     glActiveTexture(GL_TEXTURE3);
-    glBindTexture(GL_TEXTURE_2D, gbufferMRSID);
+    glBindTexture(GL_TEXTURE_2D, gbufferMRAID);
 
     glActiveTexture(GL_TEXTURE4);
     glBindTexture(GL_TEXTURE_2D, gbufferEmissionID);

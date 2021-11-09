@@ -20,7 +20,7 @@ class World;
 class Material {
 public:
     // Initializes some of the engine defaults by default, otherwise the user can disable that
-    Material(std::string name, Shader *shader, bool usingDefaults = true);
+    Material(Resources* resources, std::string name, Shader *shader, bool usingDefaults = true);
 
     void RegisterValue(MaterialValue *value);
 
@@ -40,7 +40,7 @@ public:
 
 class MaterialLoader {
 public:
-    Material *CreateMaterial(std::string name, Shader *shader, bool usingDefaults = true);
+    Material *CreateMaterial(Resources* resources, std::string name, Shader *shader, bool usingDefaults = true);
 
     std::unordered_map<std::string, Material *> materials;
 };

@@ -45,7 +45,7 @@ public:
 
     Texture *LoadTexture(MEngine *engine, std::string path, std::string id = "");
 
-    Cubemap *CreateCubemap(MEngine *engine, std::string id);
+    Cubemap *CreateCubemap(MEngine *engine, std::string id, Texture* base = nullptr);
 
     Cubemap *LoadCubemap(MEngine *engine, std::string path, std::string id = "");
 

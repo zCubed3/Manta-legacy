@@ -1,5 +1,6 @@
 # Manta Engine [![forthebadge](https://forthebadge.com/images/badges/0-percent-optimized.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/built-with-resentment.svg)](https://forthebadge.com)
 
+## DISCLAIMER: I am still quite new to C/C++! Any stupid and obvious errors are due to my general lack of experience with such low level languages! This engine isn't meant to be used for anything other than learning, it is unstable and lacks quite a lot of features!
 
 The Manta engine is a one man project to build a basic game engine capable of making basic games with. It is in no way meant to compete with Unreal, Unity, Godot, and any other game engine developed by professionals. This project may be abandoned in the future depending on my motivation.
 

@@ -43,8 +43,8 @@ public:
 
     bool gbufferInited = false;
     uint gbufferFBO, gbufferDepthRBO;
-    Texture *gbufferPositionTex, *gbufferNormalTex, *gbufferAlbedoTex, *gbufferMRSTex, *gbufferEmissionTex;
-    uint gbufferPositionID, gbufferNormalID, gbufferAlbedoID, gbufferMRSID, gbufferEmissionID;
+    Texture *gbufferPositionTex, *gbufferNormalTex, *gbufferAlbedoTex, *gbufferMRATex, *gbufferEmissionTex;
+    uint gbufferPositionID, gbufferNormalID, gbufferAlbedoID, gbufferMRAID, gbufferEmissionID;
 
     uint shadowmapFBO, shadowmapID;
 

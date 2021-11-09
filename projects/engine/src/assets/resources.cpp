@@ -37,12 +37,13 @@ void Resources::LoadBaseContent(MEngine *engine) {
     // Base textures
     LoadTexture(engine, "engine/base/textures/white.png", "engine#white");
     LoadTexture(engine, "engine/base/textures/black.png", "engine#black");
+    auto grayTex = LoadTexture(engine, "engine/base/textures/gray.png", "engine#gray");
     LoadTexture(engine, "engine/base/textures/brdf_lut.png", "engine#brdf_lut");
 
-    // Base cubemaps
-    CreateCubemap(engine, "engine#default_cubemap");
+    // Base cubemap
+    CreateCubemap(engine, "engine#default_cubemap", grayTex);
 
-    // Materials
+            // Materials
     LoadMaterial(engine, "engine#standard", "engine/base/shaders/standard.glsl", "engine#shader#standard", true);
     LoadMaterial(engine, "engine#skybox", "engine/base/shaders/skybox.glsl", "engine#shader#skybox", false);
     LoadMaterial(engine, "engine#deferred_lighting", "engine/base/shaders/deferred_lighting.glsl",
@@ -114,11 +115,12 @@ Texture *Resources::LoadTexture(MEngine *engine, std::string path, std::string i
 }
 
 // Returns a cubemap auto populated with engine#black
-Cubemap *Resources::CreateCubemap(MEngine *engine, std::string id) {
-    auto black = textureLoader.loadedTextures["engine#black"];
+Cubemap *Resources::CreateCubemap(MEngine *engine, std::string id, Texture* base) {
+    if (!base)
+        base = textureLoader.loadedTextures["engine#black"];
 
-    if (black) {
-        auto cubemap = new Cubemap(black, black, black, black, black, black);
+    if (base) {
+        auto cubemap = new Cubemap(base, base, base, base, base, base);
 
         if (cubemap)
             engine->renderer->CreateCubemapBuffer(cubemap);
@@ -151,7 +153,7 @@ Resources::LoadMaterial(MEngine *engine, std::string name, std::string path, std
     auto shader = LoadShader(engine, path, id);
 
     if (shader) {
-        return materialLoader.CreateMaterial(name, shader, usingDefaults);
+        return materialLoader.CreateMaterial(this, name, shader, usingDefaults);
     }
 
     return nullptr;
@@ -161,7 +163,7 @@ Material *Resources::CreateMaterial(MEngine *engine, std::string name, std::stri
     auto shader = shaderLoader.shaders[shader_id];
 
     if (shader) {
-        return materialLoader.CreateMaterial(name, shader, usingDefaults);
+        return materialLoader.CreateMaterial(this, name, shader, usingDefaults);
     }
 
     return nullptr;
@@ -363,7 +365,7 @@ void Resources::DrawImGuiWindow(MEngine *engine) {
                 ImGui::PushID(shader.second->name.c_str());
 
                 if (ImGui::Button("Create Material")) {
-                    materialLoader.CreateMaterial("New Material", shader.second);
+                    materialLoader.CreateMaterial(this, "New Material", shader.second);
                 }
 
                 ImGui::PopID();

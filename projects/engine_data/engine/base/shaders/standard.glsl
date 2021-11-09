@@ -30,7 +30,7 @@ void main() {
 layout(location = 0) out vec4 out_position;
 layout(location = 1) out vec4 out_normal;
 layout(location = 2) out vec4 out_color;
-layout(location = 3) out vec4 out_mrs;
+layout(location = 3) out vec4 out_mra;
 layout(location = 4) out vec4 out_emission;
 
 in vec3 vert_position;
@@ -42,11 +42,13 @@ uniform vec4 MANTA_COLOR_ALBEDO;
 uniform float MANTA_SCALAR_METALLIC;
 uniform float MANTA_SCALAR_ROUGHNESS;
 
+uniform sampler2D MANTA_MAP_ALBEDO;
+
 void main() {
    out_position = vec4(vert_position, 1);
    out_normal = vec4(normalize(normal), 1);
-   out_color = MANTA_COLOR_ALBEDO;
-   out_mrs = vec4(MANTA_SCALAR_METALLIC, MANTA_SCALAR_ROUGHNESS, 0, 1);
+   out_color = texture(MANTA_MAP_ALBEDO, uv) * MANTA_COLOR_ALBEDO;
+   out_mra = vec4(MANTA_SCALAR_METALLIC, MANTA_SCALAR_ROUGHNESS, 0, 1);
    out_emission = vec4(0, 0, 0, 1);
 }
 
