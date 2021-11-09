@@ -1,4 +1,4 @@
-# Manta Engine [![forthebadge](https://forthebadge.com/images/badges/0-percent-optimized.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/built-with-resentment.svg)](https://forthebadge.com)
+ # Manta Engine [![forthebadge](https://forthebadge.com/images/badges/0-percent-optimized.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/built-with-resentment.svg)](https://forthebadge.com)
 
 ## DISCLAIMER: I am still quite new to C/C++! Any stupid and obvious errors are due to my general lack of experience with such low level languages! This engine isn't meant to be used for anything other than learning, it is unstable and lacks quite a lot of features!
 
