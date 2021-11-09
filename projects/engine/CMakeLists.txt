@@ -39,7 +39,7 @@ set(SOURCE_EXTENSIONS
 
 get_sources(${SOURCE_DIRS} ${SOURCE_EXTENSIONS} GLOB_SOURCES)
 
-add_executable(MantaEngine ${GLOB_SOURCES} ${SOURCES})
+add_executable(MantaEngine ${GLOB_SOURCES})
 target_include_directories(MantaEngine PUBLIC ${INCLUDE_DIRS})
 target_link_libraries(MantaEngine PUBLIC ${LIBRARIES})
 
